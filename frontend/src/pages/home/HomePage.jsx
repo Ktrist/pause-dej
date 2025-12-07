@@ -3,7 +3,6 @@ import HeroSection from '../../components/home/HeroSection'
 import HowItWorks from '../../components/home/HowItWorks'
 import PopularDishes from '../../components/home/PopularDishes'
 import Testimonials from '../../components/home/Testimonials'
-import Footer from '../../components/layout/Footer'
 
 export default function HomePage() {
   return (
@@ -12,7 +11,6 @@ export default function HomePage() {
       <HowItWorks />
       <PopularDishes />
       <Testimonials />
-      <Footer />
     </Box>
   )
 }

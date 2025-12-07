@@ -1,8 +1,25 @@
-import { Box, Container, Heading, Text, VStack, SimpleGrid, Image, HStack, Badge, Button, Icon } from '@chakra-ui/react'
+import { Box, Container, Heading, Text, VStack, SimpleGrid, Image, HStack, Badge, Button, Icon, useToast } from '@chakra-ui/react'
+import { Link as RouterLink } from 'react-router-dom'
 import { popularDishes } from '../../data/mockData'
 import { FiShoppingCart, FiTrendingUp } from 'react-icons/fi'
+import { useCart } from '../../context/CartContext'
 
 export default function PopularDishes() {
+  const { addToCart } = useCart()
+  const toast = useToast()
+
+  const handleAddToCart = (dish) => {
+    addToCart(dish)
+    toast({
+      title: 'Ajouté au panier',
+      description: `${dish.name} a été ajouté à votre panier`,
+      status: 'success',
+      duration: 2000,
+      isClosable: true,
+      position: 'bottom-right'
+    })
+  }
+
   return (
     <Box py={{ base: 16, md: 20 }} bg="white">
       <Container maxW="container.xl">
@@ -93,6 +110,7 @@ export default function PopularDishes() {
                     colorScheme="brand"
                     size="md"
                     w="full"
+                    onClick={() => handleAddToCart(dish)}
                     _hover={{
                       transform: 'scale(1.02)'
                     }}
@@ -106,6 +124,8 @@ export default function PopularDishes() {
 
           {/* CTA */}
           <Button
+            as={RouterLink}
+            to="/catalogue"
             size="lg"
             variant="outline"
             colorScheme="brand"
