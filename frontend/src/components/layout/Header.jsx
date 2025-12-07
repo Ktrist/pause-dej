@@ -20,15 +20,23 @@ import {
   VStack,
   Text
 } from '@chakra-ui/react'
-import { Link as RouterLink } from 'react-router-dom'
-import { FiShoppingCart, FiMenu, FiUser } from 'react-icons/fi'
+import { Link as RouterLink, useNavigate } from 'react-router-dom'
+import { FiShoppingCart, FiMenu, FiUser, FiLogOut } from 'react-icons/fi'
 import { APP_NAME } from '../../config'
 import { useCart } from '../../context/CartContext'
+import { useAuth } from '../../context/AuthContext'
 
 export default function Header() {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const { getCartCount } = useCart()
+  const { user, signOut } = useAuth()
   const cartItemsCount = getCartCount()
+  const navigate = useNavigate()
+
+  const handleSignOut = async () => {
+    await signOut()
+    navigate('/')
+  }
 
   const navLinks = [
     { name: 'Accueil', path: '/' },
@@ -112,23 +120,38 @@ export default function Header() {
             </RouterLink>
 
             {/* User Menu */}
-            <Menu>
-              <MenuButton
-                as={IconButton}
-                icon={<FiUser />}
+            {user ? (
+              <Menu>
+                <MenuButton
+                  as={IconButton}
+                  icon={<FiUser />}
+                  variant="ghost"
+                  colorScheme="brand"
+                  aria-label="Mon compte"
+                  fontSize="20px"
+                  display={{ base: 'none', md: 'flex' }}
+                />
+                <MenuList>
+                  <MenuItem as={RouterLink} to="/compte">Mon compte</MenuItem>
+                  <MenuItem as={RouterLink} to="/compte?tab=orders">Mes commandes</MenuItem>
+                  <MenuItem as={RouterLink} to="/compte?tab=addresses">Mes adresses</MenuItem>
+                  <MenuItem icon={<FiLogOut />} onClick={handleSignOut}>
+                    Se déconnecter
+                  </MenuItem>
+                </MenuList>
+              </Menu>
+            ) : (
+              <Button
+                as={RouterLink}
+                to="/login"
                 variant="ghost"
                 colorScheme="brand"
-                aria-label="Mon compte"
-                fontSize="20px"
+                size="md"
                 display={{ base: 'none', md: 'flex' }}
-              />
-              <MenuList>
-                <MenuItem as={RouterLink} to="/compte">Mon compte</MenuItem>
-                <MenuItem as={RouterLink} to="/commandes">Mes commandes</MenuItem>
-                <MenuItem as={RouterLink} to="/adresses">Mes adresses</MenuItem>
-                <MenuItem>Se déconnecter</MenuItem>
-              </MenuList>
-            </Menu>
+              >
+                Connexion
+              </Button>
+            )}
 
             {/* CTA Button */}
             <Button
