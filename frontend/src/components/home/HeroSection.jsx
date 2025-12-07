@@ -1,4 +1,5 @@
 import { Box, Container, Heading, Text, Button, VStack, HStack, Badge } from '@chakra-ui/react'
+import { Link as RouterLink } from 'react-router-dom'
 import { APP_NAME, APP_TAGLINE } from '../../config'
 import { FiClock, FiCheck } from 'react-icons/fi'
 
@@ -90,6 +91,8 @@ export default function HeroSection() {
           {/* CTA Buttons */}
           <HStack spacing={4} pt={4}>
             <Button
+              as={RouterLink}
+              to="/catalogue"
               size="lg"
               bg="white"
               color="brand.600"
@@ -104,6 +107,8 @@ export default function HeroSection() {
               Commander maintenant
             </Button>
             <Button
+              as={RouterLink}
+              to="/catalogue"
               size="lg"
               variant="outline"
               borderColor="white"

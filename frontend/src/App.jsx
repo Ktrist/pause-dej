@@ -10,6 +10,8 @@ import CartPage from './pages/cart/CartPage'
 import AccountPage from './pages/account/AccountPage'
 import LoginPage from './pages/auth/LoginPage'
 import SignupPage from './pages/auth/SignupPage'
+import ForgotPasswordPage from './pages/auth/ForgotPasswordPage'
+import NotFoundPage from './pages/NotFoundPage'
 
 function App() {
   return (
@@ -26,6 +28,8 @@ function App() {
                 <Route path="/compte" element={<AccountPage />} />
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/signup" element={<SignupPage />} />
+                <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+                <Route path="*" element={<NotFoundPage />} />
               </Routes>
             </Box>
             <Footer />

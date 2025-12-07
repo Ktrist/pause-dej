@@ -207,16 +207,55 @@ export default function Header() {
               >
                 Commander
               </Button>
-              <Button
-                as={RouterLink}
-                to="/compte"
-                variant="outline"
-                colorScheme="brand"
-                size="lg"
-                onClick={onClose}
-              >
-                Mon compte
-              </Button>
+
+              {user ? (
+                <>
+                  <Button
+                    as={RouterLink}
+                    to="/compte"
+                    variant="outline"
+                    colorScheme="brand"
+                    size="lg"
+                    onClick={onClose}
+                  >
+                    Mon compte
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    colorScheme="red"
+                    size="lg"
+                    onClick={() => {
+                      handleSignOut()
+                      onClose()
+                    }}
+                    leftIcon={<FiLogOut />}
+                  >
+                    Se déconnecter
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button
+                    as={RouterLink}
+                    to="/login"
+                    variant="outline"
+                    colorScheme="brand"
+                    size="lg"
+                    onClick={onClose}
+                  >
+                    Connexion
+                  </Button>
+                  <Button
+                    as={RouterLink}
+                    to="/signup"
+                    colorScheme="brand"
+                    size="lg"
+                    onClick={onClose}
+                  >
+                    Créer un compte
+                  </Button>
+                </>
+              )}
             </VStack>
           </DrawerBody>
         </DrawerContent>
