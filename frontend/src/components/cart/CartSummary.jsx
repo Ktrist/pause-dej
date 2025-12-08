@@ -10,46 +10,85 @@ import {
   InputRightElement,
   Divider,
   Badge,
-  useToast
+  useToast,
+  Spinner
 } from '@chakra-ui/react'
 import { FiTag, FiCheck, FiX } from 'react-icons/fi'
-import { validatePromoCode } from '../../data/promoCodes'
+import { calculateDiscount } from '../../hooks/usePromoCodes'
+import { supabase } from '../../supabaseClient'
 
 const DELIVERY_FEE = 3.90
 const FREE_DELIVERY_THRESHOLD = 30
 
-export default function CartSummary({ subtotal, onCheckout }) {
+export default function CartSummary({ subtotal, onCheckout, appliedPromo, setAppliedPromo }) {
   const [promoCode, setPromoCode] = useState('')
-  const [appliedPromo, setAppliedPromo] = useState(null)
   const [promoError, setPromoError] = useState('')
+  const [validating, setValidating] = useState(false)
   const toast = useToast()
 
   const deliveryFee = subtotal >= FREE_DELIVERY_THRESHOLD ? 0 : DELIVERY_FEE
-  const discount = appliedPromo?.discount || 0
+  const discount = appliedPromo ? calculateDiscount(appliedPromo, subtotal) : 0
   const total = subtotal + deliveryFee - discount
 
-  const handleApplyPromo = () => {
+  const handleApplyPromo = async () => {
     if (!promoCode.trim()) {
       setPromoError('Veuillez entrer un code promo')
       return
     }
 
-    const result = validatePromoCode(promoCode, subtotal)
+    setValidating(true)
+    setPromoError('')
 
-    if (result.valid) {
-      setAppliedPromo(result)
+    try {
+      // Fetch promo code from Supabase
+      const { data, error } = await supabase
+        .from('promo_codes')
+        .select('*')
+        .eq('code', promoCode.toUpperCase())
+        .eq('is_active', true)
+        .single()
+
+      if (error) {
+        if (error.code === 'PGRST116') {
+          throw new Error('Code promo invalide')
+        }
+        throw error
+      }
+
+      // Check if code has expired
+      if (data.valid_until && new Date(data.valid_until) < new Date()) {
+        throw new Error('Ce code promo a expiré')
+      }
+
+      // Check if code has reached usage limit
+      if (data.usage_limit && data.usage_count >= data.usage_limit) {
+        throw new Error('Ce code promo a atteint sa limite d\'utilisation')
+      }
+
+      // Check minimum order amount
+      if (data.min_order_amount && subtotal < data.min_order_amount) {
+        throw new Error(`Commande minimum de ${data.min_order_amount.toFixed(2)}€ requise`)
+      }
+
+      // Apply promo code
+      setAppliedPromo(data)
       setPromoError('')
+      setPromoCode('')
+
       toast({
         title: 'Code promo appliqué !',
-        description: result.code.description,
+        description: data.description,
         status: 'success',
         duration: 3000,
         isClosable: true,
         position: 'top'
       })
-    } else {
-      setPromoError(result.error)
+    } catch (err) {
+      console.error('Error validating promo code:', err)
+      setPromoError(err.message || 'Code promo invalide')
       setAppliedPromo(null)
+    } finally {
+      setValidating(false)
     }
   }
 
@@ -99,6 +138,12 @@ export default function CartSummary({ subtotal, onCheckout }) {
                   }}
                   isInvalid={!!promoError}
                   textTransform="uppercase"
+                  isDisabled={validating}
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter') {
+                      handleApplyPromo()
+                    }
+                  }}
                 />
                 <InputRightElement width="4.5rem">
                   <Button
@@ -106,9 +151,10 @@ export default function CartSummary({ subtotal, onCheckout }) {
                     size="sm"
                     colorScheme="brand"
                     onClick={handleApplyPromo}
-                    leftIcon={<FiTag />}
+                    isLoading={validating}
+                    isDisabled={!promoCode.trim()}
                   >
-                    OK
+                    {validating ? <Spinner size="xs" /> : <FiTag />}
                   </Button>
                 </InputRightElement>
               </InputGroup>
@@ -129,10 +175,10 @@ export default function CartSummary({ subtotal, onCheckout }) {
                 <FiCheck color="green" />
                 <VStack align="start" spacing={0}>
                   <Text fontSize="sm" fontWeight="600" color="green.700">
-                    {appliedPromo.code.code}
+                    {appliedPromo.code}
                   </Text>
                   <Text fontSize="xs" color="green.600">
-                    {appliedPromo.code.description}
+                    {appliedPromo.description}
                   </Text>
                 </VStack>
               </HStack>

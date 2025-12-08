@@ -23,10 +23,11 @@ import {
   AlertTitle,
   AlertDescription
 } from '@chakra-ui/react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
 import { useAuth } from '../context/AuthContext'
 import { useCreateOrder } from '../hooks/useOrders'
+import { calculateDiscount } from '../hooks/usePromoCodes'
 import AddressSelector from '../components/checkout/AddressSelector'
 import TimeSlotSelector from '../components/checkout/TimeSlotSelector'
 import OrderSummary from '../components/checkout/OrderSummary'
@@ -41,6 +42,7 @@ const steps = [
 export default function CheckoutPage() {
   const { cart, getCartTotal, clearCart } = useCart()
   const { user, loading: authLoading } = useAuth()
+  const location = useLocation()
   const navigate = useNavigate()
   const toast = useToast()
   const { createOrder, loading: creatingOrder } = useCreateOrder()
@@ -52,6 +54,7 @@ export default function CheckoutPage() {
 
   const [selectedAddress, setSelectedAddress] = useState(null)
   const [selectedTimeSlot, setSelectedTimeSlot] = useState(null)
+  const [appliedPromo, setAppliedPromo] = useState(location.state?.appliedPromo || null)
 
   // Redirect if not authenticated
   useEffect(() => {
@@ -111,8 +114,8 @@ export default function CheckoutPage() {
     try {
       // Calculate totals
       const subtotal = getCartTotal()
-      const deliveryFee = 3.90
-      const discount = 0 // TODO: Add promo code support
+      const deliveryFee = subtotal >= 30 ? 0 : 3.90
+      const discount = appliedPromo ? calculateDiscount(appliedPromo, subtotal) : 0
       const total = subtotal + deliveryFee - discount
 
       // Prepare order data
@@ -127,6 +130,7 @@ export default function CheckoutPage() {
         subtotal: subtotal,
         delivery_fee: deliveryFee,
         discount: discount,
+        promo_code_id: appliedPromo?.id || null,
         total: total,
         payment_method: 'card', // TODO: Add payment method selection
         status: 'pending'

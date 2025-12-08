@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import {
   Box,
   Container,
@@ -19,11 +20,12 @@ export default function CartPage() {
   const { cart, getCartTotal } = useCart()
   const navigate = useNavigate()
   const toast = useToast()
+  const [appliedPromo, setAppliedPromo] = useState(null)
 
   const subtotal = getCartTotal()
 
   const handleCheckout = () => {
-    navigate('/checkout')
+    navigate('/checkout', { state: { appliedPromo } })
   }
 
   // Empty cart state
@@ -121,7 +123,12 @@ export default function CartPage() {
 
             {/* Summary */}
             <Box>
-              <CartSummary subtotal={subtotal} onCheckout={handleCheckout} />
+              <CartSummary
+                subtotal={subtotal}
+                onCheckout={handleCheckout}
+                appliedPromo={appliedPromo}
+                setAppliedPromo={setAppliedPromo}
+              />
             </Box>
           </SimpleGrid>
 
