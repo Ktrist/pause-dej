@@ -32,7 +32,7 @@ function App() {
                 <Route path="/signup" element={<SignupPage />} />
                 <Route path="/forgot-password" element={<ForgotPasswordPage />} />
                 <Route path="/checkout" element={<CheckoutPage />} />
-                <Route path="/confirmation" element={<OrderConfirmationPage />} />
+                <Route path="/confirmation/:orderNumber" element={<OrderConfirmationPage />} />
                 <Route path="*" element={<NotFoundPage />} />
               </Routes>
             </Box>

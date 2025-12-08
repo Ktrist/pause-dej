@@ -1,4 +1,3 @@
-import { useEffect } from 'react'
 import {
   Box,
   Container,
@@ -11,39 +10,69 @@ import {
   Divider,
   Badge,
   SimpleGrid,
-  useToast
+  Alert,
+  AlertIcon,
+  Spinner
 } from '@chakra-ui/react'
 import { FiCheckCircle, FiHome, FiShoppingBag, FiClock, FiMapPin } from 'react-icons/fi'
-import { useLocation, useNavigate, Link as RouterLink } from 'react-router-dom'
+import { useParams, useNavigate, Link as RouterLink } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { useOrderByNumber } from '../hooks/useOrders'
 
 export default function OrderConfirmationPage() {
-  const location = useLocation()
+  const { orderNumber } = useParams()
   const navigate = useNavigate()
-  const toast = useToast()
   const { user } = useAuth()
 
-  const order = location.state?.order
+  // Load order from Supabase
+  const { order, loading, error } = useOrderByNumber(orderNumber)
 
-  useEffect(() => {
-    // Redirect if no order data
-    if (!order) {
-      toast({
-        title: 'Aucune commande',
-        description: 'Vous n\'avez pas passé de commande',
-        status: 'warning',
-        duration: 3000
-      })
-      navigate('/')
-    }
-  }, [order, navigate, toast])
-
-  if (!order) {
-    return null
+  // Loading state
+  if (loading) {
+    return (
+      <Box minH="100vh" bg="gray.50" display="flex" alignItems="center" justifyContent="center">
+        <VStack spacing={4}>
+          <Spinner size="xl" color="brand.500" thickness="4px" />
+          <Text color="gray.600">Chargement de votre commande...</Text>
+        </VStack>
+      </Box>
+    )
   }
 
-  // Generate order number (will come from backend in production)
-  const orderNumber = `PDJ-${new Date().toISOString().split('T')[0].replace(/-/g, '')}-${Math.floor(Math.random() * 1000).toString().padStart(3, '0')}`
+  // Error state
+  if (error || !order) {
+    return (
+      <Box minH="100vh" bg="gray.50" py={12}>
+        <Container maxW="container.md">
+          <Alert status="error" variant="left-accent" rounded="lg">
+            <AlertIcon />
+            <Box>
+              <Text fontWeight="bold">Commande introuvable</Text>
+              <Text fontSize="sm">
+                {error || 'Nous n\'avons pas trouvé cette commande. Vérifiez le numéro ou consultez votre historique de commandes.'}
+              </Text>
+            </Box>
+          </Alert>
+          <HStack spacing={4} mt={6} justify="center">
+            <Button as={RouterLink} to="/" variant="outline" colorScheme="gray">
+              Retour à l'accueil
+            </Button>
+            <Button as={RouterLink} to="/compte" colorScheme="brand">
+              Mes commandes
+            </Button>
+          </HStack>
+        </Container>
+      </Box>
+    )
+  }
+
+  // Format delivery date
+  const deliveryDate = new Date(order.delivery_date)
+  const formattedDate = deliveryDate.toLocaleDateString('fr-FR', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long'
+  })
 
   return (
     <Box minH="100vh" bg="gray.50" py={12}>
@@ -79,7 +108,7 @@ export default function OrderConfirmationPage() {
               colorScheme="brand"
               rounded="full"
             >
-              N° {orderNumber}
+              N° {order.order_number}
             </Badge>
           </Box>
 
@@ -92,14 +121,13 @@ export default function OrderConfirmationPage() {
                 <Text fontWeight="bold" fontSize="lg">Adresse de livraison</Text>
               </HStack>
               <VStack align="start" spacing={1} pl={9}>
-                <Text fontWeight="bold">{order.address.label}</Text>
-                <Text color="gray.700">{order.address.street_address}</Text>
+                <Text fontWeight="bold">{order.delivery_street}</Text>
                 <Text color="gray.700">
-                  {order.address.postal_code} {order.address.city}
+                  {order.delivery_postal_code} {order.delivery_city}
                 </Text>
-                {order.address.additional_info && (
+                {order.delivery_additional_info && (
                   <Text fontSize="sm" color="gray.600">
-                    {order.address.additional_info}
+                    {order.delivery_additional_info}
                   </Text>
                 )}
               </VStack>
@@ -114,17 +142,17 @@ export default function OrderConfirmationPage() {
               <VStack align="start" spacing={1} pl={9}>
                 <HStack>
                   <Text fontWeight="bold" fontSize="xl" color="brand.600">
-                    {order.timeSlot.time}
+                    {order.delivery_time}
                   </Text>
-                  <Badge colorScheme="green">Confirmé</Badge>
+                  <Badge colorScheme={order.status === 'delivered' ? 'green' : 'orange'}>
+                    {order.status === 'pending' && 'En préparation'}
+                    {order.status === 'preparing' && 'En cours'}
+                    {order.status === 'delivering' && 'En livraison'}
+                    {order.status === 'delivered' && 'Livré'}
+                    {order.status === 'cancelled' && 'Annulé'}
+                  </Badge>
                 </HStack>
-                <Text color="gray.700">
-                  {order.timeSlot.date.toLocaleDateString('fr-FR', {
-                    weekday: 'long',
-                    day: 'numeric',
-                    month: 'long'
-                  })}
-                </Text>
+                <Text color="gray.700">{formattedDate}</Text>
                 <Text fontSize="sm" color="gray.600" mt={2}>
                   ⚡ Livraison express en ~30 minutes
                 </Text>
@@ -137,30 +165,32 @@ export default function OrderConfirmationPage() {
             <HStack spacing={3} mb={4}>
               <Icon as={FiShoppingBag} boxSize={6} color="orange.500" />
               <Text fontWeight="bold" fontSize="lg">Votre commande</Text>
-              <Badge ml="auto">{order.items.length} article{order.items.length > 1 ? 's' : ''}</Badge>
+              <Badge ml="auto">
+                {order.order_items?.length || 0} article{(order.order_items?.length || 0) > 1 ? 's' : ''}
+              </Badge>
             </HStack>
 
             <VStack align="stretch" spacing={3} divider={<Divider />}>
-              {order.items.map((item) => (
+              {order.order_items?.map((item) => (
                 <HStack key={item.id} justify="space-between" py={2}>
                   <HStack spacing={3}>
                     <Box
                       w="50px"
                       h="50px"
-                      bgImage={`url(${item.image})`}
+                      bgImage={`url(${item.dish_image_url})`}
                       bgSize="cover"
                       bgPosition="center"
                       rounded="md"
                     />
                     <VStack align="start" spacing={0}>
-                      <Text fontWeight="medium">{item.name}</Text>
+                      <Text fontWeight="medium">{item.dish_name}</Text>
                       <Text fontSize="sm" color="gray.600">
                         Quantité: {item.quantity}
                       </Text>
                     </VStack>
                   </HStack>
                   <Text fontWeight="bold">
-                    {(item.price * item.quantity).toFixed(2)}€
+                    {item.subtotal.toFixed(2)}€
                   </Text>
                 </HStack>
               ))}
@@ -171,14 +201,22 @@ export default function OrderConfirmationPage() {
             <VStack align="stretch" spacing={2}>
               <HStack justify="space-between">
                 <Text color="gray.600">Sous-total</Text>
-                <Text fontWeight="medium">
-                  {order.items.reduce((sum, item) => sum + item.price * item.quantity, 0).toFixed(2)}€
-                </Text>
+                <Text fontWeight="medium">{order.subtotal.toFixed(2)}€</Text>
               </HStack>
               <HStack justify="space-between">
                 <Text color="gray.600">Frais de livraison</Text>
-                <Text fontWeight="medium">Gratuit</Text>
+                <Text fontWeight="medium">
+                  {order.delivery_fee > 0 ? `${order.delivery_fee.toFixed(2)}€` : 'Gratuit'}
+                </Text>
               </HStack>
+              {order.discount > 0 && (
+                <HStack justify="space-between">
+                  <Text color="gray.600">Réduction</Text>
+                  <Text fontWeight="medium" color="green.600">
+                    -{order.discount.toFixed(2)}€
+                  </Text>
+                </HStack>
+              )}
               <Divider />
               <HStack justify="space-between" pt={2}>
                 <Text fontSize="xl" fontWeight="bold">Total</Text>
