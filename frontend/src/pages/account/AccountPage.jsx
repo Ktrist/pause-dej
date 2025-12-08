@@ -36,7 +36,7 @@ import {
   AlertIcon
 } from '@chakra-ui/react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { FiUser, FiMapPin, FiShoppingBag, FiEdit2, FiTrash2, FiPlus } from 'react-icons/fi'
+import { FiUser, FiMapPin, FiShoppingBag, FiEdit2, FiTrash2, FiPlus, FiTruck } from 'react-icons/fi'
 import { useAuth } from '../../context/AuthContext'
 import { useAddresses, useCreateAddress, useUpdateAddress, useDeleteAddress } from '../../hooks/useAddresses'
 import { useOrders } from '../../hooks/useOrders'
@@ -394,10 +394,19 @@ export default function AccountPage() {
                               <HStack spacing={2}>
                                 <Button
                                   size="sm"
-                                  variant="outline"
                                   colorScheme="brand"
+                                  leftIcon={<FiTruck />}
                                   as="a"
-                                  href={`/order/${order.order_number}`}
+                                  href={`/track/${order.order_number}`}
+                                >
+                                  Suivre
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  colorScheme="gray"
+                                  as="a"
+                                  href={`/confirmation/${order.order_number}`}
                                 >
                                   Voir détails
                                 </Button>

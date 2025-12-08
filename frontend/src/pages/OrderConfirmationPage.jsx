@@ -14,7 +14,7 @@ import {
   AlertIcon,
   Spinner
 } from '@chakra-ui/react'
-import { FiCheckCircle, FiHome, FiShoppingBag, FiClock, FiMapPin } from 'react-icons/fi'
+import { FiCheckCircle, FiHome, FiShoppingBag, FiClock, FiMapPin, FiTruck } from 'react-icons/fi'
 import { useParams, useNavigate, Link as RouterLink } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useOrderByNumber } from '../hooks/useOrders'
@@ -241,27 +241,40 @@ export default function OrderConfirmationPage() {
           </Box>
 
           {/* Action Buttons */}
-          <SimpleGrid columns={{ base: 1, sm: 2 }} spacing={4}>
+          <VStack spacing={4}>
             <Button
               as={RouterLink}
-              to="/"
+              to={`/track/${order.order_number}`}
               size="lg"
-              leftIcon={<FiHome />}
-              variant="outline"
-              colorScheme="gray"
-            >
-              Retour à l'accueil
-            </Button>
-            <Button
-              as={RouterLink}
-              to="/compte"
-              size="lg"
-              leftIcon={<FiShoppingBag />}
+              width="100%"
+              leftIcon={<FiTruck />}
               colorScheme="brand"
             >
-              Voir mes commandes
+              Suivre ma commande
             </Button>
-          </SimpleGrid>
+            <SimpleGrid columns={{ base: 1, sm: 2 }} spacing={4} width="100%">
+              <Button
+                as={RouterLink}
+                to="/"
+                size="lg"
+                leftIcon={<FiHome />}
+                variant="outline"
+                colorScheme="gray"
+              >
+                Retour à l'accueil
+              </Button>
+              <Button
+                as={RouterLink}
+                to="/compte"
+                size="lg"
+                leftIcon={<FiShoppingBag />}
+                variant="outline"
+                colorScheme="gray"
+              >
+                Voir mes commandes
+              </Button>
+            </SimpleGrid>
+          </VStack>
         </VStack>
       </Container>
     </Box>
