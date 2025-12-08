@@ -15,18 +15,28 @@ import { useCart } from '../../context/CartContext'
 export default function CartItemCard({ item }) {
   const { updateQuantity, removeFromCart } = useCart()
 
+  // Ensure all properties exist (for backward compatibility with old cart data)
+  const safeItem = {
+    ...item,
+    categoryLabel: item.categoryLabel || item.category || 'Plat',
+    image: item.image || '/placeholder-dish.jpg',
+    description: item.description || '',
+    price: item.price || 0,
+    quantity: item.quantity || 1
+  }
+
   const { getInputProps, getIncrementButtonProps, getDecrementButtonProps } =
     useNumberInput({
       step: 1,
-      defaultValue: item.quantity,
+      defaultValue: safeItem.quantity,
       min: 1,
       max: 99,
-      value: item.quantity,
-      onChange: (valueString, valueNumber) => updateQuantity(item.id, valueNumber)
+      value: safeItem.quantity,
+      onChange: (valueString, valueNumber) => updateQuantity(safeItem.id, valueNumber)
     })
 
   const handleRemove = () => {
-    removeFromCart(item.id)
+    removeFromCart(safeItem.id)
   }
 
   return (
@@ -41,8 +51,8 @@ export default function CartItemCard({ item }) {
       <HStack spacing={4} align="start">
         {/* Image */}
         <Image
-          src={item.image}
-          alt={item.name}
+          src={safeItem.image}
+          alt={safeItem.name}
           w={{ base: '80px', md: '100px' }}
           h={{ base: '80px', md: '100px' }}
           objectFit="cover"
@@ -55,10 +65,10 @@ export default function CartItemCard({ item }) {
           <HStack justify="space-between" align="start">
             <VStack align="start" spacing={1}>
               <Text fontWeight="600" fontSize={{ base: 'md', md: 'lg' }}>
-                {item.name}
+                {safeItem.name}
               </Text>
               <Badge colorScheme="gray" fontSize="xs">
-                {item.categoryLabel}
+                {safeItem.categoryLabel}
               </Badge>
             </VStack>
             <IconButton
@@ -72,7 +82,7 @@ export default function CartItemCard({ item }) {
           </HStack>
 
           <Text fontSize="sm" color="gray.600" noOfLines={2} display={{ base: 'none', md: 'block' }}>
-            {item.description}
+            {safeItem.description}
           </Text>
 
           <HStack justify="space-between" pt={2}>
@@ -93,7 +103,7 @@ export default function CartItemCard({ item }) {
                 fontWeight="600"
                 fontSize="md"
               >
-                {item.quantity}
+                {safeItem.quantity}
               </Text>
               <Button
                 {...getIncrementButtonProps()}
@@ -108,11 +118,11 @@ export default function CartItemCard({ item }) {
             {/* Price */}
             <VStack align="end" spacing={0}>
               <Text fontWeight="700" fontSize="lg" color="brand.600">
-                {(item.price * item.quantity).toFixed(2)}€
+                {(safeItem.price * safeItem.quantity).toFixed(2)}€
               </Text>
-              {item.quantity > 1 && (
+              {safeItem.quantity > 1 && (
                 <Text fontSize="xs" color="gray.500">
-                  {item.price.toFixed(2)}€ / unité
+                  {safeItem.price.toFixed(2)}€ / unité
                 </Text>
               )}
             </VStack>
