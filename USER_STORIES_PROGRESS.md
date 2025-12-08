@@ -81,6 +81,21 @@
 | **RLS Policies** | ✅ Configurées | 27582ea |
 | **Auth Integration** | ✅ Intégré | b4aa02d |
 
+### Supabase Hooks & Data Integration
+| Composant | Hooks | Statut | Commit |
+|---|---|---|---|
+| **useDishes.js** | 4 hooks | ✅ Terminé | ffbcc6f |
+| **useAddresses.js** | 6 hooks | ✅ Terminé | 35f3fb4 |
+| **useOrders.js** | 6 hooks | ✅ Terminé | 35f3fb4 |
+| **usePromoCodes.js** | 6 hooks | ✅ Terminé | 35f3fb4 |
+| **Migration PopularDishes** | - | ✅ Terminé | 6e6e7bb |
+| **Migration CataloguePage** | - | ✅ Terminé | 6e6e7bb |
+| **Seed Dishes Data** | 15 plats | ✅ Terminé | e9e2486 |
+| **Integration Guide** | - | ✅ Terminé | ffbcc6f |
+| **Hooks Reference** | - | ✅ Terminé | - |
+
+**Total : 24 hooks personnalisés créés pour toutes les opérations Supabase**
+
 ---
 
 ## 🚧 User Stories En Cours / Préparées
@@ -94,10 +109,11 @@
 
 ### ⏳ Prochaines priorités recommandées
 1. **Stripe Integration** (M6.3, M6.4) - Paiements réels
-2. **Supabase Migration** - Données réelles (adresses, plats, commandes)
-3. **Admin Dashboard** (A2.x) - Gestion produits
-4. **Notifications** (N1.x) - Emails transactionnels
-5. **Suivi commandes** (M7.x) - Temps réel
+2. ~~**Supabase Migration**~~ - ✅ **Terminé !** (24 hooks créés, 2 composants migrés)
+3. **Migrer Checkout** - Utiliser les hooks pour créer vraies commandes
+4. **Admin Dashboard** (A2.x) - Gestion produits
+5. **Notifications** (N1.x) - Emails transactionnels
+6. **Suivi commandes** (M7.x) - Temps réel
 
 ---
 
