@@ -32,6 +32,9 @@ export default function Header() {
   const { user, signOut } = useAuth()
   const navigate = useNavigate()
 
+  // DEBUG: Log badge state
+  console.log('[Header] Rendering with cartItemsCount:', cartItemsCount, 'Show badge?', cartItemsCount > 0)
+
   const handleSignOut = async () => {
     await signOut()
     navigate('/')
@@ -89,34 +92,35 @@ export default function Header() {
           {/* Actions */}
           <HStack spacing={4}>
             {/* Cart */}
-            <RouterLink to="/panier">
-              <IconButton
-                icon={<FiShoppingCart />}
-                variant="ghost"
-                colorScheme="brand"
-                aria-label="Panier"
-                position="relative"
-                fontSize="20px"
-              >
-                {cartItemsCount > 0 && (
-                  <Badge
-                    position="absolute"
-                    top="-1"
-                    right="-1"
-                    colorScheme="red"
-                    borderRadius="full"
-                    fontSize="xs"
-                    minW="20px"
-                    h="20px"
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="center"
-                  >
-                    {cartItemsCount}
-                  </Badge>
-                )}
-              </IconButton>
-            </RouterLink>
+            <Box position="relative">
+              <RouterLink to="/panier">
+                <IconButton
+                  icon={<FiShoppingCart />}
+                  variant="ghost"
+                  colorScheme="brand"
+                  aria-label="Panier"
+                  fontSize="20px"
+                />
+              </RouterLink>
+              {cartItemsCount > 0 && (
+                <Badge
+                  position="absolute"
+                  top="-1"
+                  right="-1"
+                  colorScheme="red"
+                  borderRadius="full"
+                  fontSize="xs"
+                  minW="20px"
+                  h="20px"
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  pointerEvents="none"
+                >
+                  {cartItemsCount}
+                </Badge>
+              )}
+            </Box>
 
             {/* User Menu */}
             {user ? (

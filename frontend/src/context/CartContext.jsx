@@ -110,6 +110,13 @@ export function CartProvider({ children }) {
   // Calculate cart count for badge (reactive)
   const cartItemsCount = cart.reduce((count, item) => count + item.quantity, 0)
 
+  // DEBUG: Log cart state
+  console.log('[CartContext] Cart updated:', {
+    cartLength: cart.length,
+    cartItemsCount,
+    cart: cart.map(item => ({ id: item.id, name: item.name, quantity: item.quantity }))
+  })
+
   const value = {
     cart,
     addToCart,
