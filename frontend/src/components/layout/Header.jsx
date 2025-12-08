@@ -32,9 +32,6 @@ export default function Header() {
   const { user, signOut } = useAuth()
   const navigate = useNavigate()
 
-  // DEBUG: Log badge state
-  console.log('[Header] Rendering with cartItemsCount:', cartItemsCount, 'Show badge?', cartItemsCount > 0)
-
   const handleSignOut = async () => {
     await signOut()
     navigate('/')
