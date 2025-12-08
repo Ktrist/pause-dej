@@ -244,6 +244,18 @@ export function useCreateOrder() {
 
       if (itemsError) throw itemsError
 
+      // Increment promo code usage count if applied
+      if (orderData.promo_code_id) {
+        const { error: promoError } = await supabase.rpc('increment_promo_code_usage', {
+          promo_id: orderData.promo_code_id
+        })
+
+        if (promoError) {
+          console.warn('Failed to increment promo code usage:', promoError)
+          // Don't throw error - order was created successfully
+        }
+      }
+
       return { data: order, error: null }
     } catch (err) {
       console.error('Error creating order:', err)
