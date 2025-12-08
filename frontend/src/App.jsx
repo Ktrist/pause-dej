@@ -13,6 +13,7 @@ import SignupPage from './pages/auth/SignupPage'
 import ForgotPasswordPage from './pages/auth/ForgotPasswordPage'
 import CheckoutPage from './pages/CheckoutPage'
 import OrderConfirmationPage from './pages/OrderConfirmationPage'
+import OrderTrackingPage from './pages/OrderTrackingPage'
 import NotFoundPage from './pages/NotFoundPage'
 
 function App() {
@@ -33,6 +34,7 @@ function App() {
                 <Route path="/forgot-password" element={<ForgotPasswordPage />} />
                 <Route path="/checkout" element={<CheckoutPage />} />
                 <Route path="/confirmation/:orderNumber" element={<OrderConfirmationPage />} />
+                <Route path="/track/:orderNumber" element={<OrderTrackingPage />} />
                 <Route path="*" element={<NotFoundPage />} />
               </Routes>
             </Box>
