@@ -1,12 +1,12 @@
 # 📊 Suivi des User Stories - Pause Dej'
 
-> **Dernière mise à jour** : 2025-12-08 (Session panier + Supabase)
-> **Progression globale** : 30/144 User Stories (20.8%)
-> **Infrastructure** : ✅ Supabase entièrement intégré (24 hooks + migrations complètes)
+> **Dernière mise à jour** : 2025-12-08 (Session suivi commandes + codes promo)
+> **Progression globale** : 31/144 User Stories (21.5%)
+> **Infrastructure** : ✅ Supabase entièrement intégré (24 hooks + migrations complètes + RPC functions)
 
 ---
 
-## ✅ User Stories Terminées (30)
+## ✅ User Stories Terminées (31)
 
 ### 🏠 Homepage - Web (4/5)
 | ID | Titre | Statut | Commit |
@@ -69,6 +69,13 @@
 | **M6.4** | Paiement carte bancaire | 🟡 **Préparé** | 2a09e29 (Stripe ready) |
 | **M6.5** | Confirmation commande | ✅ **Terminé** | 2a09e29 |
 
+### 📦 Suivi Commande - Mobile/Web (1/3)
+| ID | Titre | Statut | Commit |
+|---|---|---|---|
+| **M7.1** | Statut en temps réel | ✅ **Terminé** | b548984, 880dd3b |
+| **M7.2** | Notifications push | ⏳ À faire | - |
+| **M7.3** | Contact support | ⏳ À faire | - |
+
 ---
 
 ## 🏗️ Infrastructure & Backend
@@ -113,6 +120,23 @@
 - ❌ Badge panier n'apparaissait pas → ✅ Résolu
 - ❌ Items corrompus dans localStorage → ✅ Migration automatique ajoutée
 
+### Promo Codes & Order Tracking (Session actuelle)
+| Composant | Description | Statut | Commits |
+|---|---|---|---|
+| **Promo Code Integration** | CartSummary avec validation Supabase | ✅ Terminé | c2cb27d |
+| **CheckoutPage Promo** | Application des réductions | ✅ Terminé | c2cb27d |
+| **RPC Functions** | increment_promo_code_usage | ✅ Terminé | 630961f |
+| **Order Tracking Page** | Page suivi avec Stepper timeline | ✅ Terminé | b548984 |
+| **Tracking Navigation** | Liens depuis confirmation et compte | ✅ Terminé | 880dd3b |
+| **Auto-refresh Status** | Polling toutes les 30s | ✅ Terminé | b548984 |
+
+**Nouvelles fonctionnalités** :
+- ✅ Codes promo validés en temps réel avec Supabase
+- ✅ Compteur d'utilisation incrémenté automatiquement
+- ✅ Page de suivi avec barre de progression visuelle
+- ✅ Auto-refresh pour suivre les changements de statut
+- ✅ Navigation intuitive depuis toutes les pages concernées
+
 ---
 
 ## 🚧 User Stories En Cours / Préparées
@@ -128,11 +152,12 @@
 1. ~~**Panier fonctionnel**~~ - ✅ **Terminé !** (Badge + CartItemCard fixés)
 2. ~~**Supabase Migration**~~ - ✅ **Terminé !** (24 hooks créés, 5 composants migrés)
 3. ~~**Migrer Checkout**~~ - ✅ **Terminé !** (useCreateOrder intégré, vraies commandes créées)
-4. **Page Confirmation Commande** - Afficher détails commande après paiement
-5. **Stripe Integration** (M6.3, M6.4) - Paiements réels
-6. **Suivi commandes** (M7.x) - Temps réel avec statuts
-7. **Admin Dashboard** (A2.x) - Gestion produits
-8. **Notifications** (N1.x) - Emails transactionnels
+4. ~~**Page Confirmation Commande**~~ - ✅ **Terminé !** (Migration Supabase + tracking link)
+5. ~~**Suivi commandes (M7.1)**~~ - ✅ **Terminé !** (Page tracking + navigation complète)
+6. **Stripe Integration** (M6.3, M6.4) - Paiements réels
+7. **Push Notifications** (M7.2) - Notifications de statut
+8. **Admin Dashboard** (A2.x) - Gestion produits
+9. **Notifications Email** (N1.x) - Emails transactionnels
 
 ---
 
@@ -147,7 +172,7 @@
 | **Authentification** | 3 | 5 | 60% |
 | **Compte Utilisateur** | 5 | 5 | 100% ✅ |
 | **Checkout** | 5 | 5 | 100% ✅ |
-| **Suivi Commande** | 0 | 3 | 0% |
+| **Suivi Commande** | 1 | 3 | 33% |
 | **Favoris & Préférences** | 0 | 3 | 0% |
 | **Fidélité** | 0 | 3 | 0% |
 | **Admin Dashboard** | 0 | 15 | 0% |
@@ -168,8 +193,12 @@
 | 6 | 9c7861c | UX improvements (M1.5, 404, loading) | 1 US |
 | 7 | 27582ea | Supabase schema + setup guide | Infrastructure |
 | 8 | 2a09e29 | Checkout complet (M6.1-M6.5) | 5 US |
+| 9 | c2cb27d | Promo codes avec Supabase | Infrastructure |
+| 10 | 630961f | RPC functions pour tracking promo | Infrastructure |
+| 11 | b548984 | Order tracking page (M7.1) | 1 US |
+| 12 | 880dd3b | Tracking navigation | Infrastructure |
 
-**Total** : 30 User Stories + Infrastructure complète
+**Total** : 31 User Stories + Infrastructure complète
 
 ---
 
