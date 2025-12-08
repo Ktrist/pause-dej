@@ -137,6 +137,27 @@
 - ✅ Auto-refresh pour suivre les changements de statut
 - ✅ Navigation intuitive depuis toutes les pages concernées
 
+### Stripe Payment Integration (Session actuelle)
+| Composant | Description | Statut | Commits |
+|---|---|---|---|
+| **Stripe Client** | Configuration et initialisation | ✅ Terminé | 087c928 |
+| **PaymentForm Component** | Stripe Elements intégration | ✅ Terminé | 087c928 |
+| **CheckoutPage Update** | Paiement étape 3 | ✅ Terminé | 087c928 |
+| **OrderSummary Promo** | Affichage réductions | ✅ Terminé | 087c928 |
+| **.env.example** | Variables d'environnement | ✅ Terminé | 087c928 |
+| **STRIPE_SETUP.md** | Guide complet setup | ✅ Terminé | 087c928 |
+| **Edge Function Backend** | Création Payment Intent | ⏳ À faire | - |
+| **Webhook Configuration** | Confirmations paiement | ⏳ À faire | - |
+
+**Frontend ready, backend required** :
+- ✅ Interface de paiement Stripe Elements complète
+- ✅ Gestion des erreurs et états de chargement
+- ✅ Affichage des réductions dans le récapitulatif
+- ✅ Documentation complète avec instructions étape par étape
+- ⏳ Nécessite création Supabase Edge Function (voir STRIPE_SETUP.md)
+- ⏳ Nécessite configuration des clés API Stripe
+- ⏳ Nécessite tests avec compte Stripe réel
+
 ---
 
 ## 🚧 User Stories En Cours / Préparées
@@ -197,8 +218,12 @@
 | 10 | 630961f | RPC functions pour tracking promo | Infrastructure |
 | 11 | b548984 | Order tracking page (M7.1) | 1 US |
 | 12 | 880dd3b | Tracking navigation | Infrastructure |
+| 13 | fade1f4 | Update USER_STORIES_PROGRESS | Documentation |
+| 14 | 087c928 | Stripe payment integration (frontend) | Infrastructure |
 
 **Total** : 31 User Stories + Infrastructure complète
+
+**Note** : M6.4 (Paiement CB) est en cours - frontend ✅, backend ⏳
 
 ---
 
