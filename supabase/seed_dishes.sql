@@ -379,5 +379,5 @@ SELECT
   COUNT(*) FILTER (WHERE d.is_popular) AS plats_populaires
 FROM dishes d
 JOIN categories c ON d.category_id = c.id
-GROUP BY c.name
+GROUP BY c.name, c.display_order
 ORDER BY c.display_order;
