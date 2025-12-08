@@ -13,14 +13,33 @@ export function useCart() {
 export function CartProvider({ children }) {
   const [cart, setCart] = useState([])
 
+  // Migrate old cart items to new structure
+  const migrateCartItem = (item) => {
+    // Ensure all required properties exist
+    return {
+      ...item,
+      categoryLabel: item.categoryLabel || item.category || 'Plat',
+      image: item.image || '/placeholder-dish.jpg',
+      description: item.description || '',
+      price: item.price || 0,
+      quantity: item.quantity || 1,
+      name: item.name || 'Produit'
+    }
+  }
+
   // Load cart from localStorage on mount
   useEffect(() => {
     const savedCart = localStorage.getItem('pause-dej-cart')
     if (savedCart) {
       try {
-        setCart(JSON.parse(savedCart))
+        const parsedCart = JSON.parse(savedCart)
+        // Migrate old cart items to ensure compatibility
+        const migratedCart = parsedCart.map(migrateCartItem)
+        setCart(migratedCart)
       } catch (error) {
         console.error('Error loading cart:', error)
+        // Clear corrupted cart
+        localStorage.removeItem('pause-dej-cart')
       }
     }
   }, [])
