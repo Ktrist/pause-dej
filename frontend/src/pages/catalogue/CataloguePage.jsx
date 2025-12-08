@@ -12,12 +12,16 @@ import {
   Button,
   Select,
   Text,
-  useDisclosure
+  useDisclosure,
+  Alert,
+  AlertIcon,
+  AlertTitle
 } from '@chakra-ui/react'
 import { FiSearch } from 'react-icons/fi'
-import { allDishes, categories } from '../../data/mockData'
+import { useDishes, useCategories } from '../../hooks/useDishes'
 import DishCard from '../../components/catalogue/DishCard'
 import DishDetailModal from '../../components/catalogue/DishDetailModal'
+import LoadingSpinner from '../../components/common/LoadingSpinner'
 
 export default function CataloguePage() {
   const [selectedCategory, setSelectedCategory] = useState('all')
@@ -25,6 +29,10 @@ export default function CataloguePage() {
   const [sortBy, setSortBy] = useState('popular')
   const [selectedDish, setSelectedDish] = useState(null)
   const { isOpen, onOpen, onClose } = useDisclosure()
+
+  // Fetch data from Supabase
+  const { dishes: allDishes, loading: loadingDishes, error: errorDishes } = useDishes()
+  const { categories, loading: loadingCategories, error: errorCategories } = useCategories()
 
   // Filter and sort dishes
   const filteredDishes = useMemo(() => {
@@ -64,11 +72,36 @@ export default function CataloguePage() {
     }
 
     return dishes
-  }, [selectedCategory, searchQuery, sortBy])
+  }, [allDishes, selectedCategory, searchQuery, sortBy])
 
   const handleViewDetails = (dish) => {
     setSelectedDish(dish)
     onOpen()
+  }
+
+  // Loading state
+  if (loadingDishes || loadingCategories) {
+    return (
+      <Box bg="gray.50" minH="calc(100vh - 64px)" py={8}>
+        <Container maxW="container.xl">
+          <LoadingSpinner message="Chargement du catalogue..." />
+        </Container>
+      </Box>
+    )
+  }
+
+  // Error state
+  if (errorDishes || errorCategories) {
+    return (
+      <Box bg="gray.50" minH="calc(100vh - 64px)" py={8}>
+        <Container maxW="container.xl">
+          <Alert status="error" borderRadius="md">
+            <AlertIcon />
+            <AlertTitle>Erreur de chargement du catalogue</AlertTitle>
+          </Alert>
+        </Container>
+      </Box>
+    )
   }
 
   return (

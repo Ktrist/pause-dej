@@ -1,12 +1,14 @@
-import { Box, Container, Heading, Text, VStack, SimpleGrid, Image, HStack, Badge, Button, Icon, useToast } from '@chakra-ui/react'
+import { Box, Container, Heading, Text, VStack, SimpleGrid, Image, HStack, Badge, Button, Icon, useToast, Alert, AlertIcon, AlertTitle } from '@chakra-ui/react'
 import { Link as RouterLink } from 'react-router-dom'
-import { popularDishes } from '../../data/mockData'
+import { usePopularDishes } from '../../hooks/useDishes'
 import { FiShoppingCart, FiTrendingUp } from 'react-icons/fi'
 import { useCart } from '../../context/CartContext'
+import LoadingSpinner from '../common/LoadingSpinner'
 
 export default function PopularDishes() {
   const { addToCart } = useCart()
   const toast = useToast()
+  const { dishes, loading, error } = usePopularDishes(6)
 
   const handleAddToCart = (dish) => {
     addToCart(dish)
@@ -18,6 +20,31 @@ export default function PopularDishes() {
       isClosable: true,
       position: 'bottom-right'
     })
+  }
+
+  // Loading state
+  if (loading) {
+    return (
+      <Box py={{ base: 16, md: 20 }} bg="white">
+        <Container maxW="container.xl">
+          <LoadingSpinner message="Chargement des plats populaires..." />
+        </Container>
+      </Box>
+    )
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <Box py={{ base: 16, md: 20 }} bg="white">
+        <Container maxW="container.xl">
+          <Alert status="error" borderRadius="md">
+            <AlertIcon />
+            <AlertTitle>Erreur de chargement des plats populaires</AlertTitle>
+          </Alert>
+        </Container>
+      </Box>
+    )
   }
 
   return (
@@ -50,7 +77,7 @@ export default function PopularDishes() {
 
           {/* Dishes Grid */}
           <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={8} w="full">
-            {popularDishes.map((dish) => (
+            {dishes.map((dish) => (
               <Box
                 key={dish.id}
                 bg="white"
