@@ -26,6 +26,7 @@ import {
 import { useNavigate } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
 import { useAuth } from '../context/AuthContext'
+import { useCreateOrder } from '../hooks/useOrders'
 import AddressSelector from '../components/checkout/AddressSelector'
 import TimeSlotSelector from '../components/checkout/TimeSlotSelector'
 import OrderSummary from '../components/checkout/OrderSummary'
@@ -42,6 +43,7 @@ export default function CheckoutPage() {
   const { user, loading: authLoading } = useAuth()
   const navigate = useNavigate()
   const toast = useToast()
+  const { createOrder, loading: creatingOrder } = useCreateOrder()
 
   const { activeStep, setActiveStep } = useSteps({
     index: 0,
@@ -50,7 +52,6 @@ export default function CheckoutPage() {
 
   const [selectedAddress, setSelectedAddress] = useState(null)
   const [selectedTimeSlot, setSelectedTimeSlot] = useState(null)
-  const [isProcessing, setIsProcessing] = useState(false)
 
   // Redirect if not authenticated
   useEffect(() => {
@@ -107,23 +108,46 @@ export default function CheckoutPage() {
   }
 
   const handlePlaceOrder = async () => {
-    setIsProcessing(true)
-
     try {
-      // Simulate order creation (will integrate with Supabase + Stripe later)
-      await new Promise(resolve => setTimeout(resolve, 2000))
+      // Calculate totals
+      const subtotal = getCartTotal()
+      const deliveryFee = 3.90
+      const discount = 0 // TODO: Add promo code support
+      const total = subtotal + deliveryFee - discount
 
-      // Create order object
-      const order = {
-        userId: user.id,
-        address: selectedAddress,
-        timeSlot: selectedTimeSlot,
-        items: cart,
-        total: getCartTotal(),
-        createdAt: new Date().toISOString()
+      // Prepare order data
+      const orderData = {
+        delivery_street: selectedAddress.street_address,
+        delivery_city: selectedAddress.city,
+        delivery_postal_code: selectedAddress.postal_code,
+        delivery_additional_info: selectedAddress.additional_info || null,
+        delivery_address_id: selectedAddress.id,
+        delivery_date: selectedTimeSlot.date,
+        delivery_time: selectedTimeSlot.time,
+        subtotal: subtotal,
+        delivery_fee: deliveryFee,
+        discount: discount,
+        total: total,
+        payment_method: 'card', // TODO: Add payment method selection
+        status: 'pending'
       }
 
-      console.log('Order created:', order)
+      // Prepare order items
+      const orderItems = cart.map(item => ({
+        dish_id: item.id,
+        dish_name: item.name,
+        dish_price: item.price,
+        dish_image_url: item.image,
+        quantity: item.quantity,
+        subtotal: item.price * item.quantity
+      }))
+
+      // Create order in Supabase
+      const { data: order, error } = await createOrder(orderData, orderItems)
+
+      if (error) {
+        throw new Error(error)
+      }
 
       // Clear cart
       clearCart()
@@ -131,25 +155,23 @@ export default function CheckoutPage() {
       // Show success
       toast({
         title: 'Commande validée !',
-        description: 'Votre commande a été envoyée avec succès',
+        description: `Votre commande #${order.order_number} a été créée avec succès`,
         status: 'success',
         duration: 5000,
         isClosable: true
       })
 
-      // Redirect to confirmation page (to be created)
-      navigate('/confirmation', { state: { order } })
+      // Redirect to confirmation page
+      navigate(`/confirmation/${order.order_number}`)
     } catch (error) {
       console.error('Order error:', error)
       toast({
         title: 'Erreur',
-        description: 'Une erreur est survenue lors de la commande',
+        description: error.message || 'Une erreur est survenue lors de la commande',
         status: 'error',
         duration: 5000,
         isClosable: true
       })
-    } finally {
-      setIsProcessing(false)
     }
   }
 
@@ -261,7 +283,7 @@ export default function CheckoutPage() {
                 colorScheme="brand"
                 size="lg"
                 px={8}
-                isLoading={isProcessing}
+                isLoading={creatingOrder}
                 loadingText="Commande en cours..."
               >
                 Payer {getCartTotal().toFixed(2)}€

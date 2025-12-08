@@ -22,37 +22,25 @@ import {
   FormLabel,
   Input,
   Textarea,
-  useToast
+  useToast,
+  Alert,
+  AlertIcon
 } from '@chakra-ui/react'
 import { FiMapPin, FiPlus, FiEdit2, FiTrash2 } from 'react-icons/fi'
 import { useAuth } from '../../context/AuthContext'
+import { useAddresses, useCreateAddress, useUpdateAddress, useDeleteAddress } from '../../hooks/useAddresses'
+import LoadingSpinner from '../common/LoadingSpinner'
 
 export default function AddressSelector({ selectedAddress, onSelectAddress }) {
   const { user } = useAuth()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const toast = useToast()
 
-  // Mock addresses (will be replaced with Supabase data)
-  const [addresses, setAddresses] = useState([
-    {
-      id: '1',
-      label: 'Domicile',
-      street_address: '123 Rue de la Paix',
-      city: 'Paris',
-      postal_code: '75001',
-      additional_info: 'Appartement 4B, Code: 1234',
-      is_default: true
-    },
-    {
-      id: '2',
-      label: 'Bureau',
-      street_address: '456 Avenue des Champs-Élysées',
-      city: 'Paris',
-      postal_code: '75008',
-      additional_info: 'Réception, 3ème étage',
-      is_default: false
-    }
-  ])
+  // Supabase hooks
+  const { addresses, loading: loadingAddresses, error: errorAddresses, refetch } = useAddresses()
+  const { createAddress, loading: creatingAddress } = useCreateAddress()
+  const { updateAddress, loading: updatingAddress } = useUpdateAddress()
+  const { deleteAddress, loading: deletingAddress } = useDeleteAddress()
 
   const [editingAddress, setEditingAddress] = useState(null)
   const [formData, setFormData] = useState({
@@ -88,50 +76,100 @@ export default function AddressSelector({ selectedAddress, onSelectAddress }) {
     onOpen()
   }
 
-  const handleSaveAddress = () => {
+  const handleSaveAddress = async () => {
     if (editingAddress) {
       // Update existing
-      setAddresses(addresses.map(addr =>
-        addr.id === editingAddress.id ? { ...formData, id: addr.id } : addr
-      ))
-      toast({
-        title: 'Adresse modifiée',
-        status: 'success',
-        duration: 2000
-      })
+      const { error } = await updateAddress(editingAddress.id, formData)
+      if (error) {
+        toast({
+          title: 'Erreur',
+          description: error,
+          status: 'error',
+          duration: 3000
+        })
+      } else {
+        toast({
+          title: 'Adresse modifiée',
+          status: 'success',
+          duration: 2000
+        })
+        refetch()
+        onClose()
+      }
     } else {
-      // Add new
-      const newAddress = {
+      // Add new - set as default if first address
+      const addressData = {
         ...formData,
-        id: Date.now().toString(),
         is_default: addresses.length === 0
       }
-      setAddresses([...addresses, newAddress])
 
-      // Auto-select if first address
-      if (addresses.length === 0) {
-        onSelectAddress(newAddress)
+      const { data, error } = await createAddress(addressData)
+      if (error) {
+        toast({
+          title: 'Erreur',
+          description: error,
+          status: 'error',
+          duration: 3000
+        })
+      } else {
+        toast({
+          title: 'Adresse ajoutée',
+          status: 'success',
+          duration: 2000
+        })
+        refetch()
+
+        // Auto-select if first address
+        if (addresses.length === 0 && data) {
+          onSelectAddress(data)
+        }
+
+        onClose()
       }
-
-      toast({
-        title: 'Adresse ajoutée',
-        status: 'success',
-        duration: 2000
-      })
     }
-    onClose()
   }
 
-  const handleDeleteAddress = (addressId) => {
-    setAddresses(addresses.filter(addr => addr.id !== addressId))
-    if (selectedAddress?.id === addressId) {
-      onSelectAddress(null)
+  const handleDeleteAddress = async (addressId) => {
+    if (confirm('Êtes-vous sûr de vouloir supprimer cette adresse ?')) {
+      const { error } = await deleteAddress(addressId)
+      if (error) {
+        toast({
+          title: 'Erreur',
+          description: error,
+          status: 'error',
+          duration: 3000
+        })
+      } else {
+        if (selectedAddress?.id === addressId) {
+          onSelectAddress(null)
+        }
+        toast({
+          title: 'Adresse supprimée',
+          status: 'info',
+          duration: 2000
+        })
+        refetch()
+      }
     }
-    toast({
-      title: 'Adresse supprimée',
-      status: 'info',
-      duration: 2000
-    })
+  }
+
+  if (loadingAddresses) {
+    return (
+      <Box bg="white" p={6} rounded="lg" shadow="sm">
+        <LoadingSpinner message="Chargement des adresses..." />
+      </Box>
+    )
+  }
+
+  if (errorAddresses) {
+    return (
+      <Box bg="white" p={6} rounded="lg" shadow="sm">
+        <Alert status="error">
+          <AlertIcon />
+          Erreur de chargement des adresses
+        </Alert>
+      </Box>
+    )
   }
 
   return (
@@ -320,6 +358,7 @@ export default function AddressSelector({ selectedAddress, onSelectAddress }) {
             <Button
               colorScheme="brand"
               onClick={handleSaveAddress}
+              isLoading={creatingAddress || updatingAddress}
               isDisabled={
                 !formData.label ||
                 !formData.street_address ||
