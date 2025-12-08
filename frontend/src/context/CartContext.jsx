@@ -15,15 +15,20 @@ export function CartProvider({ children }) {
 
   // Migrate old cart items to new structure
   const migrateCartItem = (item) => {
+    // Skip null or undefined items
+    if (!item || typeof item !== 'object') {
+      return null
+    }
+
     // Ensure all required properties exist
     return {
-      ...item,
+      id: item.id,
+      name: item.name || 'Produit',
       categoryLabel: item.categoryLabel || item.category || 'Plat',
       image: item.image || '/placeholder-dish.jpg',
       description: item.description || '',
-      price: item.price || 0,
-      quantity: item.quantity || 1,
-      name: item.name || 'Produit'
+      price: parseFloat(item.price) || 0,
+      quantity: parseInt(item.quantity) || 1
     }
   }
 
@@ -33,8 +38,16 @@ export function CartProvider({ children }) {
     if (savedCart) {
       try {
         const parsedCart = JSON.parse(savedCart)
-        // Migrate old cart items to ensure compatibility
-        const migratedCart = parsedCart.map(migrateCartItem)
+        // Ensure parsedCart is an array
+        if (!Array.isArray(parsedCart)) {
+          console.warn('Invalid cart data in localStorage, clearing...')
+          localStorage.removeItem('pause-dej-cart')
+          return
+        }
+        // Migrate old cart items and filter out null/invalid items
+        const migratedCart = parsedCart
+          .map(migrateCartItem)
+          .filter(item => item !== null && item.id)
         setCart(migratedCart)
       } catch (error) {
         console.error('Error loading cart:', error)

@@ -15,14 +15,21 @@ import { useCart } from '../../context/CartContext'
 export default function CartItemCard({ item }) {
   const { updateQuantity, removeFromCart } = useCart()
 
+  // Defensive check: if item is invalid, don't render anything
+  if (!item || typeof item !== 'object' || !item.id) {
+    console.warn('CartItemCard received invalid item:', item)
+    return null
+  }
+
   // Ensure all properties exist (for backward compatibility with old cart data)
   const safeItem = {
-    ...item,
+    id: item.id,
+    name: item.name || 'Produit',
     categoryLabel: item.categoryLabel || item.category || 'Plat',
     image: item.image || '/placeholder-dish.jpg',
     description: item.description || '',
-    price: item.price || 0,
-    quantity: item.quantity || 1
+    price: parseFloat(item.price) || 0,
+    quantity: parseInt(item.quantity) || 1
   }
 
   const { getInputProps, getIncrementButtonProps, getDecrementButtonProps } =
