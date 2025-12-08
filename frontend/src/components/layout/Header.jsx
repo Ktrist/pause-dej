@@ -28,9 +28,8 @@ import { useAuth } from '../../context/AuthContext'
 
 export default function Header() {
   const { isOpen, onOpen, onClose } = useDisclosure()
-  const { getCartCount } = useCart()
+  const { cartItemsCount } = useCart()
   const { user, signOut } = useAuth()
-  const cartItemsCount = getCartCount()
   const navigate = useNavigate()
 
   const handleSignOut = async () => {

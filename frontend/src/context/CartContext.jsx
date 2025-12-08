@@ -107,6 +107,9 @@ export function CartProvider({ children }) {
     return cart.reduce((count, item) => count + item.quantity, 0)
   }
 
+  // Calculate cart count for badge (reactive)
+  const cartItemsCount = cart.reduce((count, item) => count + item.quantity, 0)
+
   const value = {
     cart,
     addToCart,
@@ -114,7 +117,8 @@ export function CartProvider({ children }) {
     updateQuantity,
     clearCart,
     getCartTotal,
-    getCartCount
+    getCartCount,
+    cartItemsCount
   }
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>
