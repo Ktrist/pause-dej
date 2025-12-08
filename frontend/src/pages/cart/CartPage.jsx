@@ -23,15 +23,7 @@ export default function CartPage() {
   const subtotal = getCartTotal()
 
   const handleCheckout = () => {
-    // TODO: Navigate to checkout page when implemented
-    toast({
-      title: 'Fonctionnalité à venir',
-      description: 'Le processus de paiement sera bientôt disponible !',
-      status: 'info',
-      duration: 3000,
-      isClosable: true,
-      position: 'top'
-    })
+    navigate('/checkout')
   }
 
   // Empty cart state

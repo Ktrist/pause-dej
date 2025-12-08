@@ -1,0 +1,180 @@
+import {
+  Box,
+  VStack,
+  HStack,
+  Text,
+  Image,
+  Divider,
+  SimpleGrid,
+  Badge,
+  Icon
+} from '@chakra-ui/react'
+import { FiMapPin, FiClock, FiPackage } from 'react-icons/fi'
+
+const DELIVERY_FEE = 3.90
+const FREE_DELIVERY_THRESHOLD = 30
+
+export default function OrderSummary({ address, timeSlot, cart, total }) {
+  const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0)
+  const deliveryFee = subtotal >= FREE_DELIVERY_THRESHOLD ? 0 : DELIVERY_FEE
+
+  return (
+    <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={6}>
+      {/* Left Column - Delivery Info */}
+      <VStack align="stretch" spacing={6}>
+        {/* Address Card */}
+        <Box bg="white" p={6} rounded="lg" shadow="sm" border="1px solid" borderColor="gray.200">
+          <HStack spacing={3} mb={4}>
+            <Box
+              p={2}
+              bg="brand.50"
+              rounded="lg"
+            >
+              <Icon as={FiMapPin} boxSize={5} color="brand.600" />
+            </Box>
+            <Text fontWeight="bold" fontSize="lg">Adresse de livraison</Text>
+          </HStack>
+
+          {address ? (
+            <VStack align="start" spacing={2} pl={10}>
+              <Text fontWeight="bold">{address.label}</Text>
+              <Text color="gray.700">{address.street_address}</Text>
+              <Text color="gray.700">{address.postal_code} {address.city}</Text>
+              {address.additional_info && (
+                <Text fontSize="sm" color="gray.600">{address.additional_info}</Text>
+              )}
+            </VStack>
+          ) : (
+            <Text color="gray.500" pl={10}>Aucune adresse sélectionnée</Text>
+          )}
+        </Box>
+
+        {/* Time Slot Card */}
+        <Box bg="white" p={6} rounded="lg" shadow="sm" border="1px solid" borderColor="gray.200">
+          <HStack spacing={3} mb={4}>
+            <Box
+              p={2}
+              bg="blue.50"
+              rounded="lg"
+            >
+              <Icon as={FiClock} boxSize={5} color="blue.600" />
+            </Box>
+            <Text fontWeight="bold" fontSize="lg">Créneau de livraison</Text>
+          </HStack>
+
+          {timeSlot ? (
+            <VStack align="start" spacing={2} pl={10}>
+              <HStack>
+                <Text fontWeight="bold" fontSize="lg">{timeSlot.time}</Text>
+                <Badge colorScheme="green">Confirmé</Badge>
+              </HStack>
+              <Text color="gray.700">
+                {timeSlot.date.toLocaleDateString('fr-FR', {
+                  weekday: 'long',
+                  day: 'numeric',
+                  month: 'long',
+                  year: 'numeric'
+                })}
+              </Text>
+              <Text fontSize="sm" color="gray.600">
+                Livraison en ~30 minutes après validation
+              </Text>
+            </VStack>
+          ) : (
+            <Text color="gray.500" pl={10}>Aucun créneau sélectionné</Text>
+          )}
+        </Box>
+      </VStack>
+
+      {/* Right Column - Order Items & Total */}
+      <VStack align="stretch" spacing={6}>
+        {/* Items Card */}
+        <Box bg="white" p={6} rounded="lg" shadow="sm" border="1px solid" borderColor="gray.200">
+          <HStack spacing={3} mb={4}>
+            <Box
+              p={2}
+              bg="orange.50"
+              rounded="lg"
+            >
+              <Icon as={FiPackage} boxSize={5} color="orange.600" />
+            </Box>
+            <Text fontWeight="bold" fontSize="lg">Votre commande</Text>
+            <Badge colorScheme="brand" ml="auto">{cart.length} article{cart.length > 1 ? 's' : ''}</Badge>
+          </HStack>
+
+          <VStack align="stretch" spacing={3} pl={10}>
+            {cart.map((item) => (
+              <HStack key={item.id} spacing={3} align="start">
+                <Image
+                  src={item.image}
+                  alt={item.name}
+                  boxSize="50px"
+                  objectFit="cover"
+                  rounded="md"
+                />
+                <Box flex="1">
+                  <Text fontWeight="medium" fontSize="sm">{item.name}</Text>
+                  <Text fontSize="xs" color="gray.600">Quantité: {item.quantity}</Text>
+                </Box>
+                <Text fontWeight="bold" fontSize="sm">
+                  {(item.price * item.quantity).toFixed(2)}€
+                </Text>
+              </HStack>
+            ))}
+          </VStack>
+        </Box>
+
+        {/* Total Card */}
+        <Box bg="white" p={6} rounded="lg" shadow="sm" border="2px solid" borderColor="brand.500">
+          <Text fontWeight="bold" fontSize="lg" mb={4}>Récapitulatif</Text>
+
+          <VStack align="stretch" spacing={3}>
+            <HStack justify="space-between">
+              <Text color="gray.700">Sous-total</Text>
+              <Text fontWeight="medium">{subtotal.toFixed(2)}€</Text>
+            </HStack>
+
+            <HStack justify="space-between">
+              <Text color="gray.700">Frais de livraison</Text>
+              {deliveryFee === 0 ? (
+                <HStack spacing={2}>
+                  <Text
+                    fontSize="sm"
+                    color="gray.500"
+                    textDecoration="line-through"
+                  >
+                    {DELIVERY_FEE.toFixed(2)}€
+                  </Text>
+                  <Badge colorScheme="green">Gratuit</Badge>
+                </HStack>
+              ) : (
+                <Text fontWeight="medium">{deliveryFee.toFixed(2)}€</Text>
+              )}
+            </HStack>
+
+            {subtotal < FREE_DELIVERY_THRESHOLD && (
+              <Text fontSize="xs" color="orange.600" fontStyle="italic">
+                Livraison gratuite dès {FREE_DELIVERY_THRESHOLD}€ d'achat
+              </Text>
+            )}
+
+            <Divider borderColor="gray.300" />
+
+            <HStack justify="space-between">
+              <Text fontSize="xl" fontWeight="bold">Total</Text>
+              <Text fontSize="xl" fontWeight="bold" color="brand.600">
+                {total.toFixed(2)}€
+              </Text>
+            </HStack>
+
+            <Box bg="green.50" p={3} rounded="md" mt={2}>
+              <Text fontSize="xs" color="green.800" textAlign="center" fontWeight="medium">
+                🎉 Vous économisez {deliveryFee === 0 ? DELIVERY_FEE.toFixed(2) + '€ sur la livraison' : '0€'}
+              </Text>
+            </Box>
+          </VStack>
+        </Box>
+      </VStack>
+    </SimpleGrid>
+  )
+}
