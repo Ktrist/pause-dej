@@ -10,13 +10,16 @@ import {
   Icon
 } from '@chakra-ui/react'
 import { FiMapPin, FiClock, FiPackage } from 'react-icons/fi'
+import { calculateDiscount } from '../../hooks/usePromoCodes'
 
 const DELIVERY_FEE = 3.90
 const FREE_DELIVERY_THRESHOLD = 30
 
-export default function OrderSummary({ address, timeSlot, cart, total }) {
+export default function OrderSummary({ address, timeSlot, cart, total, appliedPromo = null }) {
   const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0)
   const deliveryFee = subtotal >= FREE_DELIVERY_THRESHOLD ? 0 : DELIVERY_FEE
+  const discount = appliedPromo ? calculateDiscount(appliedPromo, subtotal) : 0
+  const finalTotal = subtotal + deliveryFee - discount
 
   return (
     <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={6}>
@@ -158,18 +161,38 @@ export default function OrderSummary({ address, timeSlot, cart, total }) {
               </Text>
             )}
 
+            {discount > 0 && (
+              <HStack justify="space-between">
+                <HStack spacing={2}>
+                  <Text color="gray.700">Code promo</Text>
+                  <Badge colorScheme="green" fontSize="xs">{appliedPromo.code}</Badge>
+                </HStack>
+                <Text fontWeight="medium" color="green.600">
+                  -{discount.toFixed(2)}€
+                </Text>
+              </HStack>
+            )}
+
             <Divider borderColor="gray.300" />
 
             <HStack justify="space-between">
               <Text fontSize="xl" fontWeight="bold">Total</Text>
               <Text fontSize="xl" fontWeight="bold" color="brand.600">
-                {total.toFixed(2)}€
+                {finalTotal.toFixed(2)}€
               </Text>
             </HStack>
 
             <Box bg="green.50" p={3} rounded="md" mt={2}>
               <Text fontSize="xs" color="green.800" textAlign="center" fontWeight="medium">
-                🎉 Vous économisez {deliveryFee === 0 ? DELIVERY_FEE.toFixed(2) + '€ sur la livraison' : '0€'}
+                🎉 Vous économisez {
+                  deliveryFee === 0 && discount > 0
+                    ? (DELIVERY_FEE + discount).toFixed(2) + '€'
+                    : deliveryFee === 0
+                    ? DELIVERY_FEE.toFixed(2) + '€ sur la livraison'
+                    : discount > 0
+                    ? discount.toFixed(2) + '€ avec le code promo'
+                    : '0€'
+                }
               </Text>
             </Box>
           </VStack>

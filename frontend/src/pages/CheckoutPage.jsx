@@ -23,6 +23,7 @@ import {
   AlertTitle,
   AlertDescription
 } from '@chakra-ui/react'
+import { Elements } from '@stripe/react-stripe-js'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
 import { useAuth } from '../context/AuthContext'
@@ -31,7 +32,9 @@ import { calculateDiscount } from '../hooks/usePromoCodes'
 import AddressSelector from '../components/checkout/AddressSelector'
 import TimeSlotSelector from '../components/checkout/TimeSlotSelector'
 import OrderSummary from '../components/checkout/OrderSummary'
+import PaymentForm from '../components/payment/PaymentForm'
 import LoadingSpinner from '../components/common/LoadingSpinner'
+import getStripe from '../stripeClient'
 
 const steps = [
   { title: 'Livraison', description: 'Adresse' },
@@ -39,7 +42,10 @@ const steps = [
   { title: 'Paiement', description: 'Finaliser' }
 ]
 
-export default function CheckoutPage() {
+// Stripe promise
+const stripePromise = getStripe()
+
+function CheckoutPageContent() {
   const { cart, getCartTotal, clearCart } = useCart()
   const { user, loading: authLoading } = useAuth()
   const location = useLocation()
@@ -241,38 +247,50 @@ export default function CheckoutPage() {
 
             {activeStep === 2 && (
               <VStack spacing={6} align="stretch">
-                <Alert status="info" variant="left-accent">
-                  <AlertIcon />
-                  <Box>
-                    <AlertTitle>Presque terminé !</AlertTitle>
-                    <AlertDescription>
-                      Vérifiez votre commande avant de finaliser le paiement.
-                    </AlertDescription>
-                  </Box>
-                </Alert>
-
+                {/* Order Summary */}
                 <OrderSummary
                   address={selectedAddress}
                   timeSlot={selectedTimeSlot}
                   cart={cart}
                   total={getCartTotal()}
+                  appliedPromo={appliedPromo}
                 />
+
+                {/* Payment Form */}
+                <Box bg="white" p={6} rounded="lg" shadow="sm">
+                  <Heading size="md" mb={6}>
+                    Paiement
+                  </Heading>
+                  <PaymentForm
+                    amount={getCartTotal() + (getCartTotal() >= 30 ? 0 : 3.90) - (appliedPromo ? calculateDiscount(appliedPromo, getCartTotal()) : 0)}
+                    onSuccess={handlePlaceOrder}
+                    onError={(error) => {
+                      toast({
+                        title: 'Erreur de paiement',
+                        description: error.message || 'Le paiement a échoué',
+                        status: 'error',
+                        duration: 5000
+                      })
+                    }}
+                    disabled={creatingOrder}
+                  />
+                </Box>
               </VStack>
             )}
           </Box>
 
           {/* Navigation Buttons */}
-          <HStack justify="space-between" bg="white" p={6} rounded="lg" shadow="sm">
-            <Button
-              onClick={handleBack}
-              isDisabled={activeStep === 0}
-              variant="ghost"
-              size="lg"
-            >
-              Retour
-            </Button>
+          {activeStep < steps.length - 1 && (
+            <HStack justify="space-between" bg="white" p={6} rounded="lg" shadow="sm">
+              <Button
+                onClick={handleBack}
+                isDisabled={activeStep === 0}
+                variant="ghost"
+                size="lg"
+              >
+                Retour
+              </Button>
 
-            {activeStep < steps.length - 1 ? (
               <Button
                 onClick={handleNext}
                 colorScheme="brand"
@@ -281,21 +299,50 @@ export default function CheckoutPage() {
               >
                 Continuer
               </Button>
-            ) : (
+            </HStack>
+          )}
+
+          {/* Back button for payment step */}
+          {activeStep === steps.length - 1 && (
+            <Box bg="white" p={6} rounded="lg" shadow="sm">
               <Button
-                onClick={handlePlaceOrder}
-                colorScheme="brand"
+                onClick={handleBack}
+                variant="ghost"
                 size="lg"
-                px={8}
-                isLoading={creatingOrder}
-                loadingText="Commande en cours..."
               >
-                Payer {getCartTotal().toFixed(2)}€
+                Retour
               </Button>
-            )}
-          </HStack>
+            </Box>
+          )}
         </VStack>
       </Container>
     </Box>
+  )
+}
+
+// Wrap with Stripe Elements provider
+export default function CheckoutPage() {
+  if (!stripePromise) {
+    return (
+      <Box minH="100vh" bg="gray.50" py={8}>
+        <Container maxW="container.md">
+          <Alert status="error" variant="left-accent" rounded="lg">
+            <AlertIcon />
+            <Box>
+              <Text fontWeight="bold">Configuration Stripe manquante</Text>
+              <Text fontSize="sm">
+                La clé publique Stripe n'est pas configurée. Veuillez consulter STRIPE_SETUP.md pour les instructions.
+              </Text>
+            </Box>
+          </Alert>
+        </Container>
+      </Box>
+    )
+  }
+
+  return (
+    <Elements stripe={stripePromise}>
+      <CheckoutPageContent />
+    </Elements>
   )
 }
