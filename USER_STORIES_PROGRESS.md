@@ -1,7 +1,8 @@
 # 📊 Suivi des User Stories - Pause Dej'
 
-> **Dernière mise à jour** : 2025-12-08
+> **Dernière mise à jour** : 2025-12-08 (Session panier + Supabase)
 > **Progression globale** : 30/144 User Stories (20.8%)
+> **Infrastructure** : ✅ Supabase entièrement intégré (24 hooks + migrations complètes)
 
 ---
 
@@ -90,11 +91,27 @@
 | **usePromoCodes.js** | 6 hooks | ✅ Terminé | 35f3fb4 |
 | **Migration PopularDishes** | - | ✅ Terminé | 6e6e7bb |
 | **Migration CataloguePage** | - | ✅ Terminé | 6e6e7bb |
+| **Migration AccountPage** | - | ✅ Terminé | Supabase session |
+| **Migration CheckoutPage** | - | ✅ Terminé | Supabase session |
+| **Migration AddressSelector** | - | ✅ Terminé | Supabase session |
 | **Seed Dishes Data** | 15 plats | ✅ Terminé | e9e2486 |
 | **Integration Guide** | - | ✅ Terminé | ffbcc6f |
-| **Hooks Reference** | - | ✅ Terminé | - |
+| **Hooks Reference** | - | ✅ Terminé | SUPABASE_HOOKS_REFERENCE.md |
 
 **Total : 24 hooks personnalisés créés pour toutes les opérations Supabase**
+
+### Cart & Badge Fixes (Session actuelle)
+| Composant | Issue | Statut | Commits |
+|---|---|---|---|
+| **CartItemCard** | Crash useNumberInput | ✅ Fixé | 2b7803f, 5d8fa62 |
+| **CartContext** | Null validation | ✅ Fixé | 2b7803f |
+| **Header Badge** | Not reactive | ✅ Fixé | 7d31c4b, 8c8a8ea |
+| **Cart Page** | Fully functional | ✅ Terminé | Latest |
+
+**Problèmes résolus** :
+- ❌ "Cannot read properties of undefined (reading 'split')" → ✅ Résolu
+- ❌ Badge panier n'apparaissait pas → ✅ Résolu
+- ❌ Items corrompus dans localStorage → ✅ Migration automatique ajoutée
 
 ---
 
@@ -108,12 +125,14 @@
 - **M8.4** : Moyens de paiement (UI prête, nécessite Stripe)
 
 ### ⏳ Prochaines priorités recommandées
-1. **Stripe Integration** (M6.3, M6.4) - Paiements réels
-2. ~~**Supabase Migration**~~ - ✅ **Terminé !** (24 hooks créés, 2 composants migrés)
-3. **Migrer Checkout** - Utiliser les hooks pour créer vraies commandes
-4. **Admin Dashboard** (A2.x) - Gestion produits
-5. **Notifications** (N1.x) - Emails transactionnels
-6. **Suivi commandes** (M7.x) - Temps réel
+1. ~~**Panier fonctionnel**~~ - ✅ **Terminé !** (Badge + CartItemCard fixés)
+2. ~~**Supabase Migration**~~ - ✅ **Terminé !** (24 hooks créés, 5 composants migrés)
+3. ~~**Migrer Checkout**~~ - ✅ **Terminé !** (useCreateOrder intégré, vraies commandes créées)
+4. **Page Confirmation Commande** - Afficher détails commande après paiement
+5. **Stripe Integration** (M6.3, M6.4) - Paiements réels
+6. **Suivi commandes** (M7.x) - Temps réel avec statuts
+7. **Admin Dashboard** (A2.x) - Gestion produits
+8. **Notifications** (N1.x) - Emails transactionnels
 
 ---
 
