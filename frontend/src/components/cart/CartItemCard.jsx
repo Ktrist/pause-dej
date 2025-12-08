@@ -6,8 +6,7 @@ import {
   Text,
   IconButton,
   Button,
-  Badge,
-  useNumberInput
+  Badge
 } from '@chakra-ui/react'
 import { FiTrash2, FiMinus, FiPlus } from 'react-icons/fi'
 import { useCart } from '../../context/CartContext'
@@ -32,15 +31,17 @@ export default function CartItemCard({ item }) {
     quantity: parseInt(item.quantity) || 1
   }
 
-  const { getInputProps, getIncrementButtonProps, getDecrementButtonProps } =
-    useNumberInput({
-      step: 1,
-      defaultValue: safeItem.quantity,
-      min: 1,
-      max: 99,
-      value: safeItem.quantity,
-      onChange: (valueString, valueNumber) => updateQuantity(safeItem.id, valueNumber)
-    })
+  const handleIncrement = () => {
+    if (safeItem.quantity < 99) {
+      updateQuantity(safeItem.id, safeItem.quantity + 1)
+    }
+  }
+
+  const handleDecrement = () => {
+    if (safeItem.quantity > 1) {
+      updateQuantity(safeItem.id, safeItem.quantity - 1)
+    }
+  }
 
   const handleRemove = () => {
     removeFromCart(safeItem.id)
@@ -96,15 +97,15 @@ export default function CartItemCard({ item }) {
             {/* Quantity Stepper */}
             <HStack spacing={2}>
               <Button
-                {...getDecrementButtonProps()}
+                onClick={handleDecrement}
                 size="sm"
                 variant="outline"
                 colorScheme="brand"
+                isDisabled={safeItem.quantity <= 1}
               >
                 <FiMinus />
               </Button>
               <Text
-                {...getInputProps()}
                 minW="40px"
                 textAlign="center"
                 fontWeight="600"
@@ -113,10 +114,11 @@ export default function CartItemCard({ item }) {
                 {safeItem.quantity}
               </Text>
               <Button
-                {...getIncrementButtonProps()}
+                onClick={handleIncrement}
                 size="sm"
                 variant="outline"
                 colorScheme="brand"
+                isDisabled={safeItem.quantity >= 99}
               >
                 <FiPlus />
               </Button>
