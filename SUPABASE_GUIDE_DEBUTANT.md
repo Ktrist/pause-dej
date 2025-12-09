@@ -1,3 +1,9 @@
+//DataBase password : %+4q*4tC4zax&77
+// PROJECT URL : https://toiyclibmidzctmwhfxn.supabase.co
+// ANON KEY : eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRvaXljbGlibWlkemN0bXdoZnhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUxODIwMzIsImV4cCI6MjA4MDc1ODAzMn0.eKi0LkeblQq9UgJ8xCvvUjwUbSsR_Q46YUfigA3iH5g
+//
+
+
 # 🚀 Guide Supabase pour Débutants - Pause Dej'
 
 > **Objectif** : Configurer votre backend Supabase en 30 minutes, même si vous n'avez jamais utilisé Supabase.
