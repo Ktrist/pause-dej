@@ -12,6 +12,7 @@ import {
   FormLabel
 } from '@chakra-ui/react'
 import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js'
+import { SUPABASE_URL, SUPABASE_ANON_KEY } from '../../config'
 
 /**
  * PaymentForm Component
@@ -45,29 +46,48 @@ export default function PaymentForm({ amount, onSuccess, onError, disabled = fal
       // Get the CardElement
       const cardElement = elements.getElement(CardElement)
 
-      // TODO: This is a placeholder implementation
-      // In production, you need to:
-      // 1. Create a payment intent on your backend (Supabase Edge Function)
-      // 2. Get the client_secret from the response
-      // 3. Use stripe.confirmCardPayment() with the client_secret
-      //
-      // For now, we'll simulate a successful payment after a delay
+      // Step 1: Create payment intent on backend
+      const response = await fetch(
+        `${SUPABASE_URL}/functions/v1/create-payment-intent`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+          },
+          body: JSON.stringify({
+            amount: amount,
+            metadata: {
+              source: 'pause-dej-checkout',
+            },
+          }),
+        }
+      )
 
-      // Validate the card
-      const { error: validateError } = await stripe.createPaymentMethod({
-        type: 'card',
-        card: cardElement
-      })
+      const data = await response.json()
 
-      if (validateError) {
-        throw new Error(validateError.message)
+      if (!response.ok || data.error) {
+        throw new Error(data.error || 'Erreur lors de la création du paiement')
       }
 
-      // Simulate payment processing
-      await new Promise((resolve) => setTimeout(resolve, 2000))
+      const { clientSecret } = data
 
-      // Mock success for development
-      console.log('Payment processed successfully (mock)')
+      // Step 2: Confirm payment with Stripe
+      const { error: confirmError, paymentIntent } = await stripe.confirmCardPayment(
+        clientSecret,
+        {
+          payment_method: {
+            card: cardElement,
+          },
+        }
+      )
+
+      if (confirmError) {
+        throw new Error(confirmError.message)
+      }
+
+      // Step 3: Payment successful
+      console.log('Payment successful:', paymentIntent.id)
       onSuccess?.()
     } catch (err) {
       console.error('Payment error:', err)
@@ -97,17 +117,6 @@ export default function PaymentForm({ amount, onSuccess, onError, disabled = fal
   return (
     <Box as="form" onSubmit={handleSubmit}>
       <VStack spacing={4} align="stretch">
-        {/* Development Warning */}
-        <Alert status="warning" rounded="md">
-          <AlertIcon />
-          <Box>
-            <AlertTitle fontSize="sm">Mode développement</AlertTitle>
-            <AlertDescription fontSize="xs">
-              Le paiement Stripe nécessite une configuration backend. Consultez STRIPE_SETUP.md pour les instructions.
-            </AlertDescription>
-          </Box>
-        </Alert>
-
         {/* Card Input */}
         <FormControl>
           <FormLabel fontSize="sm" fontWeight="600">
