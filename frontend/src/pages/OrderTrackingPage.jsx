@@ -25,7 +25,7 @@ import {
   Stepper,
   useSteps
 } from '@chakra-ui/react'
-import { FiPackage, FiHome, FiClock, FiMapPin, FiCheckCircle, FiTruck, FiChef } from 'react-icons/fi'
+import { FiPackage, FiHome, FiClock, FiMapPin, FiCheckCircle, FiTruck } from 'react-icons/fi'
 import { useParams, useNavigate, Link as RouterLink } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useOrderByNumber } from '../hooks/useOrders'
@@ -33,7 +33,7 @@ import { useOrderByNumber } from '../hooks/useOrders'
 const getOrderStatusSteps = (status) => {
   const allSteps = [
     { title: 'Commande reçue', icon: FiCheckCircle, status: 'pending' },
-    { title: 'En préparation', icon: FiChef, status: 'preparing' },
+    { title: 'En préparation', icon: FiClock, status: 'preparing' },
     { title: 'En livraison', icon: FiTruck, status: 'delivering' },
     { title: 'Livrée', icon: FiPackage, status: 'delivered' }
   ]
