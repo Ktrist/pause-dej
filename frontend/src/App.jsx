@@ -14,6 +14,7 @@ import ForgotPasswordPage from './pages/auth/ForgotPasswordPage'
 import CheckoutPage from './pages/CheckoutPage'
 import OrderConfirmationPage from './pages/OrderConfirmationPage'
 import OrderTrackingPage from './pages/OrderTrackingPage'
+import SupportPage from './pages/SupportPage'
 import NotFoundPage from './pages/NotFoundPage'
 
 // Admin pages
@@ -61,6 +62,8 @@ function App() {
                       <Route path="/checkout" element={<CheckoutPage />} />
                       <Route path="/confirmation/:orderNumber" element={<OrderConfirmationPage />} />
                       <Route path="/track/:orderNumber" element={<OrderTrackingPage />} />
+                      <Route path="/support" element={<SupportPage />} />
+                      <Route path="/support/:ticketId" element={<SupportPage />} />
                       <Route path="*" element={<NotFoundPage />} />
                     </Routes>
                   </Box>
