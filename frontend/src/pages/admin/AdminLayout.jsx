@@ -123,6 +123,9 @@ export default function AdminLayout() {
               <SidebarLink to="/admin/customers" icon={FiUsers}>
                 Clients
               </SidebarLink>
+              <SidebarLink to="/admin/delivery" icon={FiTruck}>
+                Livraisons
+              </SidebarLink>
               <SidebarLink to="/admin/analytics" icon={FiTrendingUp}>
                 Analytics
               </SidebarLink>
