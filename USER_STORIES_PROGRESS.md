@@ -1,12 +1,12 @@
 # 📊 Suivi des User Stories - Pause Dej'
 
-> **Dernière mise à jour** : 2025-12-10 (Session complète - Admin Dashboard 100% + Support + Analytics)
-> **Progression globale** : 54/144 User Stories (37.5%)
-> **Infrastructure** : ✅ Supabase entièrement intégré (36 hooks + migrations complètes + RPC functions) | ✅ Stripe paiements fonctionnels | ✅ Admin Dashboard 100% | ✅ Email notifications | ✅ Support client | ✅ Analytics
+> **Dernière mise à jour** : 2025-12-10 (Session complète - Admin 100% + B2B Foundation)
+> **Progression globale** : 58/144 User Stories (40.3%)
+> **Infrastructure** : ✅ Supabase entièrement intégré (40 hooks + migrations complètes + RPC functions) | ✅ Stripe paiements fonctionnels | ✅ Admin Dashboard 100% | ✅ Email notifications | ✅ Support client | ✅ Analytics | ✅ B2B Platform (4/9)
 
 ---
 
-## ✅ User Stories Terminées (54)
+## ✅ User Stories Terminées (58)
 
 ### 🏠 Homepage - Web (5/5)
 | ID | Titre | Statut | Commit |
@@ -120,6 +120,19 @@
 | **N3.1-N3.6** | Push Notifications | ⏳ À faire | - |
 | **N4.1-N4.3** | SMS | ⏳ À faire | - |
 
+### 🏢 B2B Platform (4/9)
+| ID | Titre | Statut | Commit |
+|---|---|---|---|
+| **B2B.1** | Landing Page B2B | ✅ **Terminé** | 932b714 |
+| **B2B.2** | Quote Request System | ✅ **Terminé** | 932b714 |
+| **B2B.3** | B2B Dashboard | ✅ **Terminé** | d577c1a |
+| **B2B.4** | Team Management | ✅ **Terminé** | d577c1a |
+| **B2B.5** | Corporate Packages | ⏳ À faire | - |
+| **B2B.6** | Bulk Ordering | ⏳ À faire | - |
+| **B2B.7** | Invoice Management | ⏳ À faire | - |
+| **B2B.8** | Contract Management | ⏳ À faire | - |
+| **B2B.9** | B2B Analytics | ⏳ À faire | - |
+
 ---
 
 ## 🏗️ Infrastructure & Backend
@@ -148,6 +161,7 @@
 | **useAdminDelivery.js** | 3 hooks | ✅ Terminé | 728d97b |
 | **useOrderDetails.js** | 1 hook | ✅ Terminé | bd8bd45 |
 | **useAdminAnalytics.js** | 1 hook | ✅ Terminé | e6c4ed4 |
+| **useB2BQuotes.js** | 4 hooks | ✅ Terminé | 932b714 |
 | **Migration PopularDishes** | - | ✅ Terminé | 6e6e7bb |
 | **Migration CataloguePage** | - | ✅ Terminé | 6e6e7bb |
 | **Migration AccountPage** | - | ✅ Terminé | Supabase session |
@@ -159,7 +173,7 @@
 
 | **useSupportTickets.js** | 2 hooks | ✅ Terminé | c098f84 |
 
-**Total : 36 hooks + 11 admin functions créés pour toutes les opérations Supabase**
+**Total : 40 hooks + 11 admin functions créés pour toutes les opérations Supabase**
 
 ### Cart & Badge Fixes (Session actuelle)
 | Composant | Issue | Statut | Commits |
@@ -398,6 +412,58 @@
 - ✅ Interface responsive avec Chakra UI
 - ✅ Admin Dashboard maintenant à 100% (15/15 US)
 
+### B2B Platform Implementation (Session 2025-12-10)
+| Composant | Description | Statut | Commits |
+|---|---|---|---|
+| **b2b_quote_requests table** | Table devis B2B avec RLS | ✅ Terminé | 932b714 |
+| **b2b_accounts table** | Comptes entreprise | ✅ Terminé | 932b714 |
+| **b2b_team_members table** | Membres d'équipe | ✅ Terminé | 932b714 |
+| **b2b_packages table** | Packages corporatifs | ✅ Terminé | 932b714 |
+| **b2b_invoices table** | Facturation B2B | ✅ Terminé | 932b714 |
+| **useB2BQuotes Hook** | 4 hooks pour B2B | ✅ Terminé | 932b714 |
+| **B2BPage** | Landing page B2B | ✅ Terminé | 932b714 |
+| **B2BDashboard** | Dashboard entreprise | ✅ Terminé | d577c1a |
+| **Quote Request Form** | Formulaire de devis | ✅ Terminé | 932b714 |
+| **Team Management UI** | Gestion d'équipe | ✅ Terminé | d577c1a |
+
+**Fonctionnalités implémentées** :
+- ✅ B2B Landing Page complète (B2B.1)
+- ✅ Hero section avec value proposition pour entreprises
+- ✅ 6 features cards (tarifs, équipe, planning, etc.)
+- ✅ Bénéfices pour entreprises et collaborateurs
+- ✅ Showcase des packages corporatifs
+- ✅ Social proof avec logos clients
+- ✅ Quote Request System complet (B2B.2)
+- ✅ Formulaire de demande de devis détaillé
+- ✅ Champs: entreprise, contact, taille, budget, fréquence
+- ✅ Validation et soumission à Supabase
+- ✅ Toast notifications pour feedback
+- ✅ B2B Dashboard fonctionnel (B2B.3)
+- ✅ Vue d'ensemble compte corporate
+- ✅ 4 KPIs: membres, budget total, commandes, crédit
+- ✅ 4 tabs: Équipe, Commandes, Facturation, Contrat
+- ✅ Redirection si pas de compte B2B
+- ✅ Team Management complet (B2B.4)
+- ✅ CRUD complet pour membres d'équipe
+- ✅ Modal d'ajout de membre
+- ✅ Budget mensuel par membre
+- ✅ Rôles: admin, manager, member
+- ✅ Activation/désactivation de membres
+- ✅ Table de membres avec statistiques
+- ✅ Database Schema B2B:
+  - 5 tables avec RLS policies
+  - Payment terms (immediate, net15, net30, net60)
+  - Credit limits et discount rates
+  - Invoice generation avec numérotation auto
+  - Trigger pour updated_at timestamps
+- ✅ 4 React hooks:
+  - useB2BQuotes() - gestion devis
+  - useB2BPackages() - packages corporatifs
+  - useB2BAccount() - compte B2B
+  - useB2BTeam() - gestion équipe
+- ✅ Routes: /b2b (landing), /b2b/dashboard
+- ✅ Navigation mise à jour depuis B2BSection
+
 ---
 
 ## 🚧 User Stories En Cours / Préparées
@@ -442,7 +508,7 @@
 | **Fidélité** | 0 | 3 | 0% |
 | **Admin Dashboard** | 15 | 15 | 100% ✅ |
 | **Notifications** | 4 | 15 | 27% |
-| **B2B** | 0 | 9 | 0% |
+| **B2B** | 4 | 9 | 44% |
 
 ---
 
@@ -482,8 +548,11 @@
 | 30 | c098f84 | Implement support ticket system | 1 US (M7.3) |
 | 31 | df1852e | Update progress with support ticket system | Documentation |
 | 32 | e6c4ed4 | Implement Admin Analytics page | 1 US (A6.x) |
+| 33 | 5b694ee | Update progress with Admin Analytics | Documentation |
+| 34 | 932b714 | Implement B2B landing and quote system | 2 US (B2B.1, B2B.2) |
+| 35 | d577c1a | Implement B2B Dashboard and team management | 2 US (B2B.3, B2B.4) |
 
-**Total** : 54 User Stories + Infrastructure complète
+**Total** : 58 User Stories + Infrastructure complète
 
 ---
 
