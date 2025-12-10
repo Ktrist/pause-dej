@@ -21,6 +21,7 @@ import AdminLayout from './pages/admin/AdminLayout'
 import AdminDashboard from './pages/admin/AdminDashboard'
 import AdminOrders from './pages/admin/AdminOrders'
 import AdminDishes from './pages/admin/AdminDishes'
+import AdminCustomers from './pages/admin/AdminCustomers'
 
 function App() {
   return (
@@ -34,6 +35,7 @@ function App() {
               <Route path="dashboard" element={<AdminDashboard />} />
               <Route path="orders" element={<AdminOrders />} />
               <Route path="dishes" element={<AdminDishes />} />
+              <Route path="customers" element={<AdminCustomers />} />
               {/* Additional admin routes will be added here */}
             </Route>
 
