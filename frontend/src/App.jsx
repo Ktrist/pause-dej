@@ -16,30 +16,53 @@ import OrderConfirmationPage from './pages/OrderConfirmationPage'
 import OrderTrackingPage from './pages/OrderTrackingPage'
 import NotFoundPage from './pages/NotFoundPage'
 
+// Admin pages
+import AdminLayout from './pages/admin/AdminLayout'
+import AdminDashboard from './pages/admin/AdminDashboard'
+import AdminOrders from './pages/admin/AdminOrders'
+import AdminDishes from './pages/admin/AdminDishes'
+
 function App() {
   return (
     <Router>
       <AuthProvider>
         <CartProvider>
-          <Box minH="100vh" display="flex" flexDirection="column">
-            <Header />
-            <Box flex="1">
-              <Routes>
-                <Route path="/" element={<HomePage />} />
-                <Route path="/catalogue" element={<CataloguePage />} />
-                <Route path="/panier" element={<CartPage />} />
-                <Route path="/compte" element={<AccountPage />} />
-                <Route path="/login" element={<LoginPage />} />
-                <Route path="/signup" element={<SignupPage />} />
-                <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-                <Route path="/checkout" element={<CheckoutPage />} />
-                <Route path="/confirmation/:orderNumber" element={<OrderConfirmationPage />} />
-                <Route path="/track/:orderNumber" element={<OrderTrackingPage />} />
-                <Route path="*" element={<NotFoundPage />} />
-              </Routes>
-            </Box>
-            <Footer />
-          </Box>
+          <Routes>
+            {/* Admin Routes - No Header/Footer */}
+            <Route path="/admin" element={<AdminLayout />}>
+              <Route index element={<AdminDashboard />} />
+              <Route path="dashboard" element={<AdminDashboard />} />
+              <Route path="orders" element={<AdminOrders />} />
+              <Route path="dishes" element={<AdminDishes />} />
+              {/* Additional admin routes will be added here */}
+            </Route>
+
+            {/* Public Routes - With Header/Footer */}
+            <Route
+              path="*"
+              element={
+                <Box minH="100vh" display="flex" flexDirection="column">
+                  <Header />
+                  <Box flex="1">
+                    <Routes>
+                      <Route path="/" element={<HomePage />} />
+                      <Route path="/catalogue" element={<CataloguePage />} />
+                      <Route path="/panier" element={<CartPage />} />
+                      <Route path="/compte" element={<AccountPage />} />
+                      <Route path="/login" element={<LoginPage />} />
+                      <Route path="/signup" element={<SignupPage />} />
+                      <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+                      <Route path="/checkout" element={<CheckoutPage />} />
+                      <Route path="/confirmation/:orderNumber" element={<OrderConfirmationPage />} />
+                      <Route path="/track/:orderNumber" element={<OrderTrackingPage />} />
+                      <Route path="*" element={<NotFoundPage />} />
+                    </Routes>
+                  </Box>
+                  <Footer />
+                </Box>
+              }
+            />
+          </Routes>
         </CartProvider>
       </AuthProvider>
     </Router>
