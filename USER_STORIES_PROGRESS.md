@@ -1,21 +1,21 @@
 # 📊 Suivi des User Stories - Pause Dej'
 
-> **Dernière mise à jour** : 2025-12-10 (Session Email Notifications complète)
-> **Progression globale** : 44/144 User Stories (30.6%)
+> **Dernière mise à jour** : 2025-12-10 (Session complète - Admin + Emails + B2B)
+> **Progression globale** : 45/144 User Stories (31.3%)
 > **Infrastructure** : ✅ Supabase entièrement intégré (27 hooks + migrations complètes + RPC functions) | ✅ Stripe paiements fonctionnels | ✅ Admin Dashboard opérationnel | ✅ Email notifications avec Resend
 
 ---
 
-## ✅ User Stories Terminées (44)
+## ✅ User Stories Terminées (45)
 
-### 🏠 Homepage - Web (4/5)
+### 🏠 Homepage - Web (5/5)
 | ID | Titre | Statut | Commit |
 |---|---|---|---|
 | **W1.1** | Hero section | ✅ **Terminé** | bd93fc8 |
 | **W1.2** | Comment ça marche | ✅ **Terminé** | bd93fc8 |
 | **W1.3** | Plats populaires | ✅ **Terminé** | bd93fc8 |
 | **W1.4** | Avis clients | ✅ **Terminé** | bd93fc8 |
-| **W1.5** | Section B2B | ⏳ À faire | - |
+| **W1.5** | Section B2B | ✅ **Terminé** | 1f064ba |
 
 ### 🧭 Navigation - Mobile/Web (2/3)
 | ID | Titre | Statut | Commit |
@@ -277,7 +277,7 @@
 
 | Epic | Terminées | Total | % Complétion |
 |---|---|---|---|
-| **Homepage (Web)** | 4 | 5 | 80% |
+| **Homepage (Web)** | 5 | 5 | 100% ✅ |
 | **Navigation** | 2 | 3 | 67% |
 | **Catalogue (Web)** | 4 | 4 | 100% ✅ |
 | **Panier** | 6 | 6 | 100% ✅ |
@@ -317,8 +317,10 @@
 | 18 | 40f2a63 | Admin Dashboard complete implementation | 8 US (A1.1, A1.2, A2.1-A2.4, A3.1-A3.3) |
 | 19 | 774f415 | Update progress with Admin Dashboard | Documentation |
 | 20 | d20ae71 | Email notification system with Resend | 4 US (N1.2-N1.5) |
+| 21 | 2879e7e | Update progress with email notifications | Documentation |
+| 22 | 1f064ba | Add B2B section to homepage | 1 US (W1.5) |
 
-**Total** : 44 User Stories + Infrastructure complète
+**Total** : 45 User Stories + Infrastructure complète
 
 ---
 
