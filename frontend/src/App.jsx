@@ -20,6 +20,7 @@ import NotFoundPage from './pages/NotFoundPage'
 import AdminLayout from './pages/admin/AdminLayout'
 import AdminDashboard from './pages/admin/AdminDashboard'
 import AdminOrders from './pages/admin/AdminOrders'
+import AdminOrderDetail from './pages/admin/AdminOrderDetail'
 import AdminDishes from './pages/admin/AdminDishes'
 import AdminCustomers from './pages/admin/AdminCustomers'
 import AdminDelivery from './pages/admin/AdminDelivery'
@@ -35,6 +36,7 @@ function App() {
               <Route index element={<AdminDashboard />} />
               <Route path="dashboard" element={<AdminDashboard />} />
               <Route path="orders" element={<AdminOrders />} />
+              <Route path="orders/:orderId" element={<AdminOrderDetail />} />
               <Route path="dishes" element={<AdminDishes />} />
               <Route path="customers" element={<AdminCustomers />} />
               <Route path="delivery" element={<AdminDelivery />} />
