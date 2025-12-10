@@ -1,12 +1,12 @@
 # 📊 Suivi des User Stories - Pause Dej'
 
-> **Dernière mise à jour** : 2025-12-10 (Session complète - Admin + Emails + B2B)
-> **Progression globale** : 45/144 User Stories (31.3%)
-> **Infrastructure** : ✅ Supabase entièrement intégré (27 hooks + migrations complètes + RPC functions) | ✅ Stripe paiements fonctionnels | ✅ Admin Dashboard opérationnel | ✅ Email notifications avec Resend
+> **Dernière mise à jour** : 2025-12-10 (Session complète - Admin + Emails + B2B + Favoris)
+> **Progression globale** : 46/144 User Stories (31.9%)
+> **Infrastructure** : ✅ Supabase entièrement intégré (28 hooks + migrations complètes + RPC functions) | ✅ Stripe paiements fonctionnels | ✅ Admin Dashboard opérationnel | ✅ Email notifications avec Resend
 
 ---
 
-## ✅ User Stories Terminées (45)
+## ✅ User Stories Terminées (46)
 
 ### 🏠 Homepage - Web (5/5)
 | ID | Titre | Statut | Commit |
@@ -77,6 +77,13 @@
 | **M7.2** | Notifications push | ⏳ À faire | - |
 | **M7.3** | Contact support | ⏳ À faire | - |
 
+### ❤️ Favoris & Préférences - Mobile/Web (1/3)
+| ID | Titre | Statut | Commit |
+|---|---|---|---|
+| **M9.1** | Plats favoris | ✅ **Terminé** | 2e46d32 |
+| **M9.2** | Préférences alimentaires | ⏳ À faire | - |
+| **M9.3** | Suggestions personnalisées | ⏳ À faire | - |
+
 ### 🔧 Admin Dashboard (8/15)
 | ID | Titre | Statut | Commit |
 |---|---|---|---|
@@ -132,6 +139,7 @@
 | **useAddresses.js** | 6 hooks | ✅ Terminé | 35f3fb4 |
 | **useOrders.js** | 6 hooks | ✅ Terminé | 35f3fb4 |
 | **usePromoCodes.js** | 6 hooks | ✅ Terminé | 35f3fb4 |
+| **useFavorites.js** | 5 hooks | ✅ Terminé | 2e46d32 |
 | **useAdminStats.js** | 2 hooks | ✅ Terminé | 40f2a63 |
 | **useAdminDishes.js** | 8 functions | ✅ Terminé | 40f2a63 |
 | **useAdminOrders.js** | 3 functions | ✅ Terminé | 40f2a63 |
@@ -144,7 +152,7 @@
 | **Integration Guide** | - | ✅ Terminé | ffbcc6f |
 | **Hooks Reference** | - | ✅ Terminé | SUPABASE_HOOKS_REFERENCE.md |
 
-**Total : 27 hooks + 11 admin functions créés pour toutes les opérations Supabase**
+**Total : 28 hooks + 11 admin functions créés pour toutes les opérations Supabase**
 
 ### Cart & Badge Fixes (Session actuelle)
 | Composant | Issue | Statut | Commits |
@@ -246,6 +254,25 @@
 - ✅ Gestion d'erreurs non-bloquante
 - ✅ Documentation complète de configuration
 
+### Favorites Feature Implementation (Session 2025-12-10)
+| Composant | Description | Statut | Commits |
+|---|---|---|---|
+| **favorites table** | Database table with RLS policies | ✅ Terminé | 2e46d32 |
+| **useFavorites Hook** | React hook for managing favorites | ✅ Terminé | 2e46d32 |
+| **DishCard Heart Button** | Favorite toggle on dish cards | ✅ Terminé | 2e46d32 |
+| **Account Favorites Tab** | Display user favorites in account | ✅ Terminé | 2e46d32 |
+| **Migration add_favorites_table** | SQL migration for favorites table | ✅ Terminé | 2e46d32 |
+
+**Fonctionnalités implémentées** :
+- ✅ Table favorites avec contrainte unique (user_id + dish_id)
+- ✅ RLS policies pour accès user-scoped sécurisé
+- ✅ useFavorites hook avec 5 méthodes (isFavorite, addFavorite, removeFavorite, toggleFavorite, useDishFavoriteCount)
+- ✅ Bouton cœur sur toutes les DishCards avec état visuel
+- ✅ Onglet Favoris dans la page Account avec grille de plats
+- ✅ État vide et gestion des erreurs
+- ✅ Optimistic UI updates avec synchronisation serveur
+- ✅ Toast notifications pour feedback utilisateur
+
 ---
 
 ## 🚧 User Stories En Cours / Préparées
@@ -266,9 +293,9 @@
 6. ~~**Stripe Integration (M6.4)**~~ - ✅ **Terminé !** (Edge Function + Tests réussis)
 7. ~~**Admin Dashboard (A1.x, A2.x, A3.x)**~~ - ✅ **Terminé !** (KPIs, Gestion plats & commandes)
 8. ~~**Notifications Email (N1.2-N1.5)**~~ - ✅ **Terminé !** (Resend integration + 5 templates)
-9. **Section B2B Homepage** (W1.5) - 🔴 **PROCHAINE PRIORITÉ** - Marketing B2B
-10. **Plats Favoris** (M9.1) - Fonctionnalité utilisateur
-11. **Admin Analytics** (A4.x, A5.x) - Gestion clients & livraisons
+9. ~~**Section B2B Homepage (W1.5)**~~ - ✅ **Terminé !** (Marketing B2B complet)
+10. ~~**Plats Favoris (M9.1)**~~ - ✅ **Terminé !** (Table + hook + UI complète)
+11. **Admin Analytics** (A4.x, A5.x) - 🔴 **PROCHAINE PRIORITÉ** - Gestion clients & livraisons
 12. **Push Notifications** (M7.2) - Notifications mobiles
 
 ---
@@ -285,7 +312,7 @@
 | **Compte Utilisateur** | 5 | 5 | 100% ✅ |
 | **Checkout** | 6 | 6 | 100% ✅ |
 | **Suivi Commande** | 1 | 3 | 33% |
-| **Favoris & Préférences** | 0 | 3 | 0% |
+| **Favoris & Préférences** | 1 | 3 | 33% |
 | **Fidélité** | 0 | 3 | 0% |
 | **Admin Dashboard** | 8 | 15 | 53% |
 | **Notifications** | 4 | 15 | 27% |
@@ -319,8 +346,10 @@
 | 20 | d20ae71 | Email notification system with Resend | 4 US (N1.2-N1.5) |
 | 21 | 2879e7e | Update progress with email notifications | Documentation |
 | 22 | 1f064ba | Add B2B section to homepage | 1 US (W1.5) |
+| 23 | 5ef6ae4 | Update progress with B2B section | Documentation |
+| 24 | 2e46d32 | Implement favorites feature | 1 US (M9.1) |
 
-**Total** : 45 User Stories + Infrastructure complète
+**Total** : 46 User Stories + Infrastructure complète
 
 ---
 
