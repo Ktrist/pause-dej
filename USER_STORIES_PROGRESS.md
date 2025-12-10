@@ -1,12 +1,12 @@
 # 📊 Suivi des User Stories - Pause Dej'
 
-> **Dernière mise à jour** : 2025-12-10 (Session Stripe + Admin Dashboard)
-> **Progression globale** : 32/144 User Stories (22.2%)
-> **Infrastructure** : ✅ Supabase entièrement intégré (24 hooks + migrations complètes + RPC functions) | ✅ Stripe paiements fonctionnels
+> **Dernière mise à jour** : 2025-12-10 (Session Admin Dashboard complète)
+> **Progression globale** : 40/144 User Stories (27.8%)
+> **Infrastructure** : ✅ Supabase entièrement intégré (27 hooks + migrations complètes + RPC functions) | ✅ Stripe paiements fonctionnels | ✅ Admin Dashboard opérationnel
 
 ---
 
-## ✅ User Stories Terminées (31)
+## ✅ User Stories Terminées (40)
 
 ### 🏠 Homepage - Web (4/5)
 | ID | Titre | Statut | Commit |
@@ -77,6 +77,25 @@
 | **M7.2** | Notifications push | ⏳ À faire | - |
 | **M7.3** | Contact support | ⏳ À faire | - |
 
+### 🔧 Admin Dashboard (8/15)
+| ID | Titre | Statut | Commit |
+|---|---|---|---|
+| **A1.1** | KPIs temps réel | ✅ **Terminé** | 40f2a63 |
+| **A1.2** | Live Commandes | ✅ **Terminé** | 40f2a63 |
+| **A2.1** | Créer plat | ✅ **Terminé** | 40f2a63 |
+| **A2.2** | Gérer stock | ✅ **Terminé** | 40f2a63 |
+| **A2.3** | Toggle dispo | ✅ **Terminé** | 40f2a63 |
+| **A2.4** | Menu du jour | ✅ **Terminé** | 40f2a63 |
+| **A3.1** | Vue Cuisine | ✅ **Terminé** | 40f2a63 |
+| **A3.2** | Changement statut | ✅ **Terminé** | 40f2a63 |
+| **A3.3** | Annuler/Refund | ✅ **Terminé** | 40f2a63 |
+| **A3.4** | Détail Commande | ⏳ À faire | - |
+| **A4.1** | Planifier tournées | ⏳ À faire | - |
+| **A4.2** | Gérer créneaux | ⏳ À faire | - |
+| **A4.3** | Gérer zones | ⏳ À faire | - |
+| **A5.1** | Liste clients | ⏳ À faire | - |
+| **A5.2** | Détail client | ⏳ À faire | - |
+
 ---
 
 ## 🏗️ Infrastructure & Backend
@@ -97,6 +116,9 @@
 | **useAddresses.js** | 6 hooks | ✅ Terminé | 35f3fb4 |
 | **useOrders.js** | 6 hooks | ✅ Terminé | 35f3fb4 |
 | **usePromoCodes.js** | 6 hooks | ✅ Terminé | 35f3fb4 |
+| **useAdminStats.js** | 2 hooks | ✅ Terminé | 40f2a63 |
+| **useAdminDishes.js** | 8 functions | ✅ Terminé | 40f2a63 |
+| **useAdminOrders.js** | 3 functions | ✅ Terminé | 40f2a63 |
 | **Migration PopularDishes** | - | ✅ Terminé | 6e6e7bb |
 | **Migration CataloguePage** | - | ✅ Terminé | 6e6e7bb |
 | **Migration AccountPage** | - | ✅ Terminé | Supabase session |
@@ -106,7 +128,7 @@
 | **Integration Guide** | - | ✅ Terminé | ffbcc6f |
 | **Hooks Reference** | - | ✅ Terminé | SUPABASE_HOOKS_REFERENCE.md |
 
-**Total : 24 hooks personnalisés créés pour toutes les opérations Supabase**
+**Total : 27 hooks + 11 admin functions créés pour toutes les opérations Supabase**
 
 ### Cart & Badge Fixes (Session actuelle)
 | Composant | Issue | Statut | Commits |
@@ -163,6 +185,29 @@
 - ✅ Commandes créées dans Supabase après paiement
 - ✅ Redirection vers page de confirmation fonctionnelle
 
+### Admin Dashboard (Session 2025-12-10)
+| Composant | Description | Statut | Commits |
+|---|---|---|---|
+| **AdminLayout** | Sidebar navigation + layout | ✅ Terminé | 40f2a63 |
+| **AdminDashboard** | KPIs + Live orders (A1.1, A1.2) | ✅ Terminé | 40f2a63 |
+| **AdminDishes** | CRUD plats + stock (A2.1-A2.4) | ✅ Terminé | 40f2a63 |
+| **AdminOrders** | Vue cuisine + statuts (A3.1-A3.3) | ✅ Terminé | 40f2a63 |
+| **useAdminStats** | Hook stats temps réel | ✅ Terminé | 40f2a63 |
+| **useAdminDishes** | Hook gestion plats | ✅ Terminé | 40f2a63 |
+| **useAdminOrders** | Hook gestion commandes | ✅ Terminé | 40f2a63 |
+| **Real-time Updates** | Subscriptions Supabase | ✅ Terminé | 40f2a63 |
+
+**Fonctionnalités implémentées** :
+- ✅ Dashboard avec KPIs en temps réel (CA, commandes, statuts)
+- ✅ Alertes de stock faible automatiques
+- ✅ Gestion complète des plats (CRUD, images, stock, prix)
+- ✅ Toggle disponibilité et plats featured
+- ✅ Vue cuisine optimisée avec groupement des items
+- ✅ Workflow de statuts des commandes (6 étapes)
+- ✅ Annulation de commandes avec motif
+- ✅ Auto-refresh toutes les 30s pour données en direct
+- ✅ Interface responsive avec Chakra UI
+
 ---
 
 ## 🚧 User Stories En Cours / Préparées
@@ -181,9 +226,10 @@
 4. ~~**Page Confirmation Commande**~~ - ✅ **Terminé !** (Migration Supabase + tracking link)
 5. ~~**Suivi commandes (M7.1)**~~ - ✅ **Terminé !** (Page tracking + navigation complète)
 6. ~~**Stripe Integration (M6.4)**~~ - ✅ **Terminé !** (Edge Function + Tests réussis)
-7. **Admin Dashboard** (A1.x, A2.x, A3.x) - 🔴 **EN COURS** - Gestion commandes & produits
-8. **Push Notifications** (M7.2) - Notifications de statut
-9. **Notifications Email** (N1.x) - Emails transactionnels
+7. ~~**Admin Dashboard (A1.x, A2.x, A3.x)**~~ - ✅ **Terminé !** (KPIs, Gestion plats & commandes)
+8. **Notifications Email** (N1.x) - 🔴 **PROCHAINE PRIORITÉ** - Emails transactionnels
+9. **Admin Analytics** (A4.x, A5.x) - Gestion clients & livraisons
+10. **Push Notifications** (M7.2) - Notifications mobiles
 
 ---
 
@@ -201,7 +247,7 @@
 | **Suivi Commande** | 1 | 3 | 33% |
 | **Favoris & Préférences** | 0 | 3 | 0% |
 | **Fidélité** | 0 | 3 | 0% |
-| **Admin Dashboard** | 0 | 15 | 0% |
+| **Admin Dashboard** | 8 | 15 | 53% |
 | **Notifications** | 0 | 15 | 0% |
 | **B2B** | 0 | 9 | 0% |
 
@@ -227,8 +273,10 @@
 | 14 | 087c928 | Stripe payment integration (frontend) | Infrastructure |
 | 15 | ca48eb6 | Stripe backend + Edge Function | 1 US (M6.4) |
 | 16 | e3dd4ea | Fix redirect to confirmation page | Infrastructure |
+| 17 | aa63933 | Update progress with Stripe integration | Documentation |
+| 18 | 40f2a63 | Admin Dashboard complete implementation | 8 US (A1.1, A1.2, A2.1-A2.4, A3.1-A3.3) |
 
-**Total** : 32 User Stories + Infrastructure complète
+**Total** : 40 User Stories + Infrastructure complète
 
 ---
 
