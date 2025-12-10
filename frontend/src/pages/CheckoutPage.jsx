@@ -119,8 +119,6 @@ function CheckoutPageContent() {
 
   const handlePlaceOrder = async () => {
     try {
-      console.log('🔍 DEBUG - Starting order placement')
-
       // Set flag to prevent cart empty redirect
       setIsPlacingOrder(true)
 
@@ -158,8 +156,6 @@ function CheckoutPageContent() {
         subtotal: item.price * item.quantity
       }))
 
-      console.log('🔍 DEBUG - Creating order in Supabase')
-
       // Create order in Supabase
       const { data: order, error } = await createOrder(orderData, orderItems)
 
@@ -167,12 +163,8 @@ function CheckoutPageContent() {
         throw new Error(error)
       }
 
-      console.log('🔍 DEBUG - Order created:', order)
-      console.log('🔍 DEBUG - Order number:', order.order_number)
-
       // Clear cart
       clearCart()
-      console.log('🔍 DEBUG - Cart cleared')
 
       // Show success
       toast({
@@ -182,8 +174,6 @@ function CheckoutPageContent() {
         duration: 5000,
         isClosable: true
       })
-
-      console.log('🔍 DEBUG - Navigating to confirmation page:', `/confirmation/${order.order_number}`)
 
       // Redirect to confirmation page
       navigate(`/confirmation/${order.order_number}`)
