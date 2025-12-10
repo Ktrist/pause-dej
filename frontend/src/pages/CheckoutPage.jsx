@@ -61,6 +61,7 @@ function CheckoutPageContent() {
   const [selectedAddress, setSelectedAddress] = useState(null)
   const [selectedTimeSlot, setSelectedTimeSlot] = useState(null)
   const [appliedPromo, setAppliedPromo] = useState(location.state?.appliedPromo || null)
+  const [isPlacingOrder, setIsPlacingOrder] = useState(false)
 
   // Redirect if not authenticated
   useEffect(() => {
@@ -75,9 +76,9 @@ function CheckoutPageContent() {
     }
   }, [user, authLoading, navigate, toast])
 
-  // Redirect if cart is empty
+  // Redirect if cart is empty (but not during order placement)
   useEffect(() => {
-    if (cart.length === 0) {
+    if (cart.length === 0 && !isPlacingOrder) {
       toast({
         title: 'Panier vide',
         description: 'Ajoutez des plats avant de commander',
@@ -86,7 +87,7 @@ function CheckoutPageContent() {
       })
       navigate('/catalogue')
     }
-  }, [cart, navigate, toast])
+  }, [cart, navigate, toast, isPlacingOrder])
 
   const handleNext = () => {
     if (activeStep === 0 && !selectedAddress) {
@@ -118,6 +119,11 @@ function CheckoutPageContent() {
 
   const handlePlaceOrder = async () => {
     try {
+      console.log('🔍 DEBUG - Starting order placement')
+
+      // Set flag to prevent cart empty redirect
+      setIsPlacingOrder(true)
+
       // Calculate totals
       const subtotal = getCartTotal()
       const deliveryFee = subtotal >= 30 ? 0 : 3.90
@@ -152,6 +158,8 @@ function CheckoutPageContent() {
         subtotal: item.price * item.quantity
       }))
 
+      console.log('🔍 DEBUG - Creating order in Supabase')
+
       // Create order in Supabase
       const { data: order, error } = await createOrder(orderData, orderItems)
 
@@ -159,8 +167,12 @@ function CheckoutPageContent() {
         throw new Error(error)
       }
 
+      console.log('🔍 DEBUG - Order created:', order)
+      console.log('🔍 DEBUG - Order number:', order.order_number)
+
       // Clear cart
       clearCart()
+      console.log('🔍 DEBUG - Cart cleared')
 
       // Show success
       toast({
@@ -171,10 +183,13 @@ function CheckoutPageContent() {
         isClosable: true
       })
 
+      console.log('🔍 DEBUG - Navigating to confirmation page:', `/confirmation/${order.order_number}`)
+
       // Redirect to confirmation page
       navigate(`/confirmation/${order.order_number}`)
     } catch (error) {
       console.error('Order error:', error)
+      setIsPlacingOrder(false) // Reset flag on error
       toast({
         title: 'Erreur',
         description: error.message || 'Une erreur est survenue lors de la commande',
