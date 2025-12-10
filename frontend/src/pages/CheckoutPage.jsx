@@ -29,6 +29,7 @@ import { useCart } from '../context/CartContext'
 import { useAuth } from '../context/AuthContext'
 import { useCreateOrder } from '../hooks/useOrders'
 import { calculateDiscount } from '../hooks/usePromoCodes'
+import { useEmail } from '../hooks/useEmail'
 import AddressSelector from '../components/checkout/AddressSelector'
 import TimeSlotSelector from '../components/checkout/TimeSlotSelector'
 import OrderSummary from '../components/checkout/OrderSummary'
@@ -52,6 +53,7 @@ function CheckoutPageContent() {
   const navigate = useNavigate()
   const toast = useToast()
   const { createOrder, loading: creatingOrder } = useCreateOrder()
+  const { sendOrderConfirmation } = useEmail()
 
   const { activeStep, setActiveStep } = useSteps({
     index: 0,
@@ -161,6 +163,16 @@ function CheckoutPageContent() {
 
       if (error) {
         throw new Error(error)
+      }
+
+      // Send confirmation email (N1.2)
+      if (user.email) {
+        try {
+          await sendOrderConfirmation(order, user.email)
+        } catch (emailError) {
+          console.error('Failed to send confirmation email:', emailError)
+          // Don't block user flow if email fails
+        }
       }
 
       // Clear cart

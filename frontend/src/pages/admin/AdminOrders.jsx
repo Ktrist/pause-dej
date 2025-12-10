@@ -46,6 +46,7 @@ import {
 } from 'react-icons/fi'
 import { useNavigate } from 'react-router-dom'
 import { useAdminOrders } from '../../hooks/useAdminOrders'
+import { useEmail } from '../../hooks/useEmail'
 
 const ORDER_STATUSES = {
   pending: { label: 'En attente', color: 'yellow', next: 'preparing' },
@@ -240,6 +241,12 @@ export default function AdminOrders() {
   const [selectedOrder, setSelectedOrder] = useState(null)
   const toast = useToast()
   const navigate = useNavigate()
+  const {
+    sendOrderPreparing,
+    sendOrderInTransit,
+    sendOrderDelivered,
+    sendOrderCancelled
+  } = useEmail()
 
   const handleStatusChange = async (orderId, newStatus) => {
     const { error } = await updateOrderStatus(orderId, newStatus)
@@ -258,6 +265,23 @@ export default function AdminOrders() {
         status: 'success',
         duration: 3000
       })
+
+      // Send email based on new status
+      const order = orders.find(o => o.id === orderId)
+      if (order && order.users?.email) {
+        try {
+          if (newStatus === 'preparing') {
+            await sendOrderPreparing(order, order.users.email)
+          } else if (newStatus === 'in_transit') {
+            await sendOrderInTransit(order, order.users.email)
+          } else if (newStatus === 'delivered') {
+            await sendOrderDelivered(order, order.users.email)
+          }
+        } catch (emailError) {
+          console.error('Failed to send email:', emailError)
+          // Don't show error to admin - email is secondary
+        }
+      }
     }
   }
 
@@ -282,6 +306,16 @@ export default function AdminOrders() {
         status: 'success',
         duration: 3000
       })
+
+      // Send cancellation email
+      const order = orders.find(o => o.id === orderId)
+      if (order && order.users?.email) {
+        try {
+          await sendOrderCancelled(order, order.users.email, reason)
+        } catch (emailError) {
+          console.error('Failed to send cancellation email:', emailError)
+        }
+      }
     }
   }
 
