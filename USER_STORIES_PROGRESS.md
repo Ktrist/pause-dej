@@ -1,8 +1,8 @@
 # 📊 Suivi des User Stories - Pause Dej'
 
-> **Dernière mise à jour** : 2025-12-08 (Session suivi commandes + codes promo)
-> **Progression globale** : 31/144 User Stories (21.5%)
-> **Infrastructure** : ✅ Supabase entièrement intégré (24 hooks + migrations complètes + RPC functions)
+> **Dernière mise à jour** : 2025-12-10 (Session Stripe + Admin Dashboard)
+> **Progression globale** : 32/144 User Stories (22.2%)
+> **Infrastructure** : ✅ Supabase entièrement intégré (24 hooks + migrations complètes + RPC functions) | ✅ Stripe paiements fonctionnels
 
 ---
 
@@ -60,14 +60,15 @@
 | **M8.4** | Moyens de paiement | ✅ **Terminé** | b4aa02d (UI ready) |
 | **M8.5** | Déconnexion | ✅ **Terminé** | b4aa02d |
 
-### 💳 Checkout - Mobile/Web (5/5)
+### 💳 Checkout - Mobile/Web (6/6)
 | ID | Titre | Statut | Commit |
 |---|---|---|---|
 | **M6.1** | Choix adresse livraison | ✅ **Terminé** | 2a09e29 |
 | **M6.2** | Choix créneau horaire | ✅ **Terminé** | 2a09e29 |
 | **M6.3** | Apple Pay / Google Pay | 🟡 **Préparé** | 2a09e29 (UI ready) |
-| **M6.4** | Paiement carte bancaire | 🟡 **Préparé** | 2a09e29 (Stripe ready) |
+| **M6.4** | Paiement carte bancaire | ✅ **Terminé** | 087c928, ca48eb6, e3dd4ea |
 | **M6.5** | Confirmation commande | ✅ **Terminé** | 2a09e29 |
+| **W3.2** | Checkout étapes | ✅ **Terminé** | 2a09e29 |
 
 ### 📦 Suivi Commande - Mobile/Web (1/3)
 | ID | Titre | Statut | Commit |
@@ -137,7 +138,7 @@
 - ✅ Auto-refresh pour suivre les changements de statut
 - ✅ Navigation intuitive depuis toutes les pages concernées
 
-### Stripe Payment Integration (Session actuelle)
+### Stripe Payment Integration (Session 2025-12-10)
 | Composant | Description | Statut | Commits |
 |---|---|---|---|
 | **Stripe Client** | Configuration et initialisation | ✅ Terminé | 087c928 |
@@ -146,17 +147,21 @@
 | **OrderSummary Promo** | Affichage réductions | ✅ Terminé | 087c928 |
 | **.env.example** | Variables d'environnement | ✅ Terminé | 087c928 |
 | **STRIPE_SETUP.md** | Guide complet setup | ✅ Terminé | 087c928 |
-| **Edge Function Backend** | Création Payment Intent | ⏳ À faire | - |
-| **Webhook Configuration** | Confirmations paiement | ⏳ À faire | - |
+| **Edge Function Backend** | Création Payment Intent | ✅ Terminé | ca48eb6 |
+| **Stripe Secret Configuration** | Configuration Supabase | ✅ Terminé | ca48eb6 |
+| **RLS Policies Fix** | order_items policies | ✅ Terminé | ca48eb6 |
+| **Redirect Fix** | Confirmation page redirect | ✅ Terminé | e3dd4ea |
+| **Production Tests** | Tests avec compte réel | ✅ Terminé | ca48eb6 |
 
-**Frontend ready, backend required** :
+**Intégration complète fonctionnelle** :
 - ✅ Interface de paiement Stripe Elements complète
 - ✅ Gestion des erreurs et états de chargement
 - ✅ Affichage des réductions dans le récapitulatif
-- ✅ Documentation complète avec instructions étape par étape
-- ⏳ Nécessite création Supabase Edge Function (voir STRIPE_SETUP.md)
-- ⏳ Nécessite configuration des clés API Stripe
-- ⏳ Nécessite tests avec compte Stripe réel
+- ✅ Supabase Edge Function déployée (create-payment-intent)
+- ✅ Configuration Stripe API keys (test mode)
+- ✅ Tests avec compte Stripe réel réussis
+- ✅ Commandes créées dans Supabase après paiement
+- ✅ Redirection vers page de confirmation fonctionnelle
 
 ---
 
@@ -175,9 +180,9 @@
 3. ~~**Migrer Checkout**~~ - ✅ **Terminé !** (useCreateOrder intégré, vraies commandes créées)
 4. ~~**Page Confirmation Commande**~~ - ✅ **Terminé !** (Migration Supabase + tracking link)
 5. ~~**Suivi commandes (M7.1)**~~ - ✅ **Terminé !** (Page tracking + navigation complète)
-6. **Stripe Integration** (M6.3, M6.4) - Paiements réels
-7. **Push Notifications** (M7.2) - Notifications de statut
-8. **Admin Dashboard** (A2.x) - Gestion produits
+6. ~~**Stripe Integration (M6.4)**~~ - ✅ **Terminé !** (Edge Function + Tests réussis)
+7. **Admin Dashboard** (A1.x, A2.x, A3.x) - 🔴 **EN COURS** - Gestion commandes & produits
+8. **Push Notifications** (M7.2) - Notifications de statut
 9. **Notifications Email** (N1.x) - Emails transactionnels
 
 ---
@@ -192,7 +197,7 @@
 | **Panier** | 6 | 6 | 100% ✅ |
 | **Authentification** | 3 | 5 | 60% |
 | **Compte Utilisateur** | 5 | 5 | 100% ✅ |
-| **Checkout** | 5 | 5 | 100% ✅ |
+| **Checkout** | 6 | 6 | 100% ✅ |
 | **Suivi Commande** | 1 | 3 | 33% |
 | **Favoris & Préférences** | 0 | 3 | 0% |
 | **Fidélité** | 0 | 3 | 0% |
@@ -220,10 +225,10 @@
 | 12 | 880dd3b | Tracking navigation | Infrastructure |
 | 13 | fade1f4 | Update USER_STORIES_PROGRESS | Documentation |
 | 14 | 087c928 | Stripe payment integration (frontend) | Infrastructure |
+| 15 | ca48eb6 | Stripe backend + Edge Function | 1 US (M6.4) |
+| 16 | e3dd4ea | Fix redirect to confirmation page | Infrastructure |
 
-**Total** : 31 User Stories + Infrastructure complète
-
-**Note** : M6.4 (Paiement CB) est en cours - frontend ✅, backend ⏳
+**Total** : 32 User Stories + Infrastructure complète
 
 ---
 
