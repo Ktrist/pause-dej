@@ -1,12 +1,12 @@
 # 📊 Suivi des User Stories - Pause Dej'
 
-> **Dernière mise à jour** : 2025-12-10 (Session complète - Admin + Emails + B2B + Favoris + Analytics)
-> **Progression globale** : 51/144 User Stories (35.4%)
-> **Infrastructure** : ✅ Supabase entièrement intégré (33 hooks + migrations complètes + RPC functions) | ✅ Stripe paiements fonctionnels | ✅ Admin Dashboard complet | ✅ Email notifications avec Resend | ✅ Gestion livraisons
+> **Dernière mise à jour** : 2025-12-10 (Session complète - Admin Dashboard 93%)
+> **Progression globale** : 52/144 User Stories (36.1%)
+> **Infrastructure** : ✅ Supabase entièrement intégré (34 hooks + migrations complètes + RPC functions) | ✅ Stripe paiements fonctionnels | ✅ Admin Dashboard 93% | ✅ Email notifications avec Resend | ✅ Gestion livraisons
 
 ---
 
-## ✅ User Stories Terminées (51)
+## ✅ User Stories Terminées (52)
 
 ### 🏠 Homepage - Web (5/5)
 | ID | Titre | Statut | Commit |
@@ -84,7 +84,7 @@
 | **M9.2** | Préférences alimentaires | ⏳ À faire | - |
 | **M9.3** | Suggestions personnalisées | ⏳ À faire | - |
 
-### 🔧 Admin Dashboard (13/15)
+### 🔧 Admin Dashboard (14/15)
 | ID | Titre | Statut | Commit |
 |---|---|---|---|
 | **A1.1** | KPIs temps réel | ✅ **Terminé** | 40f2a63 |
@@ -96,7 +96,7 @@
 | **A3.1** | Vue Cuisine | ✅ **Terminé** | 40f2a63 |
 | **A3.2** | Changement statut | ✅ **Terminé** | 40f2a63 |
 | **A3.3** | Annuler/Refund | ✅ **Terminé** | 40f2a63 |
-| **A3.4** | Détail Commande | ⏳ À faire | - |
+| **A3.4** | Détail Commande | ✅ **Terminé** | bd8bd45 |
 | **A4.1** | Planifier tournées | ✅ **Terminé** | 728d97b |
 | **A4.2** | Gérer créneaux | ✅ **Terminé** | 728d97b |
 | **A4.3** | Gérer zones | ✅ **Terminé** | 728d97b |
@@ -145,6 +145,7 @@
 | **useAdminOrders.js** | 3 functions | ✅ Terminé | 40f2a63 |
 | **useAdminCustomers.js** | 2 hooks | ✅ Terminé | 3d94d10 |
 | **useAdminDelivery.js** | 3 hooks | ✅ Terminé | 728d97b |
+| **useOrderDetails.js** | 1 hook | ✅ Terminé | bd8bd45 |
 | **Migration PopularDishes** | - | ✅ Terminé | 6e6e7bb |
 | **Migration CataloguePage** | - | ✅ Terminé | 6e6e7bb |
 | **Migration AccountPage** | - | ✅ Terminé | Supabase session |
@@ -154,7 +155,7 @@
 | **Integration Guide** | - | ✅ Terminé | ffbcc6f |
 | **Hooks Reference** | - | ✅ Terminé | SUPABASE_HOOKS_REFERENCE.md |
 
-**Total : 33 hooks + 11 admin functions créés pour toutes les opérations Supabase**
+**Total : 34 hooks + 11 admin functions créés pour toutes les opérations Supabase**
 
 ### Cart & Badge Fixes (Session actuelle)
 | Composant | Issue | Statut | Commits |
@@ -314,6 +315,26 @@
 - ✅ Données par défaut (Paris + proche banlieue)
 - ✅ Interface admin avec onglets séparés
 
+### Order Detail Page Implementation (Session 2025-12-10)
+| Composant | Description | Statut | Commits |
+|---|---|---|---|
+| **useOrderDetails Hook** | Hook with real-time order updates | ✅ Terminé | bd8bd45 |
+| **AdminOrderDetail Page** | Complete order detail view | ✅ Terminé | bd8bd45 |
+| **Order Information Display** | Items, customer, delivery info | ✅ Terminé | bd8bd45 |
+| **Price Breakdown** | Discounts, fees, total calculation | ✅ Terminé | bd8bd45 |
+
+**Fonctionnalités implémentées** :
+- ✅ Page de détail de commande complète (A3.4)
+- ✅ Affichage détaillé de tous les articles avec images
+- ✅ Informations client avec coordonnées
+- ✅ Détail de livraison (adresse, date, créneau)
+- ✅ Décomposition des prix (sous-total, remise, frais)
+- ✅ Statistiques de commande (nb articles, montant)
+- ✅ Informations de paiement (méthode, ID Stripe)
+- ✅ Mise à jour en temps réel via subscription
+- ✅ Navigation depuis la liste des commandes
+- ✅ Actions rapides (voir client, imprimer, email)
+
 ---
 
 ## 🚧 User Stories En Cours / Préparées
@@ -355,7 +376,7 @@
 | **Suivi Commande** | 1 | 3 | 33% |
 | **Favoris & Préférences** | 1 | 3 | 33% |
 | **Fidélité** | 0 | 3 | 0% |
-| **Admin Dashboard** | 13 | 15 | 87% |
+| **Admin Dashboard** | 14 | 15 | 93% |
 | **Notifications** | 4 | 15 | 27% |
 | **B2B** | 0 | 9 | 0% |
 
@@ -392,8 +413,10 @@
 | 25 | 79c3cb4 | Update progress with favorites feature | Documentation |
 | 26 | 3d94d10 | Implement Admin Customers page | 2 US (A5.1, A5.2) |
 | 27 | 728d97b | Implement delivery management system | 3 US (A4.1-A4.3) |
+| 28 | 3e8a840 | Update progress with Customers and Delivery | Documentation |
+| 29 | bd8bd45 | Implement order detail page | 1 US (A3.4) |
 
-**Total** : 51 User Stories + Infrastructure complète
+**Total** : 52 User Stories + Infrastructure complète
 
 ---
 
