@@ -1,12 +1,12 @@
 # 📊 Suivi des User Stories - Pause Dej'
 
-> **Dernière mise à jour** : 2025-12-10 (Session Admin Dashboard complète)
-> **Progression globale** : 40/144 User Stories (27.8%)
-> **Infrastructure** : ✅ Supabase entièrement intégré (27 hooks + migrations complètes + RPC functions) | ✅ Stripe paiements fonctionnels | ✅ Admin Dashboard opérationnel
+> **Dernière mise à jour** : 2025-12-10 (Session Email Notifications complète)
+> **Progression globale** : 44/144 User Stories (30.6%)
+> **Infrastructure** : ✅ Supabase entièrement intégré (27 hooks + migrations complètes + RPC functions) | ✅ Stripe paiements fonctionnels | ✅ Admin Dashboard opérationnel | ✅ Email notifications avec Resend
 
 ---
 
-## ✅ User Stories Terminées (40)
+## ✅ User Stories Terminées (44)
 
 ### 🏠 Homepage - Web (4/5)
 | ID | Titre | Statut | Commit |
@@ -95,6 +95,22 @@
 | **A4.3** | Gérer zones | ⏳ À faire | - |
 | **A5.1** | Liste clients | ⏳ À faire | - |
 | **A5.2** | Détail client | ⏳ À faire | - |
+
+### 📧 Email Notifications (4/15)
+| ID | Titre | Statut | Commit |
+|---|---|---|---|
+| **N1.1** | Confirmation Compte | 🟡 **Supabase Auth** | Native |
+| **N1.2** | Confirmation Commande | ✅ **Terminé** | d20ae71 |
+| **N1.3** | Commande Préparation | ✅ **Terminé** | d20ae71 |
+| **N1.4** | En Livraison | ✅ **Terminé** | d20ae71 |
+| **N1.5** | Livrée | ✅ **Terminé** | d20ae71 |
+| **N1.6** | Demande Avis | ⏳ À faire | - |
+| **N1.7** | Reset Password | 🟡 **Supabase Auth** | Native |
+| **N2.1** | Newsletter Hebdo | ⏳ À faire | - |
+| **N2.2** | Marketing Promo | ⏳ À faire | - |
+| **N2.3** | Réactivation | ⏳ À faire | - |
+| **N3.1-N3.6** | Push Notifications | ⏳ À faire | - |
+| **N4.1-N4.3** | SMS | ⏳ À faire | - |
 
 ---
 
@@ -208,6 +224,28 @@
 - ✅ Auto-refresh toutes les 30s pour données en direct
 - ✅ Interface responsive avec Chakra UI
 
+### Email Notification System (Session 2025-12-10)
+| Composant | Description | Statut | Commits |
+|---|---|---|---|
+| **send-email Edge Function** | Supabase function with Resend API | ✅ Terminé | d20ae71 |
+| **useEmail Hook** | React hook for triggering emails | ✅ Terminé | d20ae71 |
+| **5 Email Templates** | Professional HTML templates | ✅ Terminé | d20ae71 |
+| **Auto Status Emails** | Triggers on order status change | ✅ Terminé | d20ae71 |
+| **Confirmation Email** | Sent after payment (N1.2) | ✅ Terminé | d20ae71 |
+| **EMAIL_SETUP.md** | Complete setup documentation | ✅ Terminé | d20ae71 |
+
+**Fonctionnalités implémentées** :
+- ✅ Edge Function pour envoi d'emails via Resend API
+- ✅ 5 templates HTML professionnels et responsives
+- ✅ Email de confirmation après paiement (N1.2)
+- ✅ Email lors du passage en préparation (N1.3)
+- ✅ Email lors du départ en livraison (N1.4)
+- ✅ Email à la livraison (N1.5)
+- ✅ Email d'annulation avec motif
+- ✅ Intégration automatique dans admin dashboard
+- ✅ Gestion d'erreurs non-bloquante
+- ✅ Documentation complète de configuration
+
 ---
 
 ## 🚧 User Stories En Cours / Préparées
@@ -227,9 +265,11 @@
 5. ~~**Suivi commandes (M7.1)**~~ - ✅ **Terminé !** (Page tracking + navigation complète)
 6. ~~**Stripe Integration (M6.4)**~~ - ✅ **Terminé !** (Edge Function + Tests réussis)
 7. ~~**Admin Dashboard (A1.x, A2.x, A3.x)**~~ - ✅ **Terminé !** (KPIs, Gestion plats & commandes)
-8. **Notifications Email** (N1.x) - 🔴 **PROCHAINE PRIORITÉ** - Emails transactionnels
-9. **Admin Analytics** (A4.x, A5.x) - Gestion clients & livraisons
-10. **Push Notifications** (M7.2) - Notifications mobiles
+8. ~~**Notifications Email (N1.2-N1.5)**~~ - ✅ **Terminé !** (Resend integration + 5 templates)
+9. **Section B2B Homepage** (W1.5) - 🔴 **PROCHAINE PRIORITÉ** - Marketing B2B
+10. **Plats Favoris** (M9.1) - Fonctionnalité utilisateur
+11. **Admin Analytics** (A4.x, A5.x) - Gestion clients & livraisons
+12. **Push Notifications** (M7.2) - Notifications mobiles
 
 ---
 
@@ -248,7 +288,7 @@
 | **Favoris & Préférences** | 0 | 3 | 0% |
 | **Fidélité** | 0 | 3 | 0% |
 | **Admin Dashboard** | 8 | 15 | 53% |
-| **Notifications** | 0 | 15 | 0% |
+| **Notifications** | 4 | 15 | 27% |
 | **B2B** | 0 | 9 | 0% |
 
 ---
@@ -275,8 +315,10 @@
 | 16 | e3dd4ea | Fix redirect to confirmation page | Infrastructure |
 | 17 | aa63933 | Update progress with Stripe integration | Documentation |
 | 18 | 40f2a63 | Admin Dashboard complete implementation | 8 US (A1.1, A1.2, A2.1-A2.4, A3.1-A3.3) |
+| 19 | 774f415 | Update progress with Admin Dashboard | Documentation |
+| 20 | d20ae71 | Email notification system with Resend | 4 US (N1.2-N1.5) |
 
-**Total** : 40 User Stories + Infrastructure complète
+**Total** : 44 User Stories + Infrastructure complète
 
 ---
 
