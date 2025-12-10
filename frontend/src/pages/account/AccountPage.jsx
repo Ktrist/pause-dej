@@ -36,11 +36,13 @@ import {
   AlertIcon
 } from '@chakra-ui/react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { FiUser, FiMapPin, FiShoppingBag, FiEdit2, FiTrash2, FiPlus, FiTruck } from 'react-icons/fi'
+import { FiUser, FiMapPin, FiShoppingBag, FiEdit2, FiTrash2, FiPlus, FiTruck, FiHeart } from 'react-icons/fi'
 import { useAuth } from '../../context/AuthContext'
 import { useAddresses, useCreateAddress, useUpdateAddress, useDeleteAddress } from '../../hooks/useAddresses'
 import { useOrders } from '../../hooks/useOrders'
+import { useFavorites } from '../../hooks/useFavorites'
 import LoadingSpinner from '../../components/common/LoadingSpinner'
+import DishCard from '../../components/catalogue/DishCard'
 
 export default function AccountPage() {
   const { user, loading } = useAuth()
@@ -62,6 +64,9 @@ export default function AccountPage() {
 
   // Supabase hooks for orders
   const { orders, loading: loadingOrders, error: errorOrders } = useOrders()
+
+  // Supabase hooks for favorites
+  const { favorites, loading: loadingFavorites, error: errorFavorites } = useFavorites()
 
   // Modal for add/edit address
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -85,6 +90,7 @@ export default function AccountPage() {
     const tab = searchParams.get('tab')
     if (tab === 'orders') setTabIndex(1)
     if (tab === 'addresses') setTabIndex(2)
+    if (tab === 'favorites') setTabIndex(3)
   }, [searchParams])
 
   useEffect(() => {
@@ -225,6 +231,12 @@ export default function AccountPage() {
                 <HStack spacing={2}>
                   <FiMapPin />
                   <Text>Adresses</Text>
+                </HStack>
+              </Tab>
+              <Tab>
+                <HStack spacing={2}>
+                  <FiHeart />
+                  <Text>Favoris</Text>
                 </HStack>
               </Tab>
             </TabList>
@@ -510,6 +522,54 @@ export default function AccountPage() {
                             </VStack>
                           </CardBody>
                         </Card>
+                      ))}
+                    </SimpleGrid>
+                  )}
+                </VStack>
+              </TabPanel>
+
+              {/* Favorites Tab */}
+              <TabPanel>
+                <VStack spacing={4} align="stretch">
+                  <Text fontSize="lg" fontWeight="600">
+                    Mes plats favoris
+                  </Text>
+
+                  {loadingFavorites ? (
+                    <LoadingSpinner message="Chargement des favoris..." />
+                  ) : errorFavorites ? (
+                    <Alert status="error" borderRadius="md">
+                      <AlertIcon />
+                      Erreur de chargement des favoris
+                    </Alert>
+                  ) : favorites.length === 0 ? (
+                    <Box bg="white" p={12} borderRadius="xl" boxShadow="md" textAlign="center">
+                      <VStack spacing={4}>
+                        <Text fontSize="4xl">❤️</Text>
+                        <Heading size="md" color="gray.600">
+                          Aucun favori
+                        </Heading>
+                        <Text color="gray.500">
+                          Ajoutez vos plats préférés en cliquant sur le cœur
+                        </Text>
+                        <Button
+                          as="a"
+                          href="/catalogue"
+                          colorScheme="brand"
+                          size="lg"
+                        >
+                          Voir le catalogue
+                        </Button>
+                      </VStack>
+                    </Box>
+                  ) : (
+                    <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6}>
+                      {favorites.map((favorite) => (
+                        <DishCard
+                          key={favorite.dish_id}
+                          dish={favorite.dishes}
+                          onViewDetails={() => navigate(`/catalogue?dish=${favorite.dish_id}`)}
+                        />
                       ))}
                     </SimpleGrid>
                   )}

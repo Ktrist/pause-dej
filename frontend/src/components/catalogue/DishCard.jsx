@@ -1,9 +1,13 @@
-import { Box, Image, VStack, HStack, Text, Button, Badge, Icon, useToast } from '@chakra-ui/react'
-import { FiShoppingCart, FiEye } from 'react-icons/fi'
+import { Box, Image, VStack, HStack, Text, Button, Badge, Icon, IconButton, useToast } from '@chakra-ui/react'
+import { FiShoppingCart, FiEye, FiHeart } from 'react-icons/fi'
 import { useCart } from '../../context/CartContext'
+import { useFavorites } from '../../hooks/useFavorites'
+import { useAuth } from '../../context/AuthContext'
 
 export default function DishCard({ dish, onViewDetails }) {
   const { addToCart } = useCart()
+  const { user } = useAuth()
+  const { isFavorite, toggleFavorite } = useFavorites()
   const toast = useToast()
 
   const handleAddToCart = (e) => {
@@ -17,6 +21,41 @@ export default function DishCard({ dish, onViewDetails }) {
       isClosable: true,
       position: 'bottom-right'
     })
+  }
+
+  const handleToggleFavorite = async (e) => {
+    e.stopPropagation()
+
+    if (!user) {
+      toast({
+        title: 'Connexion requise',
+        description: 'Connectez-vous pour ajouter des favoris',
+        status: 'warning',
+        duration: 3000,
+        isClosable: true
+      })
+      return
+    }
+
+    const { error } = await toggleFavorite(dish.id)
+
+    if (error && !error.includes('Already in favorites')) {
+      toast({
+        title: 'Erreur',
+        description: error,
+        status: 'error',
+        duration: 3000,
+        isClosable: true
+      })
+    } else if (!error) {
+      toast({
+        title: isFavorite(dish.id) ? 'Retiré des favoris' : 'Ajouté aux favoris',
+        status: 'success',
+        duration: 2000,
+        isClosable: true,
+        position: 'bottom-right'
+      })
+    }
   }
 
   return (
@@ -57,10 +96,30 @@ export default function DishCard({ dish, onViewDetails }) {
           )}
         </HStack>
 
-        {dish.stock < 10 && (
+        {/* Favorite Button */}
+        <IconButton
+          icon={<Icon as={FiHeart} />}
+          position="absolute"
+          top={3}
+          right={3}
+          size="sm"
+          colorScheme={isFavorite(dish.id) ? 'red' : 'gray'}
+          variant={isFavorite(dish.id) ? 'solid' : 'ghost'}
+          bg={isFavorite(dish.id) ? 'red.500' : 'white'}
+          color={isFavorite(dish.id) ? 'white' : 'gray.600'}
+          _hover={{
+            bg: isFavorite(dish.id) ? 'red.600' : 'gray.100',
+            transform: 'scale(1.1)'
+          }}
+          onClick={handleToggleFavorite}
+          aria-label={isFavorite(dish.id) ? 'Retirer des favoris' : 'Ajouter aux favoris'}
+          transition="all 0.2s"
+        />
+
+        {dish.stock < 10 && dish.stock > 0 && (
           <Badge
             position="absolute"
-            top={3}
+            bottom={3}
             right={3}
             colorScheme="red"
             fontSize="xs"
