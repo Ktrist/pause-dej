@@ -110,7 +110,7 @@ export default function B2BSection() {
                   colorScheme="brand"
                   rightIcon={<FiArrowRight />}
                   px={8}
-                  onClick={() => navigate('/b2b/quote')}
+                  onClick={() => navigate('/b2b')}
                 >
                   Demander un devis
                 </Button>
