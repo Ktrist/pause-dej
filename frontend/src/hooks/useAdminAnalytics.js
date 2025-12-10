@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { supabase } from '../lib/supabaseClient'
+import { supabase } from '../supabaseClient'
 
 /**
  * Hook pour récupérer les analytics admin - A6.x
