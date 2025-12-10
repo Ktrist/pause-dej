@@ -1,12 +1,12 @@
 # 📊 Suivi des User Stories - Pause Dej'
 
-> **Dernière mise à jour** : 2025-12-10 (Session complète - Admin + Emails + B2B + Favoris)
-> **Progression globale** : 46/144 User Stories (31.9%)
-> **Infrastructure** : ✅ Supabase entièrement intégré (28 hooks + migrations complètes + RPC functions) | ✅ Stripe paiements fonctionnels | ✅ Admin Dashboard opérationnel | ✅ Email notifications avec Resend
+> **Dernière mise à jour** : 2025-12-10 (Session complète - Admin + Emails + B2B + Favoris + Analytics)
+> **Progression globale** : 51/144 User Stories (35.4%)
+> **Infrastructure** : ✅ Supabase entièrement intégré (33 hooks + migrations complètes + RPC functions) | ✅ Stripe paiements fonctionnels | ✅ Admin Dashboard complet | ✅ Email notifications avec Resend | ✅ Gestion livraisons
 
 ---
 
-## ✅ User Stories Terminées (46)
+## ✅ User Stories Terminées (51)
 
 ### 🏠 Homepage - Web (5/5)
 | ID | Titre | Statut | Commit |
@@ -84,7 +84,7 @@
 | **M9.2** | Préférences alimentaires | ⏳ À faire | - |
 | **M9.3** | Suggestions personnalisées | ⏳ À faire | - |
 
-### 🔧 Admin Dashboard (8/15)
+### 🔧 Admin Dashboard (13/15)
 | ID | Titre | Statut | Commit |
 |---|---|---|---|
 | **A1.1** | KPIs temps réel | ✅ **Terminé** | 40f2a63 |
@@ -97,11 +97,11 @@
 | **A3.2** | Changement statut | ✅ **Terminé** | 40f2a63 |
 | **A3.3** | Annuler/Refund | ✅ **Terminé** | 40f2a63 |
 | **A3.4** | Détail Commande | ⏳ À faire | - |
-| **A4.1** | Planifier tournées | ⏳ À faire | - |
-| **A4.2** | Gérer créneaux | ⏳ À faire | - |
-| **A4.3** | Gérer zones | ⏳ À faire | - |
-| **A5.1** | Liste clients | ⏳ À faire | - |
-| **A5.2** | Détail client | ⏳ À faire | - |
+| **A4.1** | Planifier tournées | ✅ **Terminé** | 728d97b |
+| **A4.2** | Gérer créneaux | ✅ **Terminé** | 728d97b |
+| **A4.3** | Gérer zones | ✅ **Terminé** | 728d97b |
+| **A5.1** | Liste clients | ✅ **Terminé** | 3d94d10 |
+| **A5.2** | Détail client | ✅ **Terminé** | 3d94d10 |
 
 ### 📧 Email Notifications (4/15)
 | ID | Titre | Statut | Commit |
@@ -143,6 +143,8 @@
 | **useAdminStats.js** | 2 hooks | ✅ Terminé | 40f2a63 |
 | **useAdminDishes.js** | 8 functions | ✅ Terminé | 40f2a63 |
 | **useAdminOrders.js** | 3 functions | ✅ Terminé | 40f2a63 |
+| **useAdminCustomers.js** | 2 hooks | ✅ Terminé | 3d94d10 |
+| **useAdminDelivery.js** | 3 hooks | ✅ Terminé | 728d97b |
 | **Migration PopularDishes** | - | ✅ Terminé | 6e6e7bb |
 | **Migration CataloguePage** | - | ✅ Terminé | 6e6e7bb |
 | **Migration AccountPage** | - | ✅ Terminé | Supabase session |
@@ -152,7 +154,7 @@
 | **Integration Guide** | - | ✅ Terminé | ffbcc6f |
 | **Hooks Reference** | - | ✅ Terminé | SUPABASE_HOOKS_REFERENCE.md |
 
-**Total : 28 hooks + 11 admin functions créés pour toutes les opérations Supabase**
+**Total : 33 hooks + 11 admin functions créés pour toutes les opérations Supabase**
 
 ### Cart & Badge Fixes (Session actuelle)
 | Composant | Issue | Statut | Commits |
@@ -273,6 +275,45 @@
 - ✅ Optimistic UI updates avec synchronisation serveur
 - ✅ Toast notifications pour feedback utilisateur
 
+### Admin Customers Implementation (Session 2025-12-10)
+| Composant | Description | Statut | Commits |
+|---|---|---|---|
+| **useAdminCustomers Hook** | 2 hooks for customer management | ✅ Terminé | 3d94d10 |
+| **AdminCustomers Page** | Customer list with search and stats | ✅ Terminé | 3d94d10 |
+| **CustomerDetailsModal** | Detailed customer view | ✅ Terminé | 3d94d10 |
+| **Customer Statistics** | Orders, spending, averages | ✅ Terminé | 3d94d10 |
+
+**Fonctionnalités implémentées** :
+- ✅ Liste complète des clients avec statistiques (A5.1)
+- ✅ Recherche par nom, email, téléphone
+- ✅ Tri par nom, commandes, montant dépensé, date
+- ✅ Statistiques globales (total clients, CA, panier moyen)
+- ✅ Modal de détails client avec historique complet (A5.2)
+- ✅ Affichage des commandes récentes par client
+- ✅ Liste des adresses de livraison par client
+- ✅ Statistiques par client (commandes, dépenses, panier moyen)
+
+### Delivery Management Implementation (Session 2025-12-10)
+| Composant | Description | Statut | Commits |
+|---|---|---|---|
+| **delivery_zones table** | Zones de livraison avec codes postaux | ✅ Terminé | 728d97b |
+| **delivery_slots table** | Créneaux horaires de livraison | ✅ Terminé | 728d97b |
+| **delivery_routes table** | Tournées de livraison | ✅ Terminé | 728d97b |
+| **useAdminDelivery Hook** | 3 hooks for delivery management | ✅ Terminé | 728d97b |
+| **AdminDelivery Page** | 3 tabs (zones, slots, routes) | ✅ Terminé | 728d97b |
+| **RPC Functions** | Availability checks, zone validation | ✅ Terminé | 728d97b |
+
+**Fonctionnalités implémentées** :
+- ✅ Gestion des zones de livraison avec codes postaux (A4.3)
+- ✅ Gestion des créneaux horaires par jour (A4.2)
+- ✅ Planification des tournées de livraison (A4.1)
+- ✅ CRUD complet pour zones (nom, codes postaux, frais, min commande)
+- ✅ CRUD complet pour créneaux (jour, horaires, capacité, frais)
+- ✅ Fonction RPC pour vérifier disponibilité des créneaux
+- ✅ Fonction RPC pour valider codes postaux dans zones
+- ✅ Données par défaut (Paris + proche banlieue)
+- ✅ Interface admin avec onglets séparés
+
 ---
 
 ## 🚧 User Stories En Cours / Préparées
@@ -314,7 +355,7 @@
 | **Suivi Commande** | 1 | 3 | 33% |
 | **Favoris & Préférences** | 1 | 3 | 33% |
 | **Fidélité** | 0 | 3 | 0% |
-| **Admin Dashboard** | 8 | 15 | 53% |
+| **Admin Dashboard** | 13 | 15 | 87% |
 | **Notifications** | 4 | 15 | 27% |
 | **B2B** | 0 | 9 | 0% |
 
@@ -348,8 +389,11 @@
 | 22 | 1f064ba | Add B2B section to homepage | 1 US (W1.5) |
 | 23 | 5ef6ae4 | Update progress with B2B section | Documentation |
 | 24 | 2e46d32 | Implement favorites feature | 1 US (M9.1) |
+| 25 | 79c3cb4 | Update progress with favorites feature | Documentation |
+| 26 | 3d94d10 | Implement Admin Customers page | 2 US (A5.1, A5.2) |
+| 27 | 728d97b | Implement delivery management system | 3 US (A4.1-A4.3) |
 
-**Total** : 46 User Stories + Infrastructure complète
+**Total** : 51 User Stories + Infrastructure complète
 
 ---
 
