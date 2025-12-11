@@ -28,6 +28,7 @@ import AdminDishes from './pages/admin/AdminDishes'
 import AdminCustomers from './pages/admin/AdminCustomers'
 import AdminDelivery from './pages/admin/AdminDelivery'
 import AdminAnalytics from './pages/admin/AdminAnalytics'
+import AdminB2B from './pages/admin/AdminB2B'
 
 function App() {
   return (
@@ -45,6 +46,7 @@ function App() {
               <Route path="customers" element={<AdminCustomers />} />
               <Route path="delivery" element={<AdminDelivery />} />
               <Route path="analytics" element={<AdminAnalytics />} />
+              <Route path="b2b" element={<AdminB2B />} />
               {/* Additional admin routes will be added here */}
             </Route>
 

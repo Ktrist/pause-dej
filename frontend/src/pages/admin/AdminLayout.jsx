@@ -20,7 +20,9 @@ import {
   FiUsers,
   FiTrendingUp,
   FiSettings,
-  FiLogOut
+  FiLogOut,
+  FiTruck,
+  FiBriefcase
 } from 'react-icons/fi'
 import { useAuth } from '../../context/AuthContext'
 
@@ -128,6 +130,9 @@ export default function AdminLayout() {
               </SidebarLink>
               <SidebarLink to="/admin/analytics" icon={FiTrendingUp}>
                 Analytics
+              </SidebarLink>
+              <SidebarLink to="/admin/b2b" icon={FiBriefcase}>
+                B2B
               </SidebarLink>
               <SidebarLink to="/admin/settings" icon={FiSettings}>
                 Paramètres
