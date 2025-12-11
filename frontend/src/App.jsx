@@ -17,6 +17,7 @@ import OrderTrackingPage from './pages/OrderTrackingPage'
 import SupportPage from './pages/SupportPage'
 import B2BPage from './pages/B2BPage'
 import B2BDashboard from './pages/B2BDashboard'
+import BulkOrderPage from './pages/BulkOrderPage'
 import NotFoundPage from './pages/NotFoundPage'
 
 // Admin pages
@@ -72,6 +73,7 @@ function App() {
                       <Route path="/support/:ticketId" element={<SupportPage />} />
                       <Route path="/b2b" element={<B2BPage />} />
                       <Route path="/b2b/dashboard" element={<B2BDashboard />} />
+                      <Route path="/b2b/bulk-order" element={<BulkOrderPage />} />
                       <Route path="*" element={<NotFoundPage />} />
                     </Routes>
                   </Box>

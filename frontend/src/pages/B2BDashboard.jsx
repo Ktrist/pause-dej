@@ -376,11 +376,16 @@ export default function B2BDashboard() {
               <TabPanel>
                 <Card>
                   <CardBody>
-                    <VStack py={8}>
+                    <VStack py={8} spacing={4}>
                       <Text color="gray.500">Aucune commande pour le moment</Text>
-                      <Button colorScheme="brand" onClick={() => navigate('/catalogue')}>
-                        Commander maintenant
-                      </Button>
+                      <HStack spacing={4}>
+                        <Button colorScheme="brand" onClick={() => navigate('/catalogue')}>
+                          Commander maintenant
+                        </Button>
+                        <Button variant="outline" colorScheme="brand" onClick={() => navigate('/b2b/bulk-order')}>
+                          Commande groupée
+                        </Button>
+                      </HStack>
                     </VStack>
                   </CardBody>
                 </Card>
