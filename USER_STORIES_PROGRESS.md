@@ -1,12 +1,12 @@
 # 📊 Suivi des User Stories - Pause Dej'
 
-> **Dernière mise à jour** : 2025-12-10 (Session complète - Admin 100% + B2B Foundation)
-> **Progression globale** : 58/144 User Stories (40.3%)
-> **Infrastructure** : ✅ Supabase entièrement intégré (40 hooks + migrations complètes + RPC functions) | ✅ Stripe paiements fonctionnels | ✅ Admin Dashboard 100% | ✅ Email notifications | ✅ Support client | ✅ Analytics | ✅ B2B Platform (4/9)
+> **Dernière mise à jour** : 2025-12-10 (Session complète - Admin 100% + B2B 67%)
+> **Progression globale** : 60/144 User Stories (41.7%)
+> **Infrastructure** : ✅ Supabase entièrement intégré (43 hooks + migrations complètes + RPC functions) | ✅ Stripe paiements fonctionnels | ✅ Admin Dashboard 100% | ✅ Email notifications | ✅ Support client | ✅ Analytics | ✅ B2B Platform (6/9)
 
 ---
 
-## ✅ User Stories Terminées (58)
+## ✅ User Stories Terminées (60)
 
 ### 🏠 Homepage - Web (5/5)
 | ID | Titre | Statut | Commit |
@@ -120,15 +120,15 @@
 | **N3.1-N3.6** | Push Notifications | ⏳ À faire | - |
 | **N4.1-N4.3** | SMS | ⏳ À faire | - |
 
-### 🏢 B2B Platform (4/9)
+### 🏢 B2B Platform (6/9)
 | ID | Titre | Statut | Commit |
 |---|---|---|---|
 | **B2B.1** | Landing Page B2B | ✅ **Terminé** | 932b714 |
 | **B2B.2** | Quote Request System | ✅ **Terminé** | 932b714 |
 | **B2B.3** | B2B Dashboard | ✅ **Terminé** | d577c1a |
 | **B2B.4** | Team Management | ✅ **Terminé** | d577c1a |
-| **B2B.5** | Corporate Packages | ⏳ À faire | - |
-| **B2B.6** | Bulk Ordering | ⏳ À faire | - |
+| **B2B.5** | Corporate Packages | ✅ **Terminé** | 96f44ca |
+| **B2B.6** | Bulk Ordering | ✅ **Terminé** | 706cd48 |
 | **B2B.7** | Invoice Management | ⏳ À faire | - |
 | **B2B.8** | Contract Management | ⏳ À faire | - |
 | **B2B.9** | B2B Analytics | ⏳ À faire | - |
@@ -162,6 +162,7 @@
 | **useOrderDetails.js** | 1 hook | ✅ Terminé | bd8bd45 |
 | **useAdminAnalytics.js** | 1 hook | ✅ Terminé | e6c4ed4 |
 | **useB2BQuotes.js** | 4 hooks | ✅ Terminé | 932b714 |
+| **useAdminB2B.js** | 3 hooks | ✅ Terminé | 96f44ca |
 | **Migration PopularDishes** | - | ✅ Terminé | 6e6e7bb |
 | **Migration CataloguePage** | - | ✅ Terminé | 6e6e7bb |
 | **Migration AccountPage** | - | ✅ Terminé | Supabase session |
@@ -173,7 +174,7 @@
 
 | **useSupportTickets.js** | 2 hooks | ✅ Terminé | c098f84 |
 
-**Total : 40 hooks + 11 admin functions créés pour toutes les opérations Supabase**
+**Total : 43 hooks + 11 admin functions créés pour toutes les opérations Supabase**
 
 ### Cart & Badge Fixes (Session actuelle)
 | Composant | Issue | Statut | Commits |
@@ -464,6 +465,48 @@
 - ✅ Routes: /b2b (landing), /b2b/dashboard
 - ✅ Navigation mise à jour depuis B2BSection
 
+### B2B Packages & Bulk Ordering (Session 2025-12-10)
+| Composant | Description | Statut | Commits |
+|---|---|---|---|
+| **useAdminB2B.js** | 3 hooks admin B2B | ✅ Terminé | 96f44ca |
+| **AdminB2B Page** | Admin dashboard B2B avec 3 tabs | ✅ Terminé | 96f44ca |
+| **Package Management** | CRUD packages corporatifs | ✅ Terminé | 96f44ca |
+| **Quote Management** | Gestion demandes de devis | ✅ Terminé | 96f44ca |
+| **Account Management** | Gestion comptes B2B | ✅ Terminé | 96f44ca |
+| **BulkOrderPage** | Page commandes groupées | ✅ Terminé | 706cd48 |
+| **Bulk Order Interface** | Table multi-commandes | ✅ Terminé | 706cd48 |
+
+**Fonctionnalités implémentées (B2B.5 - Packages)** :
+- ✅ Admin hooks avec 3 fonctions:
+  - useAdminB2BPackages() - CRUD packages
+  - useAdminB2BQuotes() - gestion devis
+  - useAdminB2BAccounts() - gestion comptes
+- ✅ AdminB2B page avec tabs (Packages, Devis, Comptes)
+- ✅ CRUD complet pour packages corporatifs
+- ✅ Configuration prix/personne, min/max people
+- ✅ Toggle actif/inactif pour packages
+- ✅ Gestion statuts devis (pending, contacted, negotiating, accepted, rejected)
+- ✅ Assignation devis aux staff members
+- ✅ Vue tous les comptes B2B avec détails
+- ✅ Stats cards (packages, devis, comptes, CA)
+- ✅ Route /admin/b2b avec lien sidebar
+
+**Fonctionnalités implémentées (B2B.6 - Bulk Ordering)** :
+- ✅ BulkOrderPage pour commandes groupées
+- ✅ Sélection date et créneau de livraison
+- ✅ Table dynamique pour gérer plusieurs commandes
+- ✅ Sélection membre d'équipe par commande
+- ✅ Sélection plat et quantité par commande
+- ✅ Notes personnalisables par commande
+- ✅ Calcul prix en temps réel avec totaux
+- ✅ Application remise B2B si configurée
+- ✅ Validation complète (date, slot, membre, plat)
+- ✅ Ajout/suppression commandes dynamique
+- ✅ Récapitulatif détaillé (nb commandes, membres, total)
+- ✅ Route /b2b/bulk-order
+- ✅ Bouton dans B2B Dashboard Orders tab
+- ✅ Vérification compte B2B avec redirect
+
 ---
 
 ## 🚧 User Stories En Cours / Préparées
@@ -508,7 +551,7 @@
 | **Fidélité** | 0 | 3 | 0% |
 | **Admin Dashboard** | 15 | 15 | 100% ✅ |
 | **Notifications** | 4 | 15 | 27% |
-| **B2B** | 4 | 9 | 44% |
+| **B2B** | 6 | 9 | 67% |
 
 ---
 
@@ -551,8 +594,12 @@
 | 33 | 5b694ee | Update progress with Admin Analytics | Documentation |
 | 34 | 932b714 | Implement B2B landing and quote system | 2 US (B2B.1, B2B.2) |
 | 35 | d577c1a | Implement B2B Dashboard and team management | 2 US (B2B.3, B2B.4) |
+| 36 | 942229b | Update progress with B2B implementation | Documentation |
+| 37 | f172af8 | Fix supabase import paths in hooks | Bug fix |
+| 38 | 96f44ca | Implement B2B Packages management | 1 US (B2B.5) |
+| 39 | 706cd48 | Implement Bulk Ordering system | 1 US (B2B.6) |
 
-**Total** : 58 User Stories + Infrastructure complète
+**Total** : 60 User Stories + Infrastructure complète
 
 ---
 
