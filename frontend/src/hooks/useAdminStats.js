@@ -42,7 +42,7 @@ export function useAdminStats() {
       const { data: dishes, error: dishesError } = await supabase
         .from('dishes')
         .select('*')
-        .lte('stock_quantity', 5)
+        .lte('stock', 5)
         .eq('is_available', true)
 
       if (dishesError) throw dishesError
@@ -98,7 +98,7 @@ export function useLiveOrders() {
             *,
             dishes(name, image_url)
           ),
-          users(email, full_name, phone)
+          user:user_id(email, full_name, phone)
         `)
         .order('created_at', { ascending: false })
         .limit(50)

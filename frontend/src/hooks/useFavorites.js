@@ -40,7 +40,7 @@ export function useFavorites() {
             image_url,
             category,
             is_available,
-            stock_quantity
+            stock
           )
         `)
         .eq('user_id', user.id)

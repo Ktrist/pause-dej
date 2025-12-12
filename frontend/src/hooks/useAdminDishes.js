@@ -93,7 +93,7 @@ export function useAdminDishes() {
   }
 
   const updateStock = async (id, quantity) => {
-    return updateDish(id, { stock_quantity: quantity })
+    return updateDish(id, { stock: quantity })
   }
 
   const toggleFeatured = async (id, isFeatured) => {

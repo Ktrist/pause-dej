@@ -22,7 +22,7 @@ export function useAdminOrders() {
             *,
             dishes(name, image_url)
           ),
-          users(email, full_name, phone)
+          user:user_id(email, full_name, phone)
         `)
         .order('created_at', { ascending: false })
 
@@ -135,7 +135,7 @@ export function useAdminOrder(orderId) {
               *,
               dishes(name, image_url, category)
             ),
-            users(email, full_name, phone),
+            user:user_id(email, full_name, phone),
             delivery_addresses(
               street_address,
               city,
