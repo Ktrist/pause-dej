@@ -58,6 +58,8 @@ import {
   FiCalendar
 } from 'react-icons/fi'
 import { useB2BAccount, useB2BTeam } from '../hooks/useB2BQuotes'
+import { useB2BInvoices } from '../hooks/useB2BInvoices'
+import { useB2BContracts } from '../hooks/useB2BContracts'
 import { useAuth } from '../context/AuthContext'
 import LoadingSpinner from '../components/common/LoadingSpinner'
 
@@ -66,6 +68,8 @@ export default function B2BDashboard() {
   const navigate = useNavigate()
   const { account, loading: accountLoading, isB2BCustomer } = useB2BAccount()
   const { teamMembers, loading: teamLoading, addTeamMember, updateTeamMember, removeTeamMember } = useB2BTeam(account?.id)
+  const { invoices, loading: invoicesLoading, stats: invoiceStats } = useB2BInvoices(account?.id)
+  const { contracts, loading: contractsLoading, stats: contractStats } = useB2BContracts(account?.id)
   const bgColor = useColorModeValue('gray.50', 'gray.900')
   const toast = useToast()
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -95,7 +99,7 @@ export default function B2BDashboard() {
     )
   }
 
-  if (accountLoading || teamLoading) {
+  if (accountLoading || teamLoading || invoicesLoading || contractsLoading) {
     return <LoadingSpinner message="Chargement de votre compte B2B..." />
   }
 
@@ -175,6 +179,22 @@ export default function B2BDashboard() {
   const activeMembers = teamMembers.filter(m => m.is_active).length
   const totalBudget = teamMembers.reduce((sum, m) => sum + (m.monthly_budget || 0), 0)
 
+  const statusBadgeColors = {
+    draft: 'gray',
+    sent: 'blue',
+    paid: 'green',
+    overdue: 'red',
+    cancelled: 'gray'
+  }
+
+  const statusLabels = {
+    draft: 'Brouillon',
+    sent: 'Envoyée',
+    paid: 'Payée',
+    overdue: 'En retard',
+    cancelled: 'Annulée'
+  }
+
   const statusColors = {
     active: 'green',
     suspended: 'orange',
@@ -185,6 +205,14 @@ export default function B2BDashboard() {
     admin: 'Administrateur',
     manager: 'Manager',
     member: 'Membre'
+  }
+
+  const documentTypeLabels = {
+    contract: 'Contrat',
+    amendment: 'Avenant',
+    terms: 'Conditions',
+    nda: 'NDA',
+    other: 'Autre'
   }
 
   return (
@@ -393,11 +421,14 @@ export default function B2BDashboard() {
 
               {/* Billing Tab */}
               <TabPanel>
-                <Card>
-                  <CardBody>
-                    <VStack spacing={4} align="start">
-                      <Heading size="sm">Informations de facturation</Heading>
-                      <SimpleGrid columns={2} spacing={4} w="full">
+                <VStack spacing={6} align="stretch">
+                  {/* Billing Info Card */}
+                  <Card>
+                    <CardHeader>
+                      <Heading size="md">Informations de facturation</Heading>
+                    </CardHeader>
+                    <CardBody>
+                      <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
                         <Box>
                           <Text fontSize="sm" color="gray.600">Email de facturation</Text>
                           <Text fontWeight="600">{account.billing_email}</Text>
@@ -419,19 +450,127 @@ export default function B2BDashboard() {
                           <Text fontWeight="600">{account.payment_terms.toUpperCase()}</Text>
                         </Box>
                       </SimpleGrid>
-                      <Text color="gray.500" mt={4}>Aucune facture disponible</Text>
-                    </VStack>
-                  </CardBody>
-                </Card>
+                    </CardBody>
+                  </Card>
+
+                  {/* Invoice Stats */}
+                  <SimpleGrid columns={{ base: 1, md: 4 }} spacing={4}>
+                    <Card>
+                      <CardBody>
+                        <Stat>
+                          <StatLabel>Total</StatLabel>
+                          <StatNumber fontSize="lg">{invoiceStats.total.toFixed(2)}€</StatNumber>
+                          <StatHelpText>{invoices.length} factures</StatHelpText>
+                        </Stat>
+                      </CardBody>
+                    </Card>
+                    <Card>
+                      <CardBody>
+                        <Stat>
+                          <StatLabel>Payées</StatLabel>
+                          <StatNumber fontSize="lg" color="green.500">{invoiceStats.paid}</StatNumber>
+                        </Stat>
+                      </CardBody>
+                    </Card>
+                    <Card>
+                      <CardBody>
+                        <Stat>
+                          <StatLabel>En attente</StatLabel>
+                          <StatNumber fontSize="lg" color="blue.500">{invoiceStats.pending}</StatNumber>
+                        </Stat>
+                      </CardBody>
+                    </Card>
+                    <Card>
+                      <CardBody>
+                        <Stat>
+                          <StatLabel>En retard</StatLabel>
+                          <StatNumber fontSize="lg" color="red.500">{invoiceStats.overdue}</StatNumber>
+                        </Stat>
+                      </CardBody>
+                    </Card>
+                  </SimpleGrid>
+
+                  {/* Invoices Table */}
+                  <Card>
+                    <CardHeader>
+                      <Heading size="md">Factures</Heading>
+                    </CardHeader>
+                    <CardBody>
+                      {invoices.length === 0 ? (
+                        <VStack py={8}>
+                          <Text color="gray.500">Aucune facture disponible</Text>
+                        </VStack>
+                      ) : (
+                        <Table variant="simple">
+                          <Thead>
+                            <Tr>
+                              <Th>Numéro</Th>
+                              <Th>Période</Th>
+                              <Th>Montant</Th>
+                              <Th>Date d'échéance</Th>
+                              <Th>Statut</Th>
+                              <Th>Actions</Th>
+                            </Tr>
+                          </Thead>
+                          <Tbody>
+                            {invoices.map((invoice) => (
+                              <Tr key={invoice.id}>
+                                <Td fontWeight="600">{invoice.invoice_number}</Td>
+                                <Td>
+                                  <Text fontSize="sm">
+                                    {new Date(invoice.period_start).toLocaleDateString('fr-FR')} -{' '}
+                                    {new Date(invoice.period_end).toLocaleDateString('fr-FR')}
+                                  </Text>
+                                </Td>
+                                <Td fontWeight="600">{parseFloat(invoice.total).toFixed(2)}€</Td>
+                                <Td>
+                                  {invoice.due_date ? (
+                                    <Text
+                                      fontSize="sm"
+                                      color={
+                                        invoice.status === 'overdue'
+                                          ? 'red.500'
+                                          : new Date(invoice.due_date) < new Date()
+                                          ? 'orange.500'
+                                          : 'inherit'
+                                      }
+                                    >
+                                      {new Date(invoice.due_date).toLocaleDateString('fr-FR')}
+                                    </Text>
+                                  ) : (
+                                    '-'
+                                  )}
+                                </Td>
+                                <Td>
+                                  <Badge colorScheme={statusBadgeColors[invoice.status]}>
+                                    {statusLabels[invoice.status] || invoice.status}
+                                  </Badge>
+                                </Td>
+                                <Td>
+                                  <Button size="sm" variant="ghost" colorScheme="brand">
+                                    Télécharger
+                                  </Button>
+                                </Td>
+                              </Tr>
+                            ))}
+                          </Tbody>
+                        </Table>
+                      )}
+                    </CardBody>
+                  </Card>
+                </VStack>
               </TabPanel>
 
               {/* Contract Tab */}
               <TabPanel>
-                <Card>
-                  <CardBody>
-                    <VStack spacing={4} align="start">
-                      <Heading size="sm">Informations contractuelles</Heading>
-                      <SimpleGrid columns={2} spacing={4} w="full">
+                <VStack spacing={6} align="stretch">
+                  {/* Contract Info Card */}
+                  <Card>
+                    <CardHeader>
+                      <Heading size="md">Informations contractuelles</Heading>
+                    </CardHeader>
+                    <CardBody>
+                      <SimpleGrid columns={{ base: 1, md: 3 }} spacing={4}>
                         {account.contract_start_date && (
                           <Box>
                             <Text fontSize="sm" color="gray.600">Date de début</Text>
@@ -448,10 +587,137 @@ export default function B2BDashboard() {
                             </Text>
                           </Box>
                         )}
+                        {account.contract_start_date && account.contract_end_date && (
+                          <Box>
+                            <Text fontSize="sm" color="gray.600">Durée</Text>
+                            <Text fontWeight="600">
+                              {Math.ceil(
+                                (new Date(account.contract_end_date) - new Date(account.contract_start_date)) /
+                                (1000 * 60 * 60 * 24 * 30)
+                              )}{' '}
+                              mois
+                            </Text>
+                          </Box>
+                        )}
                       </SimpleGrid>
-                    </VStack>
-                  </CardBody>
-                </Card>
+                    </CardBody>
+                  </Card>
+
+                  {/* Contract Stats */}
+                  <SimpleGrid columns={{ base: 1, md: 4 }} spacing={4}>
+                    <Card>
+                      <CardBody>
+                        <Stat>
+                          <StatLabel>Total Documents</StatLabel>
+                          <StatNumber fontSize="lg">{contractStats.total}</StatNumber>
+                        </Stat>
+                      </CardBody>
+                    </Card>
+                    <Card>
+                      <CardBody>
+                        <Stat>
+                          <StatLabel>Actifs</StatLabel>
+                          <StatNumber fontSize="lg" color="green.500">{contractStats.active}</StatNumber>
+                        </Stat>
+                      </CardBody>
+                    </Card>
+                    <Card>
+                      <CardBody>
+                        <Stat>
+                          <StatLabel>À renouveler</StatLabel>
+                          <StatNumber fontSize="lg" color="orange.500">{contractStats.expiring}</StatNumber>
+                        </Stat>
+                      </CardBody>
+                    </Card>
+                    <Card>
+                      <CardBody>
+                        <Stat>
+                          <StatLabel>Expirés</StatLabel>
+                          <StatNumber fontSize="lg" color="red.500">{contractStats.expired}</StatNumber>
+                        </Stat>
+                      </CardBody>
+                    </Card>
+                  </SimpleGrid>
+
+                  {/* Documents Table */}
+                  <Card>
+                    <CardHeader>
+                      <Heading size="md">Documents contractuels</Heading>
+                    </CardHeader>
+                    <CardBody>
+                      {contracts.length === 0 ? (
+                        <VStack py={8}>
+                          <Text color="gray.500">Aucun document disponible</Text>
+                        </VStack>
+                      ) : (
+                        <Table variant="simple">
+                          <Thead>
+                            <Tr>
+                              <Th>Document</Th>
+                              <Th>Type</Th>
+                              <Th>Version</Th>
+                              <Th>Date de signature</Th>
+                              <Th>Expiration</Th>
+                              <Th>Statut</Th>
+                              <Th>Actions</Th>
+                            </Tr>
+                          </Thead>
+                          <Tbody>
+                            {contracts.map((contract) => (
+                              <Tr key={contract.id}>
+                                <Td fontWeight="600">{contract.document_name}</Td>
+                                <Td>
+                                  <Badge>{documentTypeLabels[contract.document_type]}</Badge>
+                                </Td>
+                                <Td>{contract.version || '-'}</Td>
+                                <Td>
+                                  {contract.signed_date
+                                    ? new Date(contract.signed_date).toLocaleDateString('fr-FR')
+                                    : '-'}
+                                </Td>
+                                <Td>
+                                  {contract.expiry_date ? (
+                                    <Text
+                                      fontSize="sm"
+                                      color={
+                                        new Date(contract.expiry_date) < new Date()
+                                          ? 'red.500'
+                                          : Math.ceil((new Date(contract.expiry_date) - new Date()) / (1000 * 60 * 60 * 24)) <= 30
+                                          ? 'orange.500'
+                                          : 'inherit'
+                                      }
+                                    >
+                                      {new Date(contract.expiry_date).toLocaleDateString('fr-FR')}
+                                    </Text>
+                                  ) : (
+                                    '-'
+                                  )}
+                                </Td>
+                                <Td>
+                                  <Badge colorScheme={contract.is_active ? 'green' : 'gray'}>
+                                    {contract.is_active ? 'Actif' : 'Inactif'}
+                                  </Badge>
+                                </Td>
+                                <Td>
+                                  <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    colorScheme="brand"
+                                    as="a"
+                                    href={contract.document_url}
+                                    target="_blank"
+                                  >
+                                    Télécharger
+                                  </Button>
+                                </Td>
+                              </Tr>
+                            ))}
+                          </Tbody>
+                        </Table>
+                      )}
+                    </CardBody>
+                  </Card>
+                </VStack>
               </TabPanel>
             </TabPanels>
           </Tabs>
