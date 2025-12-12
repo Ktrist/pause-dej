@@ -59,7 +59,7 @@ export function useEmail() {
       'order-confirmation',
       {
         orderNumber: order.order_number,
-        customerName: order.users?.full_name || 'Client',
+        customerName: order.user?.full_name || 'Client',
         items: order.order_items?.map(item => ({
           name: item.dish_name,
           quantity: item.quantity,
@@ -83,7 +83,7 @@ export function useEmail() {
       'order-preparing',
       {
         orderNumber: order.order_number,
-        customerName: order.users?.full_name || 'Client',
+        customerName: order.user?.full_name || 'Client',
         deliveryTime: order.delivery_time
       },
       userEmail
@@ -98,7 +98,7 @@ export function useEmail() {
       'order-in-transit',
       {
         orderNumber: order.order_number,
-        customerName: order.users?.full_name || 'Client',
+        customerName: order.user?.full_name || 'Client',
         deliveryAddress: `${order.delivery_street}, ${order.delivery_city}`,
         eta: '10-15'
       },
@@ -114,7 +114,7 @@ export function useEmail() {
       'order-delivered',
       {
         orderNumber: order.order_number,
-        customerName: order.users?.full_name || 'Client',
+        customerName: order.user?.full_name || 'Client',
         reviewUrl: `${window.location.origin}/review/${order.id}`
       },
       userEmail
@@ -129,7 +129,7 @@ export function useEmail() {
       'order-cancelled',
       {
         orderNumber: order.order_number,
-        customerName: order.users?.full_name || 'Client',
+        customerName: order.user?.full_name || 'Client',
         reason
       },
       userEmail

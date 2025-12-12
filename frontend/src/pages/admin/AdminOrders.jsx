@@ -268,14 +268,14 @@ export default function AdminOrders() {
 
       // Send email based on new status
       const order = orders.find(o => o.id === orderId)
-      if (order && order.users?.email) {
+      if (order && order.user?.email) {
         try {
           if (newStatus === 'preparing') {
-            await sendOrderPreparing(order, order.users.email)
+            await sendOrderPreparing(order, order.user.email)
           } else if (newStatus === 'in_transit') {
-            await sendOrderInTransit(order, order.users.email)
+            await sendOrderInTransit(order, order.user.email)
           } else if (newStatus === 'delivered') {
-            await sendOrderDelivered(order, order.users.email)
+            await sendOrderDelivered(order, order.user.email)
           }
         } catch (emailError) {
           console.error('Failed to send email:', emailError)
@@ -309,9 +309,9 @@ export default function AdminOrders() {
 
       // Send cancellation email
       const order = orders.find(o => o.id === orderId)
-      if (order && order.users?.email) {
+      if (order && order.user?.email) {
         try {
-          await sendOrderCancelled(order, order.users.email, reason)
+          await sendOrderCancelled(order, order.user.email, reason)
         } catch (emailError) {
           console.error('Failed to send cancellation email:', emailError)
         }

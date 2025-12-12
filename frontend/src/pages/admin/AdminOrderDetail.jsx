@@ -333,11 +333,11 @@ export default function AdminOrderDetail() {
                         Nom
                       </Text>
                       <Text fontWeight="600">
-                        {order.users?.full_name || 'Non renseigné'}
+                        {order.user?.full_name || 'Non renseigné'}
                       </Text>
                     </Box>
 
-                    {order.users?.email && (
+                    {order.user?.email && (
                       <HStack spacing={2}>
                         <Icon as={FiMail} color="gray.500" />
                         <Box flex={1}>
@@ -345,20 +345,20 @@ export default function AdminOrderDetail() {
                             Email
                           </Text>
                           <Text fontWeight="600" fontSize="sm" wordBreak="break-all">
-                            {order.users.email}
+                            {order.user.email}
                           </Text>
                         </Box>
                       </HStack>
                     )}
 
-                    {order.users?.phone && (
+                    {order.user?.phone && (
                       <HStack spacing={2}>
                         <Icon as={FiPhone} color="gray.500" />
                         <Box>
                           <Text fontSize="sm" color="gray.600">
                             Téléphone
                           </Text>
-                          <Text fontWeight="600">{order.users.phone}</Text>
+                          <Text fontWeight="600">{order.user.phone}</Text>
                         </Box>
                       </HStack>
                     )}

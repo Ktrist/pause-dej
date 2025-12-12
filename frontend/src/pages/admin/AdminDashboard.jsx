@@ -237,10 +237,10 @@ export default function AdminDashboard() {
                       <Td>
                         <VStack align="start" spacing={0}>
                           <Text fontSize="sm" fontWeight="medium">
-                            {order.users?.full_name || 'N/A'}
+                            {order.user?.full_name || 'N/A'}
                           </Text>
                           <Text fontSize="xs" color="gray.500">
-                            {order.users?.phone || order.users?.email}
+                            {order.user?.phone || order.user?.email}
                           </Text>
                         </VStack>
                       </Td>
