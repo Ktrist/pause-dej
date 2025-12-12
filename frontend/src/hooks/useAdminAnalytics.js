@@ -100,8 +100,7 @@ export function useAdminAnalytics(period = '30days') {
             dishSales[dishName] = {
               name: dishName,
               quantity: 0,
-              revenue: 0,
-              category: item.dishes?.category || 'unknown'
+              revenue: 0
             }
           }
           dishSales[dishName].quantity += item.quantity
@@ -113,17 +112,10 @@ export function useAdminAnalytics(period = '30days') {
         .sort((a, b) => b.revenue - a.revenue)
         .slice(0, 10)
 
-      // Revenue by category
-      const revenueByCategory = {}
-      orders.forEach(order => {
-        order.order_items?.forEach(item => {
-          const category = item.dishes?.category || 'Autre'
-          if (!revenueByCategory[category]) {
-            revenueByCategory[category] = 0
-          }
-          revenueByCategory[category] += item.subtotal
-        })
-      })
+      // Revenue by category (disabled - requires category join)
+      const revenueByCategory = {
+        'Non disponible': totalRevenue
+      }
 
       // Customer analytics
       const uniqueCustomers = new Set(orders.map(o => o.user_id).filter(Boolean))

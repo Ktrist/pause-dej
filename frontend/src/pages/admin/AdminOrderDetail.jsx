@@ -304,13 +304,13 @@ export default function AdminOrderDetail() {
               )}
 
               {/* Cancellation Reason */}
-              {order.status === 'cancelled' && order.cancellation_reason && (
+              {order.status === 'cancelled' && order.admin_notes && (
                 <Card bg="red.50" borderColor="red.200" borderWidth={1}>
                   <CardBody>
                     <Heading size="md" mb={3} color="red.700">
                       Motif d'annulation
                     </Heading>
-                    <Text color="red.800">{order.cancellation_reason}</Text>
+                    <Text color="red.800">{order.admin_notes}</Text>
                   </CardBody>
                 </Card>
               )}

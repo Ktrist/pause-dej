@@ -65,7 +65,7 @@ export function useAdminOrders() {
     try {
       const { data, error: updateError } = await supabase
         .from('orders')
-        .update({ status, updated_at: new Date().toISOString() })
+        .update({ status })
         .eq('id', id)
         .select()
         .single()
@@ -86,8 +86,7 @@ export function useAdminOrders() {
         .from('orders')
         .update({
           status: 'cancelled',
-          cancellation_reason: reason,
-          updated_at: new Date().toISOString()
+          admin_notes: reason
         })
         .eq('id', id)
         .select()
@@ -133,7 +132,7 @@ export function useAdminOrder(orderId) {
             *,
             order_items(
               *,
-              dishes(name, image_url, category)
+              dishes(name, image_url)
             ),
             user:user_id(email, full_name, phone),
             delivery_addresses(
