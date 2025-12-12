@@ -62,6 +62,7 @@ export default function AdminLayout() {
   const navigate = useNavigate()
   const bgColor = useColorModeValue('white', 'gray.800')
   const borderColor = useColorModeValue('gray.200', 'gray.700')
+  const mainBgColor = useColorModeValue('gray.50', 'gray.900')
 
   // Check if user is authenticated
   useEffect(() => {
@@ -84,7 +85,7 @@ export default function AdminLayout() {
   }
 
   return (
-    <Box minH="100vh" bg={useColorModeValue('gray.50', 'gray.900')}>
+    <Box minH="100vh" bg={mainBgColor}>
       <Flex>
         {/* Sidebar */}
         <Box
