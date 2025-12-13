@@ -41,6 +41,7 @@ import { useAuth } from '../../context/AuthContext'
 import { useAddresses, useCreateAddress, useUpdateAddress, useDeleteAddress } from '../../hooks/useAddresses'
 import { useOrders } from '../../hooks/useOrders'
 import { useFavorites } from '../../hooks/useFavorites'
+import { useProfile, DIETARY_PREFERENCES } from '../../hooks/useProfile'
 import LoadingSpinner from '../../components/common/LoadingSpinner'
 import DishCard from '../../components/catalogue/DishCard'
 
@@ -67,6 +68,13 @@ export default function AccountPage() {
 
   // Supabase hooks for favorites
   const { favorites, loading: loadingFavorites, error: errorFavorites } = useFavorites()
+
+  // Supabase hook for dietary preferences
+  const {
+    dietaryPreferences,
+    toggleDietaryPreference,
+    loading: loadingProfile
+  } = useProfile()
 
   // Modal for add/edit address
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -282,6 +290,81 @@ export default function AccountPage() {
                     >
                       Enregistrer les modifications
                     </Button>
+
+                    <Divider my={4} />
+
+                    {/* Dietary Preferences Section - M9.2 */}
+                    <VStack align="stretch" spacing={4}>
+                      <Heading size="md">Préférences alimentaires</Heading>
+                      <Text fontSize="sm" color="gray.600">
+                        Sélectionnez vos restrictions et préférences alimentaires pour personnaliser votre expérience
+                      </Text>
+
+                      {loadingProfile ? (
+                        <LoadingSpinner message="Chargement..." />
+                      ) : (
+                        <SimpleGrid columns={{ base: 1, md: 2 }} spacing={3}>
+                          {DIETARY_PREFERENCES.map((pref) => {
+                            const isSelected = dietaryPreferences.includes(pref.value)
+                            return (
+                              <Card
+                                key={pref.value}
+                                variant="outline"
+                                borderWidth={2}
+                                borderColor={isSelected ? 'brand.500' : 'gray.200'}
+                                bg={isSelected ? 'brand.50' : 'white'}
+                                cursor="pointer"
+                                onClick={() => {
+                                  toggleDietaryPreference(pref.value)
+                                  toast({
+                                    title: isSelected ? 'Préférence retirée' : 'Préférence ajoutée',
+                                    description: pref.label,
+                                    status: 'success',
+                                    duration: 2000,
+                                    isClosable: true
+                                  })
+                                }}
+                                _hover={{
+                                  transform: 'translateY(-2px)',
+                                  boxShadow: 'md',
+                                  borderColor: 'brand.500'
+                                }}
+                                transition="all 0.2s"
+                              >
+                                <CardBody>
+                                  <HStack spacing={3}>
+                                    <Text fontSize="2xl">{pref.icon}</Text>
+                                    <VStack align="start" spacing={0} flex={1}>
+                                      <HStack>
+                                        <Text fontWeight="600">{pref.label}</Text>
+                                        {isSelected && (
+                                          <Badge colorScheme="brand" size="sm">✓</Badge>
+                                        )}
+                                      </HStack>
+                                      <Text fontSize="xs" color="gray.600">
+                                        {pref.description}
+                                      </Text>
+                                    </VStack>
+                                  </HStack>
+                                </CardBody>
+                              </Card>
+                            )
+                          })}
+                        </SimpleGrid>
+                      )}
+
+                      {dietaryPreferences.length > 0 && (
+                        <Alert status="info" borderRadius="md">
+                          <AlertIcon />
+                          <VStack align="start" spacing={1}>
+                            <Text fontWeight="600">Vos préférences sont actives</Text>
+                            <Text fontSize="sm">
+                              Le catalogue filtrera automatiquement les plats compatibles avec vos choix
+                            </Text>
+                          </VStack>
+                        </Alert>
+                      )}
+                    </VStack>
                   </VStack>
                 </Box>
               </TabPanel>

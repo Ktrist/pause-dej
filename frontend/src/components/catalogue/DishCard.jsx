@@ -1,8 +1,9 @@
-import { Box, Image, VStack, HStack, Text, Button, Badge, Icon, IconButton, useToast } from '@chakra-ui/react'
+import { Box, Image, VStack, HStack, Text, Button, Badge, Icon, IconButton, useToast, Wrap, WrapItem } from '@chakra-ui/react'
 import { FiShoppingCart, FiEye, FiHeart } from 'react-icons/fi'
 import { useCart } from '../../context/CartContext'
 import { useFavorites } from '../../hooks/useFavorites'
 import { useAuth } from '../../context/AuthContext'
+import { getPreferenceIcon, getPreferenceLabel } from '../../hooks/useProfile'
 
 export default function DishCard({ dish, onViewDetails }) {
   const { addToCart } = useCart()
@@ -82,19 +83,45 @@ export default function DishCard({ dish, onViewDetails }) {
           objectFit="cover"
         />
 
-        {/* Badges */}
-        <HStack position="absolute" top={3} left={3} spacing={2}>
-          {dish.vegetarian && (
-            <Badge colorScheme="green" fontSize="xs">
-              🌱 Végétarien
-            </Badge>
-          )}
-          {dish.vegan && (
-            <Badge colorScheme="green" fontSize="xs">
-              🌿 Vegan
-            </Badge>
-          )}
-        </HStack>
+        {/* Dietary Tags Badges - M9.2 */}
+        {dish.dietaryTags && dish.dietaryTags.length > 0 && (
+          <Wrap position="absolute" top={3} left={3} spacing={1} maxW="70%">
+            {dish.dietaryTags.slice(0, 3).map((tag) => (
+              <WrapItem key={tag}>
+                <Badge
+                  colorScheme="green"
+                  fontSize="xs"
+                  px={2}
+                  py={0.5}
+                  borderRadius="md"
+                  bg="white"
+                  color="green.600"
+                  fontWeight="600"
+                  boxShadow="sm"
+                >
+                  {getPreferenceIcon(tag)}
+                </Badge>
+              </WrapItem>
+            ))}
+            {dish.dietaryTags.length > 3 && (
+              <WrapItem>
+                <Badge
+                  colorScheme="green"
+                  fontSize="xs"
+                  px={2}
+                  py={0.5}
+                  borderRadius="md"
+                  bg="white"
+                  color="green.600"
+                  fontWeight="600"
+                  boxShadow="sm"
+                >
+                  +{dish.dietaryTags.length - 3}
+                </Badge>
+              </WrapItem>
+            )}
+          </Wrap>
+        )}
 
         {/* Favorite Button */}
         <IconButton

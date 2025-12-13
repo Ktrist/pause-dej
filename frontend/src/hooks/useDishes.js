@@ -64,6 +64,7 @@ export function useDishes({ enabled = true, category = null, availableOnly = tru
         stock: dish.stock,
         isPopular: dish.is_popular,
         allergens: dish.allergens || [],
+        dietaryTags: dish.dietary_tags || [], // M9.2 - Dietary preferences
         nutritionInfo: {
           calories: dish.calories,
           protein: dish.protein,
@@ -142,6 +143,7 @@ export function useDish(dishId) {
           stock: data.stock,
           isPopular: data.is_popular,
           allergens: data.allergens || [],
+          dietaryTags: data.dietary_tags || [], // M9.2 - Dietary preferences
           nutritionInfo: {
             calories: data.calories,
             protein: data.protein,
@@ -208,6 +210,7 @@ export function usePopularDishes(limit = 6) {
           stock: dish.stock,
           isPopular: dish.is_popular,
           allergens: dish.allergens || [],
+          dietaryTags: dish.dietary_tags || [], // M9.2 - Dietary preferences
           nutritionInfo: {
             calories: dish.calories,
             protein: dish.protein,

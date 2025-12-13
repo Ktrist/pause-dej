@@ -17,8 +17,9 @@ import {
   AlertIcon,
   AlertTitle
 } from '@chakra-ui/react'
-import { FiSearch } from 'react-icons/fi'
+import { FiSearch, FiFilter } from 'react-icons/fi'
 import { useDishes, useCategories } from '../../hooks/useDishes'
+import { useProfile, DIETARY_PREFERENCES, getPreferenceIcon } from '../../hooks/useProfile'
 import DishCard from '../../components/catalogue/DishCard'
 import DishDetailModal from '../../components/catalogue/DishDetailModal'
 import LoadingSpinner from '../../components/common/LoadingSpinner'
@@ -28,11 +29,14 @@ export default function CataloguePage() {
   const [searchQuery, setSearchQuery] = useState('')
   const [sortBy, setSortBy] = useState('popular')
   const [selectedDish, setSelectedDish] = useState(null)
+  const [dietaryFilter, setDietaryFilter] = useState(null) // Filter by specific dietary preference
+  const [filterByMyPreferences, setFilterByMyPreferences] = useState(false) // Use user's saved preferences
   const { isOpen, onOpen, onClose } = useDisclosure()
 
   // Fetch data from Supabase
   const { dishes: allDishes, loading: loadingDishes, error: errorDishes } = useDishes()
   const { categories, loading: loadingCategories, error: errorCategories } = useCategories()
+  const { dietaryPreferences } = useProfile()
 
   // Filter and sort dishes
   const filteredDishes = useMemo(() => {
@@ -41,6 +45,20 @@ export default function CataloguePage() {
     // Filter by category
     if (selectedCategory !== 'all') {
       dishes = dishes.filter((dish) => dish.category === selectedCategory)
+    }
+
+    // Filter by dietary preferences
+    if (filterByMyPreferences && dietaryPreferences.length > 0) {
+      // Filter to show only dishes compatible with ALL user's preferences
+      dishes = dishes.filter((dish) => {
+        if (!dish.dietaryTags || dish.dietaryTags.length === 0) return false
+        return dietaryPreferences.every(pref => dish.dietaryTags.includes(pref))
+      })
+    } else if (dietaryFilter) {
+      // Filter by single selected dietary preference
+      dishes = dishes.filter((dish) =>
+        dish.dietaryTags && dish.dietaryTags.includes(dietaryFilter)
+      )
     }
 
     // Filter by search query
@@ -72,7 +90,7 @@ export default function CataloguePage() {
     }
 
     return dishes
-  }, [allDishes, selectedCategory, searchQuery, sortBy])
+  }, [allDishes, selectedCategory, searchQuery, sortBy, dietaryFilter, filterByMyPreferences, dietaryPreferences])
 
   const handleViewDetails = (dish) => {
     setSelectedDish(dish)
@@ -151,6 +169,56 @@ export default function CataloguePage() {
               ))}
             </HStack>
 
+            {/* Dietary Filters - M9.2 */}
+            <VStack align="stretch" spacing={2}>
+              <HStack spacing={2}>
+                <FiFilter />
+                <Text fontSize="sm" fontWeight="600" color="gray.700">
+                  Préférences alimentaires
+                </Text>
+              </HStack>
+              <HStack spacing={2} overflowX="auto" pb={2}>
+                {/* My Preferences Button */}
+                {dietaryPreferences.length > 0 && (
+                  <Button
+                    size="sm"
+                    variant={filterByMyPreferences ? 'solid' : 'outline'}
+                    colorScheme={filterByMyPreferences ? 'green' : 'gray'}
+                    onClick={() => {
+                      setFilterByMyPreferences(!filterByMyPreferences)
+                      if (!filterByMyPreferences) setDietaryFilter(null)
+                    }}
+                    flexShrink={0}
+                    leftIcon={<span>⭐</span>}
+                  >
+                    Mes préférences ({dietaryPreferences.length})
+                  </Button>
+                )}
+
+                {/* Individual Dietary Filters */}
+                {DIETARY_PREFERENCES.map((pref) => (
+                  <Button
+                    key={pref.value}
+                    size="sm"
+                    variant={dietaryFilter === pref.value ? 'solid' : 'outline'}
+                    colorScheme={dietaryFilter === pref.value ? 'brand' : 'gray'}
+                    onClick={() => {
+                      if (dietaryFilter === pref.value) {
+                        setDietaryFilter(null)
+                      } else {
+                        setDietaryFilter(pref.value)
+                        setFilterByMyPreferences(false)
+                      }
+                    }}
+                    flexShrink={0}
+                    leftIcon={<span>{pref.icon}</span>}
+                  >
+                    {pref.label}
+                  </Button>
+                ))}
+              </HStack>
+            </VStack>
+
             {/* Sort */}
             <HStack justify="space-between" align="center">
               <Text fontSize="sm" color="gray.600">
@@ -201,6 +269,8 @@ export default function CataloguePage() {
                 onClick={() => {
                   setSelectedCategory('all')
                   setSearchQuery('')
+                  setDietaryFilter(null)
+                  setFilterByMyPreferences(false)
                 }}
               >
                 Réinitialiser les filtres
