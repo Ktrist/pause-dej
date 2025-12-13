@@ -17,9 +17,11 @@ import {
   AlertIcon,
   AlertTitle
 } from '@chakra-ui/react'
-import { FiSearch, FiFilter } from 'react-icons/fi'
+import { FiSearch, FiFilter, FiStar } from 'react-icons/fi'
 import { useDishes, useCategories } from '../../hooks/useDishes'
 import { useProfile, DIETARY_PREFERENCES, getPreferenceIcon } from '../../hooks/useProfile'
+import { usePersonalizedSuggestions } from '../../hooks/usePersonalizedSuggestions'
+import { useAuth } from '../../context/AuthContext'
 import DishCard from '../../components/catalogue/DishCard'
 import DishDetailModal from '../../components/catalogue/DishDetailModal'
 import LoadingSpinner from '../../components/common/LoadingSpinner'
@@ -34,9 +36,11 @@ export default function CataloguePage() {
   const { isOpen, onOpen, onClose } = useDisclosure()
 
   // Fetch data from Supabase
+  const { user } = useAuth()
   const { dishes: allDishes, loading: loadingDishes, error: errorDishes } = useDishes()
   const { categories, loading: loadingCategories, error: errorCategories } = useCategories()
   const { dietaryPreferences } = useProfile()
+  const { suggestions, hasPersonalizedSuggestions } = usePersonalizedSuggestions(4)
 
   // Filter and sort dishes
   const filteredDishes = useMemo(() => {
@@ -135,6 +139,36 @@ export default function CataloguePage() {
               Découvrez nos {allDishes.length} plats frais et savoureux
             </Text>
           </VStack>
+
+          {/* Personalized Recommendations - M9.3 */}
+          {user && hasPersonalizedSuggestions && suggestions.length > 0 && (
+            <Box
+              bg="gradient.subtle"
+              p={6}
+              borderRadius="xl"
+              borderWidth={2}
+              borderColor="brand.200"
+              boxShadow="sm"
+            >
+              <VStack align="stretch" spacing={4}>
+                <HStack spacing={2}>
+                  <FiStar color="var(--chakra-colors-brand-500)" />
+                  <Heading size="md" color="gray.800">
+                    Recommandé pour vous
+                  </Heading>
+                </HStack>
+                <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={4}>
+                  {suggestions.map((dish) => (
+                    <DishCard
+                      key={dish.id}
+                      dish={dish}
+                      onViewDetails={() => handleViewDetails(dish)}
+                    />
+                  ))}
+                </SimpleGrid>
+              </VStack>
+            </Box>
+          )}
 
           {/* Search and Filters */}
           <VStack spacing={4} align="stretch">
