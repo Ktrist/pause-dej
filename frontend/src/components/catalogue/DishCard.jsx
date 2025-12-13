@@ -191,11 +191,13 @@ export default function DishCard({ dish, onViewDetails }) {
         </Text>
 
         {/* Nutrition Info */}
-        <HStack fontSize="xs" color="gray.500" spacing={3}>
-          <Text>{dish.nutritionInfo.calories} kcal</Text>
-          <Text>•</Text>
-          <Text>{dish.nutritionInfo.protein}g protéines</Text>
-        </HStack>
+        {dish.nutritionInfo && (
+          <HStack fontSize="xs" color="gray.500" spacing={3}>
+            <Text>{dish.nutritionInfo.calories} kcal</Text>
+            <Text>•</Text>
+            <Text>{dish.nutritionInfo.protein}g protéines</Text>
+          </HStack>
+        )}
 
         {/* Actions */}
         <HStack spacing={2} pt={2}>
