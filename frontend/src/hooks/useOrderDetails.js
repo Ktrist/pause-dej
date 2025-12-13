@@ -42,8 +42,7 @@ export function useOrderDetails(orderId) {
                 id,
                 name,
                 description,
-                image_url,
-                dietary_tags
+                image_url
               )
             ),
             promo_codes (
