@@ -36,15 +36,17 @@ import {
   AlertIcon
 } from '@chakra-ui/react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { FiUser, FiMapPin, FiShoppingBag, FiEdit2, FiTrash2, FiPlus, FiTruck, FiHeart, FiAward } from 'react-icons/fi'
+import { FiUser, FiMapPin, FiShoppingBag, FiEdit2, FiTrash2, FiPlus, FiTruck, FiHeart, FiAward, FiMessageSquare } from 'react-icons/fi'
 import { useAuth } from '../../context/AuthContext'
 import { useAddresses, useCreateAddress, useUpdateAddress, useDeleteAddress } from '../../hooks/useAddresses'
 import { useOrders } from '../../hooks/useOrders'
 import { useFavorites } from '../../hooks/useFavorites'
 import { useProfile, DIETARY_PREFERENCES } from '../../hooks/useProfile'
 import { useLoyalty, useLoyaltyRewards, useLoyaltyRedemptions, useLoyaltyTransactions } from '../../hooks/useLoyalty'
+import { useUserReviews, useDeleteReview } from '../../hooks/useReviews'
 import LoadingSpinner from '../../components/common/LoadingSpinner'
 import DishCard from '../../components/catalogue/DishCard'
+import { StarRating } from '../../components/reviews/StarRating'
 
 export default function AccountPage() {
   const { user, loading } = useAuth()
@@ -83,6 +85,10 @@ export default function AccountPage() {
   const { redemptions, loading: loadingRedemptions } = useLoyaltyRedemptions()
   const { transactions, loading: loadingTransactions } = useLoyaltyTransactions(20)
 
+  // Reviews hooks
+  const { reviews: userReviews, loading: loadingReviews, refresh: refreshReviews } = useUserReviews()
+  const { deleteReview, loading: deletingReview } = useDeleteReview()
+
   // Modal for add/edit address
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [editingAddress, setEditingAddress] = useState(null)
@@ -107,6 +113,7 @@ export default function AccountPage() {
     if (tab === 'loyalty') setTabIndex(2)
     if (tab === 'addresses') setTabIndex(3)
     if (tab === 'favorites') setTabIndex(4)
+    if (tab === 'reviews') setTabIndex(5)
   }, [searchParams])
 
   useEffect(() => {
@@ -259,6 +266,12 @@ export default function AccountPage() {
                 <HStack spacing={2}>
                   <FiHeart />
                   <Text>Favoris</Text>
+                </HStack>
+              </Tab>
+              <Tab>
+                <HStack spacing={2}>
+                  <FiMessageSquare />
+                  <Text>Avis</Text>
                 </HStack>
               </Tab>
             </TabList>
@@ -911,6 +924,151 @@ export default function AccountPage() {
                         />
                       ))}
                     </SimpleGrid>
+                  )}
+                </VStack>
+              </TabPanel>
+
+              {/* Reviews Tab */}
+              <TabPanel>
+                <VStack spacing={4} align="stretch">
+                  <Text fontSize="lg" fontWeight="600">
+                    Mes avis
+                  </Text>
+
+                  {loadingReviews ? (
+                    <LoadingSpinner message="Chargement des avis..." />
+                  ) : userReviews.length === 0 ? (
+                    <Box bg="white" p={12} borderRadius="xl" boxShadow="md" textAlign="center">
+                      <VStack spacing={4}>
+                        <Text fontSize="4xl">⭐</Text>
+                        <Heading size="md" color="gray.600">
+                          Aucun avis
+                        </Heading>
+                        <Text color="gray.500">
+                          Commandez et recevez des plats pour laisser des avis
+                        </Text>
+                        <Button
+                          as="a"
+                          href="/catalogue"
+                          colorScheme="brand"
+                          size="lg"
+                        >
+                          Voir le catalogue
+                        </Button>
+                      </VStack>
+                    </Box>
+                  ) : (
+                    <VStack spacing={4} align="stretch">
+                      {userReviews.map((review) => (
+                        <Card key={review.id}>
+                          <CardBody>
+                            <VStack align="stretch" spacing={4}>
+                              {/* Header with dish info */}
+                              <HStack justify="space-between" align="start">
+                                <HStack spacing={3}>
+                                  {review.dish?.image_url && (
+                                    <Box
+                                      w="60px"
+                                      h="60px"
+                                      bgImage={`url(${review.dish.image_url})`}
+                                      bgSize="cover"
+                                      bgPosition="center"
+                                      borderRadius="md"
+                                    />
+                                  )}
+                                  <VStack align="start" spacing={1}>
+                                    <Text fontWeight="600" fontSize="md">
+                                      {review.dish?.name}
+                                    </Text>
+                                    <StarRating rating={review.rating} size="sm" />
+                                    <Text fontSize="xs" color="gray.500">
+                                      {new Date(review.created_at).toLocaleDateString('fr-FR', {
+                                        day: 'numeric',
+                                        month: 'long',
+                                        year: 'numeric'
+                                      })}
+                                    </Text>
+                                  </VStack>
+                                </HStack>
+                                <IconButton
+                                  icon={<FiTrash2 />}
+                                  size="sm"
+                                  variant="ghost"
+                                  colorScheme="red"
+                                  onClick={async () => {
+                                    if (confirm('Êtes-vous sûr de vouloir supprimer cet avis ?')) {
+                                      const { error } = await deleteReview(review.id)
+                                      if (error) {
+                                        toast({
+                                          title: 'Erreur',
+                                          description: error,
+                                          status: 'error',
+                                          duration: 3000
+                                        })
+                                      } else {
+                                        toast({
+                                          title: 'Avis supprimé',
+                                          status: 'info',
+                                          duration: 2000
+                                        })
+                                        refreshReviews()
+                                      }
+                                    }
+                                  }}
+                                  isLoading={deletingReview}
+                                  aria-label="Supprimer"
+                                />
+                              </HStack>
+
+                              {/* Review content */}
+                              {review.title && (
+                                <Text fontWeight="600" fontSize="md">
+                                  {review.title}
+                                </Text>
+                              )}
+                              {review.comment && (
+                                <Text fontSize="sm" color="gray.700">
+                                  {review.comment}
+                                </Text>
+                              )}
+
+                              {/* Status badges */}
+                              <HStack spacing={2}>
+                                {review.is_verified_purchase && (
+                                  <Badge colorScheme="green" fontSize="xs">
+                                    ✓ Achat vérifié
+                                  </Badge>
+                                )}
+                                {review.is_approved ? (
+                                  <Badge colorScheme="green" fontSize="xs">
+                                    Publié
+                                  </Badge>
+                                ) : (
+                                  <Badge colorScheme="orange" fontSize="xs">
+                                    En attente de modération
+                                  </Badge>
+                                )}
+                                <Badge fontSize="xs">
+                                  {review.helpful_count} 👍
+                                </Badge>
+                              </HStack>
+
+                              <Divider />
+
+                              <Button
+                                as="a"
+                                href={`/catalogue?dish=${review.dish_id}`}
+                                size="sm"
+                                variant="outline"
+                                colorScheme="brand"
+                              >
+                                Voir le plat
+                              </Button>
+                            </VStack>
+                          </CardBody>
+                        </Card>
+                      ))}
+                    </VStack>
                   )}
                 </VStack>
               </TabPanel>

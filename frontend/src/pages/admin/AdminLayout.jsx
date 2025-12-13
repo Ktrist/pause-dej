@@ -22,7 +22,8 @@ import {
   FiSettings,
   FiLogOut,
   FiTruck,
-  FiBriefcase
+  FiBriefcase,
+  FiMessageSquare
 } from 'react-icons/fi'
 import { useAuth } from '../../context/AuthContext'
 
@@ -125,6 +126,9 @@ export default function AdminLayout() {
               </SidebarLink>
               <SidebarLink to="/admin/customers" icon={FiUsers}>
                 Clients
+              </SidebarLink>
+              <SidebarLink to="/admin/reviews" icon={FiMessageSquare}>
+                Avis
               </SidebarLink>
               <SidebarLink to="/admin/delivery" icon={FiTruck}>
                 Livraisons

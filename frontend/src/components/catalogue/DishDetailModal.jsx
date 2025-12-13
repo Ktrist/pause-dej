@@ -18,6 +18,7 @@ import {
 } from '@chakra-ui/react'
 import { FiShoppingCart } from 'react-icons/fi'
 import { useCart } from '../../context/CartContext'
+import ReviewsSection from '../reviews/ReviewsSection'
 
 export default function DishDetailModal({ dish, isOpen, onClose }) {
   const { addToCart } = useCart()
@@ -152,6 +153,13 @@ export default function DishDetailModal({ dish, isOpen, onClose }) {
                 </Text>
               )}
             </VStack>
+
+            <Divider />
+
+            {/* Reviews Section */}
+            <ReviewsSection dishId={dish.id} dishName={dish.name} />
+
+            <Divider />
 
             {/* Add to Cart Button */}
             <Button
