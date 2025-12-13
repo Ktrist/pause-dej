@@ -65,6 +65,8 @@ export function useDishes({ enabled = true, category = null, availableOnly = tru
         isPopular: dish.is_popular,
         allergens: dish.allergens || [],
         dietaryTags: dish.dietary_tags || [], // M9.2 - Dietary preferences
+        averageRating: dish.average_rating || 0, // Reviews system
+        reviewCount: dish.review_count || 0, // Reviews system
         nutritionInfo: {
           calories: dish.calories,
           protein: dish.protein,
@@ -144,6 +146,8 @@ export function useDish(dishId) {
           isPopular: data.is_popular,
           allergens: data.allergens || [],
           dietaryTags: data.dietary_tags || [], // M9.2 - Dietary preferences
+          averageRating: data.average_rating || 0, // Reviews system
+          reviewCount: data.review_count || 0, // Reviews system
           nutritionInfo: {
             calories: data.calories,
             protein: data.protein,
@@ -211,6 +215,8 @@ export function usePopularDishes(limit = 6) {
           isPopular: dish.is_popular,
           allergens: dish.allergens || [],
           dietaryTags: dish.dietary_tags || [], // M9.2 - Dietary preferences
+          averageRating: dish.average_rating || 0, // Reviews system
+          reviewCount: dish.review_count || 0, // Reviews system
           nutritionInfo: {
             calories: dish.calories,
             protein: dish.protein,

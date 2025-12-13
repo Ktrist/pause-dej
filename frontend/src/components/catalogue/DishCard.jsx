@@ -1,5 +1,5 @@
 import { Box, Image, VStack, HStack, Text, Button, Badge, Icon, IconButton, useToast, Wrap, WrapItem } from '@chakra-ui/react'
-import { FiShoppingCart, FiEye, FiHeart } from 'react-icons/fi'
+import { FiShoppingCart, FiEye, FiHeart, FiStar } from 'react-icons/fi'
 import { useCart } from '../../context/CartContext'
 import { useFavorites } from '../../hooks/useFavorites'
 import { useAuth } from '../../context/AuthContext'
@@ -167,9 +167,23 @@ export default function DishCard({ dish, onViewDetails }) {
               {dish.price.toFixed(2)}€
             </Text>
           </HStack>
-          <Badge colorScheme="gray" fontSize="xs">
-            {dish.categoryLabel}
-          </Badge>
+          <HStack spacing={2}>
+            <Badge colorScheme="gray" fontSize="xs">
+              {dish.categoryLabel}
+            </Badge>
+            {/* Rating Display - Reviews System */}
+            {dish.reviewCount > 0 && (
+              <HStack spacing={1}>
+                <Icon as={FiStar} color="yellow.500" boxSize={3} fill="yellow.500" />
+                <Text fontSize="xs" fontWeight="600" color="gray.700">
+                  {dish.averageRating.toFixed(1)}
+                </Text>
+                <Text fontSize="xs" color="gray.500">
+                  ({dish.reviewCount})
+                </Text>
+              </HStack>
+            )}
+          </HStack>
         </VStack>
 
         <Text fontSize="sm" color="gray.600" noOfLines={2} minH="40px">
