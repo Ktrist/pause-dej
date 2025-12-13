@@ -1,12 +1,12 @@
 # 📊 Suivi des User Stories - Pause Dej'
 
-> **Dernière mise à jour** : 2025-12-13 (Session - Reviews & Ratings System Complete)
-> **Progression globale** : 71/144 User Stories (49.3%)
+> **Dernière mise à jour** : 2025-12-13 (Session - Review Request Emails)
+> **Progression globale** : 72/144 User Stories (50.0%)
 > **Infrastructure** : ✅ Supabase entièrement intégré (58 hooks + migrations complètes + RPC functions) | ✅ Stripe paiements fonctionnels | ✅ Admin Dashboard 100% | ✅ Email notifications | ✅ Support client | ✅ Analytics | ✅ B2B Platform 100% (9/9) | ✅ User Personalization 100% (3/3) | ✅ Loyalty Program 100% (3/3) | ✅ Reviews & Ratings 100% (3/3)
 
 ---
 
-## ✅ User Stories Terminées (68)
+## ✅ User Stories Terminées (69)
 
 ### 🏠 Homepage - Web (5/5)
 | ID | Titre | Statut | Commit |
@@ -118,7 +118,7 @@
 | **A5.2** | Détail client | ✅ **Terminé** | 3d94d10 |
 | **A6.x** | Analytics | ✅ **Terminé** | e6c4ed4 |
 
-### 📧 Email Notifications (4/15)
+### 📧 Email Notifications (5/15)
 | ID | Titre | Statut | Commit |
 |---|---|---|---|
 | **N1.1** | Confirmation Compte | 🟡 **Supabase Auth** | Native |
@@ -126,7 +126,7 @@
 | **N1.3** | Commande Préparation | ✅ **Terminé** | d20ae71 |
 | **N1.4** | En Livraison | ✅ **Terminé** | d20ae71 |
 | **N1.5** | Livrée | ✅ **Terminé** | d20ae71 |
-| **N1.6** | Demande Avis | ⏳ À faire | - |
+| **N1.6** | Demande Avis | ✅ **Terminé** | 8770661 |
 | **N1.7** | Reset Password | 🟡 **Supabase Auth** | Native |
 | **N2.1** | Newsletter Hebdo | ⏳ À faire | - |
 | **N2.2** | Marketing Promo | ⏳ À faire | - |
@@ -669,7 +669,7 @@
 | **Fidélité** | 3 | 3 | 100% ✅ |
 | **Avis & Évaluations** | 3 | 3 | 100% ✅ |
 | **Admin Dashboard** | 15 | 15 | 100% ✅ |
-| **Notifications** | 4 | 15 | 27% |
+| **Notifications** | 5 | 15 | 33% |
 | **B2B** | 9 | 9 | 100% ✅ |
 
 ---
@@ -722,8 +722,12 @@
 | 42 | 17828fe | Implement loyalty program with points, tiers, and rewards | 3 US (M10.1-M10.3) |
 | 43 | ca41666 | Implement reviews system - Part 1 (database, hooks, star ratings) | Infrastructure |
 | 44 | 24124ef | Complete reviews system - Part 2 (UI components and admin) | 3 US (M11.1-M11.3) |
+| 45 | f3c429a | Update progress with Reviews & Ratings system | Documentation |
+| 46 | 9c70d79 | Fix supabase import path in useAdminReviews hook | Bug fix |
+| 47 | 8217c52 | Fix auth.users join issues in reviews system | Bug fix |
+| 48 | 8770661 | Implement review request email system (N1.6) | 1 US (N1.6) |
 
-**Total** : 68 User Stories + Infrastructure complète
+**Total** : 69 User Stories + Infrastructure complète
 
 ---
 
@@ -736,4 +740,4 @@
 
 ---
 
-**Dernière mise à jour** : 2025-12-13 - Session Claude Code (Reviews & Ratings System Complete)
+**Dernière mise à jour** : 2025-12-13 - Session Claude Code (Review Request Emails - 50% Complete! 🎉)
