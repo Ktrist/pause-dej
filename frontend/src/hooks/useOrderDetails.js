@@ -43,7 +43,6 @@ export function useOrderDetails(orderId) {
                 name,
                 description,
                 image_url,
-                category,
                 dietary_tags
               )
             ),

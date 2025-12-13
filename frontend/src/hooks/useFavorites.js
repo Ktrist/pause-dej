@@ -38,7 +38,6 @@ export function useFavorites() {
             description,
             price,
             image_url,
-            category,
             is_available,
             stock
           )
