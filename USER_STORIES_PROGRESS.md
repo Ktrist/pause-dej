@@ -1,12 +1,12 @@
 # 📊 Suivi des User Stories - Pause Dej'
 
-> **Dernière mise à jour** : 2025-12-12 (Session complète - B2B 100%)
-> **Progression globale** : 63/144 User Stories (43.8%)
-> **Infrastructure** : ✅ Supabase entièrement intégré (46 hooks + migrations complètes + RPC functions) | ✅ Stripe paiements fonctionnels | ✅ Admin Dashboard 100% | ✅ Email notifications | ✅ Support client | ✅ Analytics | ✅ B2B Platform 100% (9/9)
+> **Dernière mise à jour** : 2025-12-13 (Session - Dietary Preferences)
+> **Progression globale** : 64/144 User Stories (44.4%)
+> **Infrastructure** : ✅ Supabase entièrement intégré (47 hooks + migrations complètes + RPC functions) | ✅ Stripe paiements fonctionnels | ✅ Admin Dashboard 100% | ✅ Email notifications | ✅ Support client | ✅ Analytics | ✅ B2B Platform 100% (9/9) | ✅ Dietary Preferences
 
 ---
 
-## ✅ User Stories Terminées (60)
+## ✅ User Stories Terminées (61)
 
 ### 🏠 Homepage - Web (5/5)
 | ID | Titre | Statut | Commit |
@@ -77,11 +77,11 @@
 | **M7.2** | Notifications push | ⏳ À faire | - |
 | **M7.3** | Contact support | ✅ **Terminé** | c098f84 |
 
-### ❤️ Favoris & Préférences - Mobile/Web (1/3)
+### ❤️ Favoris & Préférences - Mobile/Web (2/3)
 | ID | Titre | Statut | Commit |
 |---|---|---|---|
 | **M9.1** | Plats favoris | ✅ **Terminé** | 2e46d32 |
-| **M9.2** | Préférences alimentaires | ⏳ À faire | - |
+| **M9.2** | Préférences alimentaires | ✅ **Terminé** | 6523f58 |
 | **M9.3** | Suggestions personnalisées | ⏳ À faire | - |
 
 ### 🔧 Admin Dashboard (15/15)
@@ -547,7 +547,7 @@
 | **Compte Utilisateur** | 5 | 5 | 100% ✅ |
 | **Checkout** | 6 | 6 | 100% ✅ |
 | **Suivi Commande** | 2 | 3 | 67% |
-| **Favoris & Préférences** | 1 | 3 | 33% |
+| **Favoris & Préférences** | 2 | 3 | 67% |
 | **Fidélité** | 0 | 3 | 0% |
 | **Admin Dashboard** | 15 | 15 | 100% ✅ |
 | **Notifications** | 4 | 15 | 27% |
