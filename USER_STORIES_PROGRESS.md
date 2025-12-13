@@ -1,12 +1,12 @@
 # 📊 Suivi des User Stories - Pause Dej'
 
-> **Dernière mise à jour** : 2025-12-13 (Session - Personalization Complete)
-> **Progression globale** : 65/144 User Stories (45.1%)
-> **Infrastructure** : ✅ Supabase entièrement intégré (48 hooks + migrations complètes + RPC functions) | ✅ Stripe paiements fonctionnels | ✅ Admin Dashboard 100% | ✅ Email notifications | ✅ Support client | ✅ Analytics | ✅ B2B Platform 100% (9/9) | ✅ User Personalization 100% (3/3)
+> **Dernière mise à jour** : 2025-12-13 (Session - Loyalty Program Complete)
+> **Progression globale** : 68/144 User Stories (47.2%)
+> **Infrastructure** : ✅ Supabase entièrement intégré (52 hooks + migrations complètes + RPC functions) | ✅ Stripe paiements fonctionnels | ✅ Admin Dashboard 100% | ✅ Email notifications | ✅ Support client | ✅ Analytics | ✅ B2B Platform 100% (9/9) | ✅ User Personalization 100% (3/3) | ✅ Loyalty Program 100% (3/3)
 
 ---
 
-## ✅ User Stories Terminées (62)
+## ✅ User Stories Terminées (65)
 
 ### 🏠 Homepage - Web (5/5)
 | ID | Titre | Statut | Commit |
@@ -83,6 +83,13 @@
 | **M9.1** | Plats favoris | ✅ **Terminé** | 2e46d32 |
 | **M9.2** | Préférences alimentaires | ✅ **Terminé** | 6523f58 |
 | **M9.3** | Suggestions personnalisées | ✅ **Terminé** | a794c72 |
+
+### 🏆 Fidélité - Mobile/Web (3/3)
+| ID | Titre | Statut | Commit |
+|---|---|---|---|
+| **M10.1** | Programme de points | ✅ **Terminé** | 17828fe |
+| **M10.2** | Paliers de fidélité | ✅ **Terminé** | 17828fe |
+| **M10.3** | Récompenses échangeables | ✅ **Terminé** | 17828fe |
 
 ### 🔧 Admin Dashboard (15/15)
 | ID | Titre | Statut | Commit |
@@ -507,6 +514,50 @@
 - ✅ Bouton dans B2B Dashboard Orders tab
 - ✅ Vérification compte B2B avec redirect
 
+### Loyalty Program Implementation (Session 2025-12-13)
+| Composant | Description | Statut | Commits |
+|---|---|---|---|
+| **add_loyalty_program.sql** | 5 tables + RLS + triggers + functions | ✅ Terminé | 17828fe |
+| **useLoyalty Hook** | 4 hooks loyalty management | ✅ Terminé | 17828fe |
+| **Account Loyalty Tab** | Fidélité tab avec rewards | ✅ Terminé | 17828fe |
+| **OrderSummary Points** | Indicateur points à gagner | ✅ Terminé | 17828fe |
+| **Confirmation Points** | Points earned indicator | ✅ Terminé | 17828fe |
+
+**Fonctionnalités implémentées (M10.1-M10.3)** :
+- ✅ Database Schema (5 tables):
+  - loyalty_tiers: 4 niveaux (Bronze, Argent, Or, Platine)
+  - loyalty_points: solde points + tier user
+  - loyalty_transactions: historique +/- points
+  - loyalty_rewards: catalogue récompenses
+  - loyalty_redemptions: échanges utilisateurs
+- ✅ Points multiplier system basé sur tier:
+  - Bronze: 1x (1 point par euro)
+  - Argent: 1.5x (1.5 points par euro)
+  - Or: 2x (2 points par euro)
+  - Platine: 3x (3 points par euro)
+- ✅ Auto-award points trigger sur order status 'delivered'
+- ✅ 4 React hooks:
+  - useLoyalty() - points, tier, progression
+  - useLoyaltyRewards() - catalogue + redeem
+  - useLoyaltyRedemptions() - mes récompenses
+  - useLoyaltyTransactions() - historique points
+- ✅ Loyalty tab dans Account avec:
+  - Tier badge et progression vers prochain niveau
+  - Points disponibles + lifetime points
+  - Catalogue rewards avec bouton échanger
+  - Mes récompenses actives
+  - Historique des transactions
+- ✅ Indicateur points à gagner sur OrderSummary (checkout)
+- ✅ Indicateur points gagnés sur OrderConfirmationPage
+- ✅ 5 rewards par défaut:
+  - 5€ de réduction (250 pts)
+  - 10€ de réduction (500 pts)
+  - Livraison gratuite (150 pts)
+  - 15% de réduction (400 pts)
+  - Plat gratuit jusqu'à 12€ (600 pts)
+- ✅ RLS policies user-scoped
+- ✅ Real-time subscriptions pour updates automatiques
+
 ---
 
 ## 🚧 User Stories En Cours / Préparées
@@ -548,7 +599,7 @@
 | **Checkout** | 6 | 6 | 100% ✅ |
 | **Suivi Commande** | 2 | 3 | 67% |
 | **Favoris & Préférences** | 3 | 3 | 100% ✅ |
-| **Fidélité** | 0 | 3 | 0% |
+| **Fidélité** | 3 | 3 | 100% ✅ |
 | **Admin Dashboard** | 15 | 15 | 100% ✅ |
 | **Notifications** | 4 | 15 | 27% |
 | **B2B** | 9 | 9 | 100% ✅ |
@@ -598,8 +649,11 @@
 | 37 | f172af8 | Fix supabase import paths in hooks | Bug fix |
 | 38 | 96f44ca | Implement B2B Packages management | 1 US (B2B.5) |
 | 39 | 706cd48 | Implement Bulk Ordering system | 1 US (B2B.6) |
+| 40 | 6523f58 | Implement dietary preferences feature | 1 US (M9.2) |
+| 41 | a794c72 | Implement personalized suggestions | 1 US (M9.3) |
+| 42 | 17828fe | Implement loyalty program with points, tiers, and rewards | 3 US (M10.1-M10.3) |
 
-**Total** : 60 User Stories + Infrastructure complète
+**Total** : 65 User Stories + Infrastructure complète
 
 ---
 
@@ -612,4 +666,4 @@
 
 ---
 
-**Dernière mise à jour** : 2025-12-10 - Session Claude Code
+**Dernière mise à jour** : 2025-12-13 - Session Claude Code (Loyalty Program Complete)
