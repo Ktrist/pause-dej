@@ -182,7 +182,7 @@ export default function AdminOrderDetail() {
                           <Text fontSize="sm" color="gray.600">
                             Qté: {item.quantity}
                           </Text>
-                          <Text fontWeight="600">{item.price.toFixed(2)}€</Text>
+                          <Text fontWeight="600">{item.dish_price.toFixed(2)}€</Text>
                           <Text fontSize="sm" color="gray.600">
                             Total: {item.subtotal.toFixed(2)}€
                           </Text>

@@ -34,7 +34,7 @@ export function useOrderDetails(orderId) {
             order_items (
               id,
               quantity,
-              price,
+              dish_price,
               subtotal,
               dish_id,
               dish_name,
