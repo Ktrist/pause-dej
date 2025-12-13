@@ -89,15 +89,15 @@ const ReviewDetailModal = ({ review, isOpen, onClose }) => {
               <HStack spacing={3}>
                 <Avatar
                   size="sm"
-                  name={review.user?.user_metadata?.full_name || review.user?.email}
+                  name={review.user_name || review.user_email}
                   bg="brand.500"
                 />
                 <VStack align="start" spacing={0}>
                   <Text fontWeight="600" fontSize="sm">
-                    {review.user?.user_metadata?.full_name || 'Utilisateur'}
+                    {review.user_name || 'Utilisateur'}
                   </Text>
                   <Text fontSize="xs" color="gray.600">
-                    {review.user?.email}
+                    {review.user_email}
                   </Text>
                 </VStack>
               </HStack>
@@ -559,12 +559,12 @@ export default function AdminReviews() {
                         <HStack spacing={2}>
                           <Avatar
                             size="xs"
-                            name={review.user?.user_metadata?.full_name || review.user?.email}
+                            name={review.user_name || review.user_email}
                             bg="brand.500"
                           />
                           <VStack align="start" spacing={0}>
                             <Text fontSize="xs" fontWeight="500">
-                              {review.user?.user_metadata?.full_name || 'Utilisateur'}
+                              {review.user_name || 'Utilisateur'}
                             </Text>
                             {review.is_verified_purchase && (
                               <HStack spacing={1}>

@@ -7,6 +7,8 @@
 CREATE TABLE IF NOT EXISTS reviews (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
+  user_name VARCHAR(255),
+  user_email VARCHAR(255),
   dish_id UUID REFERENCES dishes(id) ON DELETE CASCADE NOT NULL,
   order_id UUID REFERENCES orders(id) ON DELETE SET NULL,
   rating INTEGER NOT NULL CHECK (rating >= 1 AND rating <= 5),

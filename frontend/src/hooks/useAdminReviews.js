@@ -17,16 +17,11 @@ export function useAdminReviews() {
       setLoading(true)
       setError(null)
 
-      // Fetch all reviews with user and dish info
+      // Fetch all reviews with dish info
       const { data, error: fetchError } = await supabase
         .from('reviews')
         .select(`
           *,
-          user:auth.users!reviews_user_id_fkey(
-            id,
-            email,
-            user_metadata
-          ),
           dish:dishes(
             id,
             name,

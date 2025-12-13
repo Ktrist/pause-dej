@@ -26,17 +26,10 @@ export function useDishReviews(dishId) {
       setLoading(true)
       setError(null)
 
-      // Fetch reviews with user info
+      // Fetch reviews
       const { data, error: fetchError } = await supabase
         .from('reviews')
-        .select(`
-          *,
-          user:user_id (
-            id,
-            email,
-            user_metadata
-          )
-        `)
+        .select('*')
         .eq('dish_id', dishId)
         .eq('is_approved', true)
         .order('created_at', { ascending: false })
@@ -173,6 +166,8 @@ export function useCreateReview() {
         .from('reviews')
         .insert({
           user_id: user.id,
+          user_name: user.user_metadata?.full_name || 'Utilisateur',
+          user_email: user.email,
           dish_id: reviewData.dishId,
           order_id: reviewData.orderId || null,
           rating: reviewData.rating,

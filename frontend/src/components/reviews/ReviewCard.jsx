@@ -58,13 +58,13 @@ export default function ReviewCard({ review }) {
           <HStack spacing={3}>
             <Avatar
               size="sm"
-              name={review.user?.user_metadata?.full_name || review.user?.email}
+              name={review.user_name || review.user_email}
               bg="brand.500"
             />
             <VStack align="start" spacing={0}>
               <HStack spacing={2}>
                 <Text fontWeight="600" fontSize="sm">
-                  {review.user?.user_metadata?.full_name || 'Utilisateur'}
+                  {review.user_name || 'Utilisateur'}
                 </Text>
                 {review.is_verified_purchase && (
                   <HStack spacing={1}>
