@@ -28,7 +28,8 @@ import {
   useColorModeValue,
   Icon,
   Wrap,
-  WrapItem
+  WrapItem,
+  useToast
 } from '@chakra-ui/react'
 import {
   FiArrowLeft,
@@ -41,9 +42,11 @@ import {
   FiPackage,
   FiDollarSign,
   FiTag,
-  FiTruck
+  FiTruck,
+  FiStar
 } from 'react-icons/fi'
 import { useOrderDetails } from '../../hooks/useOrderDetails'
+import { useEmail } from '../../hooks/useEmail'
 import LoadingSpinner from '../../components/common/LoadingSpinner'
 
 const ORDER_STATUSES = {
@@ -60,7 +63,40 @@ export default function AdminOrderDetail() {
   const { orderId } = useParams()
   const navigate = useNavigate()
   const { order, loading, error } = useOrderDetails(orderId)
+  const { sendReviewRequest, sending } = useEmail()
+  const toast = useToast()
   const bgColor = useColorModeValue('gray.50', 'gray.900')
+
+  const handleSendReviewRequest = async () => {
+    if (!order?.user_email) {
+      toast({
+        title: 'Erreur',
+        description: 'Email utilisateur non trouvé',
+        status: 'error',
+        duration: 3000
+      })
+      return
+    }
+
+    const result = await sendReviewRequest(order, order.user_email)
+
+    if (result.success) {
+      toast({
+        title: 'Email envoyé !',
+        description: 'La demande d\'avis a été envoyée au client',
+        status: 'success',
+        duration: 4000,
+        position: 'bottom-right'
+      })
+    } else {
+      toast({
+        title: 'Erreur',
+        description: result.error || 'Impossible d\'envoyer l\'email',
+        status: 'error',
+        duration: 4000
+      })
+    }
+  }
 
   if (loading) {
     return <LoadingSpinner message="Chargement des détails de la commande..." />
@@ -436,6 +472,17 @@ export default function AdminOrderDetail() {
                     </Button>
                     <Button size="sm" variant="outline" isDisabled>
                       Envoyer email client
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      leftIcon={<Icon as={FiStar} />}
+                      colorScheme="purple"
+                      onClick={handleSendReviewRequest}
+                      isLoading={sending}
+                      isDisabled={order?.status !== 'delivered'}
+                    >
+                      Demander un avis
                     </Button>
                   </VStack>
                 </CardBody>

@@ -203,6 +203,75 @@ const templates = {
 </body>
 </html>
     `
+  }),
+
+  'review-request': (data: any) => ({
+    subject: `Comment était votre commande ? ⭐`,
+    html: `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+    .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 40px 30px; text-align: center; border-radius: 8px 8px 0 0; }
+    .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 8px 8px; }
+    .emoji { font-size: 60px; margin: 20px 0; }
+    .dish-card { background: white; padding: 20px; border-radius: 8px; margin: 20px 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .dish-image { width: 100%; max-width: 400px; height: 200px; object-fit: cover; border-radius: 8px; margin-bottom: 15px; }
+    .dish-name { font-size: 20px; font-weight: bold; color: #333; margin-bottom: 10px; }
+    .stars { font-size: 32px; margin: 20px 0; }
+    .button { display: inline-block; padding: 15px 40px; background: #4F46E5; color: white; text-decoration: none; border-radius: 8px; margin: 10px 0; font-weight: bold; font-size: 16px; }
+    .button:hover { background: #4338ca; }
+    .incentive { background: #FEF3C7; border-left: 4px solid #F59E0B; padding: 15px; margin: 20px 0; border-radius: 4px; }
+    .footer { font-size: 14px; color: #666; margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="emoji">⭐</div>
+      <h1>Votre avis compte pour nous !</h1>
+      <p style="font-size: 16px; margin-top: 10px; opacity: 0.9;">Comment s'est passée votre dernière commande ?</p>
+    </div>
+    <div class="content">
+      <p>Bonjour ${data.customerName},</p>
+      <p>Il y a quelques jours, vous avez commandé chez Pause Dej'. Nous espérons que vous vous êtes régalé ! 🍽️</p>
+
+      ${data.dishes && data.dishes.length > 0 ? `
+        <p><strong>Votre commande :</strong></p>
+        ${data.dishes.map((dish: any) => `
+          <div class="dish-card">
+            ${dish.image ? `<img src="${dish.image}" alt="${dish.name}" class="dish-image" />` : ''}
+            <div class="dish-name">${dish.name}</div>
+            <p style="color: #666; font-size: 14px;">Qu'avez-vous pensé de ce plat ?</p>
+            <a href="${dish.reviewUrl}" class="button">⭐ Laisser un avis</a>
+          </div>
+        `).join('')}
+      ` : `
+        <p><strong>Commande #${data.orderNumber}</strong></p>
+        <a href="${data.reviewUrl}" class="button">⭐ Laisser un avis sur ma commande</a>
+      `}
+
+      <div class="incentive">
+        <p style="margin: 0;"><strong>💡 Le saviez-vous ?</strong></p>
+        <p style="margin: 5px 0 0 0;">Votre avis aide d'autres gourmets à faire leur choix et nous permet d'améliorer continuellement nos services !</p>
+      </div>
+
+      <p style="font-size: 14px; color: #666;">Cela ne vous prendra que 2 minutes et fera toute la différence pour nous. 🙏</p>
+
+      <div class="footer">
+        <p><strong>Merci de votre confiance,</strong><br>L'équipe Pause Dej'</p>
+        <p style="font-size: 12px; color: #999; margin-top: 15px;">
+          Vous recevez cet email car vous avez récemment commandé chez Pause Dej'.
+        </p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
+    `
   })
 }
 

@@ -136,6 +136,31 @@ export function useEmail() {
     )
   }
 
+  /**
+   * Send review request email (N1.6)
+   * Sent a few days after delivery to encourage reviews
+   */
+  const sendReviewRequest = async (order, userEmail) => {
+    // Get dishes from order items with review URLs
+    const dishes = order.order_items?.map(item => ({
+      name: item.dish_name,
+      image: item.dish?.image_url || null,
+      reviewUrl: `${window.location.origin}/catalogue?dish=${item.dish_id}&review=true`
+    })) || []
+
+    return await sendEmail(
+      'review-request',
+      {
+        orderNumber: order.order_number,
+        customerName: order.user?.full_name || 'Client',
+        dishes: dishes,
+        // Fallback review URL to account page
+        reviewUrl: `${window.location.origin}/compte?tab=reviews`
+      },
+      userEmail
+    )
+  }
+
   return {
     sending,
     error,
@@ -144,6 +169,7 @@ export function useEmail() {
     sendOrderPreparing,
     sendOrderInTransit,
     sendOrderDelivered,
-    sendOrderCancelled
+    sendOrderCancelled,
+    sendReviewRequest
   }
 }
