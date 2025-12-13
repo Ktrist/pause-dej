@@ -14,10 +14,11 @@ import {
   AlertIcon,
   Spinner
 } from '@chakra-ui/react'
-import { FiCheckCircle, FiHome, FiShoppingBag, FiClock, FiMapPin, FiTruck } from 'react-icons/fi'
+import { FiCheckCircle, FiHome, FiShoppingBag, FiClock, FiMapPin, FiTruck, FiAward } from 'react-icons/fi'
 import { useParams, useNavigate, Link as RouterLink } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useOrderByNumber } from '../hooks/useOrders'
+import { useLoyalty } from '../hooks/useLoyalty'
 
 export default function OrderConfirmationPage() {
   const { orderNumber } = useParams()
@@ -26,6 +27,26 @@ export default function OrderConfirmationPage() {
 
   // Load order from Supabase
   const { order, loading, error } = useOrderByNumber(orderNumber)
+
+  // Load loyalty data
+  const { loyaltyData } = useLoyalty()
+
+  // Calculate points to be earned
+  const calculatePointsToEarn = () => {
+    if (!user || !loyaltyData || !loyaltyData.tier || !order) return 0
+
+    let multiplier = 1
+    const tierName = loyaltyData.tier.name
+
+    if (tierName === 'Platine') multiplier = 3
+    else if (tierName === 'Or') multiplier = 2
+    else if (tierName === 'Argent') multiplier = 1.5
+    else multiplier = 1 // Bronze
+
+    return Math.floor(order.total * multiplier)
+  }
+
+  const pointsToEarn = calculatePointsToEarn()
 
   // Loading state
   if (loading) {
@@ -225,6 +246,33 @@ export default function OrderConfirmationPage() {
                 </Text>
               </HStack>
             </VStack>
+
+            {/* Loyalty Points Indicator - M10 */}
+            {user && pointsToEarn > 0 && (
+              <Box bg="brand.50" p={4} rounded="md" border="1px solid" borderColor="brand.200" mt={4}>
+                <HStack spacing={3} justify="center">
+                  <Icon as={FiAward} boxSize={5} color="brand.600" />
+                  <VStack spacing={0} align="start">
+                    <Text fontSize="md" color="brand.800" fontWeight="600">
+                      {order.status === 'delivered'
+                        ? `+${pointsToEarn} points gagnés !`
+                        : `+${pointsToEarn} points à gagner`
+                      }
+                    </Text>
+                    {loyaltyData?.tier && order.status !== 'delivered' && (
+                      <Text fontSize="xs" color="brand.700">
+                        Points crédités après la livraison (Niveau {loyaltyData.tier.name})
+                      </Text>
+                    )}
+                    {order.status === 'delivered' && (
+                      <Text fontSize="xs" color="brand.700">
+                        Points ajoutés à votre compte fidélité
+                      </Text>
+                    )}
+                  </VStack>
+                </HStack>
+              </Box>
+            )}
           </Box>
 
           {/* Next Steps */}

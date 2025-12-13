@@ -36,12 +36,13 @@ import {
   AlertIcon
 } from '@chakra-ui/react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { FiUser, FiMapPin, FiShoppingBag, FiEdit2, FiTrash2, FiPlus, FiTruck, FiHeart } from 'react-icons/fi'
+import { FiUser, FiMapPin, FiShoppingBag, FiEdit2, FiTrash2, FiPlus, FiTruck, FiHeart, FiAward } from 'react-icons/fi'
 import { useAuth } from '../../context/AuthContext'
 import { useAddresses, useCreateAddress, useUpdateAddress, useDeleteAddress } from '../../hooks/useAddresses'
 import { useOrders } from '../../hooks/useOrders'
 import { useFavorites } from '../../hooks/useFavorites'
 import { useProfile, DIETARY_PREFERENCES } from '../../hooks/useProfile'
+import { useLoyalty, useLoyaltyRewards, useLoyaltyRedemptions, useLoyaltyTransactions } from '../../hooks/useLoyalty'
 import LoadingSpinner from '../../components/common/LoadingSpinner'
 import DishCard from '../../components/catalogue/DishCard'
 
@@ -76,6 +77,12 @@ export default function AccountPage() {
     loading: loadingProfile
   } = useProfile()
 
+  // Loyalty hooks
+  const { loyaltyData, tiers, loading: loadingLoyalty, nextTierProgress } = useLoyalty()
+  const { rewards, loading: loadingRewards, redeemReward } = useLoyaltyRewards()
+  const { redemptions, loading: loadingRedemptions } = useLoyaltyRedemptions()
+  const { transactions, loading: loadingTransactions } = useLoyaltyTransactions(20)
+
   // Modal for add/edit address
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [editingAddress, setEditingAddress] = useState(null)
@@ -97,8 +104,9 @@ export default function AccountPage() {
   useEffect(() => {
     const tab = searchParams.get('tab')
     if (tab === 'orders') setTabIndex(1)
-    if (tab === 'addresses') setTabIndex(2)
-    if (tab === 'favorites') setTabIndex(3)
+    if (tab === 'loyalty') setTabIndex(2)
+    if (tab === 'addresses') setTabIndex(3)
+    if (tab === 'favorites') setTabIndex(4)
   }, [searchParams])
 
   useEffect(() => {
@@ -233,6 +241,12 @@ export default function AccountPage() {
                 <HStack spacing={2}>
                   <FiShoppingBag />
                   <Text>Commandes</Text>
+                </HStack>
+              </Tab>
+              <Tab>
+                <HStack spacing={2}>
+                  <FiAward />
+                  <Text>Fidélité</Text>
                 </HStack>
               </Tab>
               <Tab>
@@ -520,6 +534,248 @@ export default function AccountPage() {
                         </Card>
                       ))}
                     </VStack>
+                  )}
+                </VStack>
+              </TabPanel>
+
+              {/* Loyalty Tab - M10 */}
+              <TabPanel>
+                <VStack spacing={6} align="stretch">
+                  {loadingLoyalty ? (
+                    <LoadingSpinner message="Chargement du programme de fidélité..." />
+                  ) : !loyaltyData ? (
+                    <Box bg="white" p={12} borderRadius="xl" boxShadow="md" textAlign="center">
+                      <VStack spacing={4}>
+                        <Text fontSize="4xl">🏆</Text>
+                        <Heading size="md" color="gray.600">
+                          Programme de Fidélité
+                        </Heading>
+                        <Text color="gray.500">
+                          Passez votre première commande pour commencer à gagner des points
+                        </Text>
+                      </VStack>
+                    </Box>
+                  ) : (
+                    <>
+                      {/* Loyalty Status Card */}
+                      <Card bg="gradient.brand" borderWidth={2} borderColor="brand.200">
+                        <CardBody>
+                          <VStack align="stretch" spacing={6}>
+                            {/* Tier Badge and Points */}
+                            <HStack justify="space-between" align="start">
+                              <VStack align="start" spacing={2}>
+                                <HStack spacing={3}>
+                                  <Text fontSize="4xl">{loyaltyData.tier?.icon || '⭐'}</Text>
+                                  <VStack align="start" spacing={0}>
+                                    <Text fontSize="sm" color="gray.600">Niveau actuel</Text>
+                                    <Heading size="lg" color={`${loyaltyData.tier?.color}.600`}>
+                                      {loyaltyData.tier?.name || 'Bronze'}
+                                    </Heading>
+                                  </VStack>
+                                </HStack>
+                                {loyaltyData.tier?.discount_percentage > 0 && (
+                                  <Badge colorScheme="green" fontSize="sm" p={2}>
+                                    {loyaltyData.tier.discount_percentage}% de réduction sur toutes vos commandes
+                                  </Badge>
+                                )}
+                              </VStack>
+                              <VStack align="end" spacing={0}>
+                                <Text fontSize="sm" color="gray.600">Points disponibles</Text>
+                                <Heading size="2xl" color="brand.600">
+                                  {loyaltyData.points_balance}
+                                </Heading>
+                                <Text fontSize="xs" color="gray.500">
+                                  {loyaltyData.lifetime_points} points gagnés au total
+                                </Text>
+                              </VStack>
+                            </HStack>
+
+                            {/* Progress to Next Tier */}
+                            {nextTierProgress && !nextTierProgress.isMaxTier && (
+                              <VStack align="stretch" spacing={2}>
+                                <HStack justify="space-between" fontSize="sm">
+                                  <Text color="gray.600">Progression vers {nextTierProgress.nextTier?.name}</Text>
+                                  <Text fontWeight="600" color="brand.600">
+                                    {nextTierProgress.pointsNeeded} points restants
+                                  </Text>
+                                </HStack>
+                                <Box
+                                  bg="gray.200"
+                                  h="8px"
+                                  borderRadius="full"
+                                  overflow="hidden"
+                                >
+                                  <Box
+                                    bg="brand.500"
+                                    h="full"
+                                    w={`${nextTierProgress.progress}%`}
+                                    transition="width 0.3s"
+                                  />
+                                </Box>
+                              </VStack>
+                            )}
+
+                            {/* Tier Benefits */}
+                            {loyaltyData.tier?.benefits && loyaltyData.tier.benefits.length > 0 && (
+                              <VStack align="stretch" spacing={2}>
+                                <Text fontSize="sm" fontWeight="600" color="gray.700">
+                                  Vos avantages actuels:
+                                </Text>
+                                <SimpleGrid columns={{ base: 1, md: 2 }} spacing={2}>
+                                  {loyaltyData.tier.benefits.map((benefit, idx) => (
+                                    <HStack key={idx} spacing={2} fontSize="sm" color="gray.600">
+                                      <Text>✓</Text>
+                                      <Text>{benefit}</Text>
+                                    </HStack>
+                                  ))}
+                                </SimpleGrid>
+                              </VStack>
+                            )}
+                          </VStack>
+                        </CardBody>
+                      </Card>
+
+                      {/* Available Rewards */}
+                      <VStack align="stretch" spacing={4}>
+                        <Heading size="md">Récompenses disponibles</Heading>
+                        {loadingRewards ? (
+                          <LoadingSpinner message="Chargement des récompenses..." />
+                        ) : rewards.length === 0 ? (
+                          <Text color="gray.500">Aucune récompense disponible pour le moment</Text>
+                        ) : (
+                          <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
+                            {rewards.map((reward) => {
+                              const canAfford = loyaltyData.points_balance >= reward.points_cost
+                              return (
+                                <Card
+                                  key={reward.id}
+                                  variant="outline"
+                                  borderWidth={2}
+                                  borderColor={canAfford ? 'brand.200' : 'gray.200'}
+                                  opacity={canAfford ? 1 : 0.6}
+                                >
+                                  <CardBody>
+                                    <VStack align="stretch" spacing={3}>
+                                      <HStack justify="space-between">
+                                        <Heading size="sm">{reward.name}</Heading>
+                                        <Badge colorScheme="brand" fontSize="md" p={2}>
+                                          {reward.points_cost} pts
+                                        </Badge>
+                                      </HStack>
+                                      <Text fontSize="sm" color="gray.600">
+                                        {reward.description}
+                                      </Text>
+                                      <Button
+                                        colorScheme="brand"
+                                        size="sm"
+                                        isDisabled={!canAfford}
+                                        onClick={async () => {
+                                          try {
+                                            await redeemReward(reward.id)
+                                            toast({
+                                              title: 'Récompense échangée !',
+                                              description: `Vous avez échangé ${reward.points_cost} points pour ${reward.name}`,
+                                              status: 'success',
+                                              duration: 4000
+                                            })
+                                          } catch (err) {
+                                            toast({
+                                              title: 'Erreur',
+                                              description: err.message,
+                                              status: 'error',
+                                              duration: 4000
+                                            })
+                                          }
+                                        }}
+                                      >
+                                        {canAfford ? 'Échanger' : `Besoin de ${reward.points_cost - loyaltyData.points_balance} pts`}
+                                      </Button>
+                                    </VStack>
+                                  </CardBody>
+                                </Card>
+                              )
+                            })}
+                          </SimpleGrid>
+                        )}
+                      </VStack>
+
+                      {/* My Redemptions */}
+                      <VStack align="stretch" spacing={4}>
+                        <Heading size="md">Mes récompenses actives</Heading>
+                        {loadingRedemptions ? (
+                          <LoadingSpinner message="Chargement..." />
+                        ) : redemptions.filter(r => r.status === 'active').length === 0 ? (
+                          <Text color="gray.500" fontSize="sm">
+                            Aucune récompense active. Échangez vos points ci-dessus !
+                          </Text>
+                        ) : (
+                          <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
+                            {redemptions
+                              .filter(r => r.status === 'active')
+                              .map((redemption) => (
+                                <Card key={redemption.id} variant="outline">
+                                  <CardBody>
+                                    <VStack align="stretch" spacing={2}>
+                                      <HStack justify="space-between">
+                                        <Text fontWeight="600">{redemption.reward?.name}</Text>
+                                        <Badge colorScheme="green">Active</Badge>
+                                      </HStack>
+                                      <Text fontSize="sm" color="gray.600">
+                                        {redemption.reward?.description}
+                                      </Text>
+                                      <Text fontSize="xs" color="gray.500">
+                                        Expire le {new Date(redemption.expires_at).toLocaleDateString('fr-FR')}
+                                      </Text>
+                                    </VStack>
+                                  </CardBody>
+                                </Card>
+                              ))}
+                          </SimpleGrid>
+                        )}
+                      </VStack>
+
+                      {/* Transaction History */}
+                      <VStack align="stretch" spacing={4}>
+                        <Heading size="md">Historique des points</Heading>
+                        {loadingTransactions ? (
+                          <LoadingSpinner message="Chargement..." />
+                        ) : transactions.length === 0 ? (
+                          <Text color="gray.500" fontSize="sm">Aucune transaction</Text>
+                        ) : (
+                          <Card>
+                            <CardBody>
+                              <VStack align="stretch" spacing={3} divider={<Divider />}>
+                                {transactions.map((transaction) => (
+                                  <HStack key={transaction.id} justify="space-between">
+                                    <VStack align="start" spacing={0} flex={1}>
+                                      <Text fontSize="sm" fontWeight="500">
+                                        {transaction.reason}
+                                      </Text>
+                                      <Text fontSize="xs" color="gray.500">
+                                        {new Date(transaction.created_at).toLocaleDateString('fr-FR', {
+                                          day: 'numeric',
+                                          month: 'short',
+                                          year: 'numeric',
+                                          hour: '2-digit',
+                                          minute: '2-digit'
+                                        })}
+                                      </Text>
+                                    </VStack>
+                                    <Text
+                                      fontSize="md"
+                                      fontWeight="600"
+                                      color={transaction.points > 0 ? 'green.600' : 'red.600'}
+                                    >
+                                      {transaction.points > 0 ? '+' : ''}{transaction.points}
+                                    </Text>
+                                  </HStack>
+                                ))}
+                              </VStack>
+                            </CardBody>
+                          </Card>
+                        )}
+                      </VStack>
+                    </>
                   )}
                 </VStack>
               </TabPanel>

@@ -9,17 +9,39 @@ import {
   Badge,
   Icon
 } from '@chakra-ui/react'
-import { FiMapPin, FiClock, FiPackage } from 'react-icons/fi'
+import { FiMapPin, FiClock, FiPackage, FiAward } from 'react-icons/fi'
 import { calculateDiscount } from '../../hooks/usePromoCodes'
+import { useLoyalty } from '../../hooks/useLoyalty'
+import { useAuth } from '../../context/AuthContext'
 
 const DELIVERY_FEE = 3.90
 const FREE_DELIVERY_THRESHOLD = 30
 
 export default function OrderSummary({ address, timeSlot, cart, total, appliedPromo = null }) {
+  const { user } = useAuth()
+  const { loyaltyData, tiers } = useLoyalty()
+
   const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0)
   const deliveryFee = subtotal >= FREE_DELIVERY_THRESHOLD ? 0 : DELIVERY_FEE
   const discount = appliedPromo ? calculateDiscount(appliedPromo, subtotal) : 0
   const finalTotal = subtotal + deliveryFee - discount
+
+  // Calculate points to be earned based on tier
+  const calculatePointsToEarn = () => {
+    if (!user || !loyaltyData || !loyaltyData.tier) return 0
+
+    let multiplier = 1
+    const tierName = loyaltyData.tier.name
+
+    if (tierName === 'Platine') multiplier = 3
+    else if (tierName === 'Or') multiplier = 2
+    else if (tierName === 'Argent') multiplier = 1.5
+    else multiplier = 1 // Bronze
+
+    return Math.floor(finalTotal * multiplier)
+  }
+
+  const pointsToEarn = calculatePointsToEarn()
 
   return (
     <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={6}>
@@ -195,6 +217,23 @@ export default function OrderSummary({ address, timeSlot, cart, total, appliedPr
                 }
               </Text>
             </Box>
+
+            {/* Loyalty Points Indicator - M10 */}
+            {user && pointsToEarn > 0 && (
+              <Box bg="brand.50" p={3} rounded="md" border="1px solid" borderColor="brand.200">
+                <HStack spacing={2} justify="center">
+                  <Icon as={FiAward} color="brand.600" />
+                  <Text fontSize="sm" color="brand.800" fontWeight="600">
+                    +{pointsToEarn} points de fidélité
+                  </Text>
+                </HStack>
+                {loyaltyData?.tier && (
+                  <Text fontSize="xs" color="brand.700" textAlign="center" mt={1}>
+                    Niveau {loyaltyData.tier.name} {loyaltyData.tier.icon}
+                  </Text>
+                )}
+              </Box>
+            )}
           </VStack>
         </Box>
       </VStack>
