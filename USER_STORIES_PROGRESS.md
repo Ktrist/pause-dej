@@ -1,12 +1,12 @@
 # 📊 Suivi des User Stories - Pause Dej'
 
-> **Dernière mise à jour** : 2025-12-13 (Session - Loyalty Program Complete)
-> **Progression globale** : 68/144 User Stories (47.2%)
-> **Infrastructure** : ✅ Supabase entièrement intégré (52 hooks + migrations complètes + RPC functions) | ✅ Stripe paiements fonctionnels | ✅ Admin Dashboard 100% | ✅ Email notifications | ✅ Support client | ✅ Analytics | ✅ B2B Platform 100% (9/9) | ✅ User Personalization 100% (3/3) | ✅ Loyalty Program 100% (3/3)
+> **Dernière mise à jour** : 2025-12-13 (Session - Reviews & Ratings System Complete)
+> **Progression globale** : 71/144 User Stories (49.3%)
+> **Infrastructure** : ✅ Supabase entièrement intégré (58 hooks + migrations complètes + RPC functions) | ✅ Stripe paiements fonctionnels | ✅ Admin Dashboard 100% | ✅ Email notifications | ✅ Support client | ✅ Analytics | ✅ B2B Platform 100% (9/9) | ✅ User Personalization 100% (3/3) | ✅ Loyalty Program 100% (3/3) | ✅ Reviews & Ratings 100% (3/3)
 
 ---
 
-## ✅ User Stories Terminées (65)
+## ✅ User Stories Terminées (68)
 
 ### 🏠 Homepage - Web (5/5)
 | ID | Titre | Statut | Commit |
@@ -90,6 +90,13 @@
 | **M10.1** | Programme de points | ✅ **Terminé** | 17828fe |
 | **M10.2** | Paliers de fidélité | ✅ **Terminé** | 17828fe |
 | **M10.3** | Récompenses échangeables | ✅ **Terminé** | 17828fe |
+
+### ⭐ Avis & Évaluations - Mobile/Web (3/3)
+| ID | Titre | Statut | Commit |
+|---|---|---|---|
+| **M11.1** | Laisser un avis après livraison | ✅ **Terminé** | ca41666, 24124ef |
+| **M11.2** | Voir avis sur détail plat | ✅ **Terminé** | ca41666, 24124ef |
+| **M11.3** | Voter sur avis utiles | ✅ **Terminé** | ca41666, 24124ef |
 
 ### 🔧 Admin Dashboard (15/15)
 | ID | Titre | Statut | Commit |
@@ -558,6 +565,66 @@
 - ✅ RLS policies user-scoped
 - ✅ Real-time subscriptions pour updates automatiques
 
+### Reviews & Ratings System Implementation (Session 2025-12-13)
+| Composant | Description | Statut | Commits |
+|---|---|---|---|
+| **add_reviews_system.sql** | 2 tables + RLS + triggers + functions | ✅ Terminé | ca41666 |
+| **useReviews.js** | 6 hooks for review management | ✅ Terminé | ca41666 |
+| **StarRating.jsx** | 3 star rating components | ✅ Terminé | ca41666 |
+| **ReviewCard.jsx** | Individual review display | ✅ Terminé | 24124ef |
+| **ReviewForm.jsx** | Review submission form | ✅ Terminé | 24124ef |
+| **ReviewsSection.jsx** | Complete reviews section | ✅ Terminé | 24124ef |
+| **DishCard Ratings** | Display average rating on cards | ✅ Terminé | ca41666 |
+| **DishDetailModal Integration** | Reviews in dish details | ✅ Terminé | 24124ef |
+| **Account Reviews Tab** | User reviews management | ✅ Terminé | 24124ef |
+| **useAdminReviews.js** | Admin review management hook | ✅ Terminé | 24124ef |
+| **AdminReviews Page** | Admin moderation dashboard | ✅ Terminé | 24124ef |
+
+**Fonctionnalités implémentées (M11.1-M11.3)** :
+- ✅ Database Schema (2 tables):
+  - reviews: avis avec note, titre, commentaire, vérification achat
+  - review_votes: votes utile/pas utile sur avis
+- ✅ Auto-update dish ratings via trigger `update_dish_rating_stats()`
+- ✅ Verified purchase auto-set via `check_verified_purchase()` function
+- ✅ 6 React hooks for users:
+  - useDishReviews(dishId) - avis d'un plat avec stats
+  - useUserReviews() - mes avis
+  - useCreateReview() - créer un avis
+  - useUpdateReview() - modifier un avis
+  - useDeleteReview() - supprimer un avis
+  - useReviewVote() - voter sur avis (helpful/not helpful)
+  - useCanReview(dishId) - vérifier éligibilité
+- ✅ Star rating components:
+  - StarRating - affichage note (support demi-étoiles)
+  - StarRatingInput - sélection note interactive
+  - RatingBar - barre distribution avec clics
+- ✅ Review display & submission:
+  - ReviewCard avec votes, verified badge, photos
+  - ReviewForm avec validation (note + commentaire requis)
+  - ReviewsSection avec tri et filtres
+- ✅ Integration:
+  - Average rating affiché sur DishCard
+  - ReviewsSection dans DishDetailModal
+  - Reviews tab dans Account page avec gestion complète
+- ✅ Admin moderation:
+  - AdminReviews page avec dashboard stats
+  - Approve/reject reviews workflow
+  - Bulk actions (approve, delete)
+  - Filter by status (approved/pending) and rating
+  - Review detail modal with full metadata
+  - Stats: total, approved, pending, average rating
+- ✅ Features:
+  - Sort: recent, oldest, highest, lowest, helpful
+  - Filter by rating (1-5 stars)
+  - Helpful/not helpful voting system with toggle
+  - Verified purchase badges
+  - One review per user per dish (UNIQUE constraint)
+  - Photo upload support (array of URLs)
+  - Rating distribution calculations
+  - Real-time updates via Supabase subscriptions
+- ✅ RLS policies user-scoped
+- ✅ Admin route /admin/reviews with sidebar link
+
 ---
 
 ## 🚧 User Stories En Cours / Préparées
@@ -600,6 +667,7 @@
 | **Suivi Commande** | 2 | 3 | 67% |
 | **Favoris & Préférences** | 3 | 3 | 100% ✅ |
 | **Fidélité** | 3 | 3 | 100% ✅ |
+| **Avis & Évaluations** | 3 | 3 | 100% ✅ |
 | **Admin Dashboard** | 15 | 15 | 100% ✅ |
 | **Notifications** | 4 | 15 | 27% |
 | **B2B** | 9 | 9 | 100% ✅ |
@@ -652,8 +720,10 @@
 | 40 | 6523f58 | Implement dietary preferences feature | 1 US (M9.2) |
 | 41 | a794c72 | Implement personalized suggestions | 1 US (M9.3) |
 | 42 | 17828fe | Implement loyalty program with points, tiers, and rewards | 3 US (M10.1-M10.3) |
+| 43 | ca41666 | Implement reviews system - Part 1 (database, hooks, star ratings) | Infrastructure |
+| 44 | 24124ef | Complete reviews system - Part 2 (UI components and admin) | 3 US (M11.1-M11.3) |
 
-**Total** : 65 User Stories + Infrastructure complète
+**Total** : 68 User Stories + Infrastructure complète
 
 ---
 
@@ -666,4 +736,4 @@
 
 ---
 
-**Dernière mise à jour** : 2025-12-13 - Session Claude Code (Loyalty Program Complete)
+**Dernière mise à jour** : 2025-12-13 - Session Claude Code (Reviews & Ratings System Complete)
