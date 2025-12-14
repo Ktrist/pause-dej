@@ -13,10 +13,12 @@ import {
   Link,
   HStack,
   Divider,
+  Checkbox,
   useToast
 } from '@chakra-ui/react'
 import { Link as RouterLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
+import { useNewsletterSubscription } from '../../hooks/useNewsletter'
 
 export default function SignupPage() {
   const [formData, setFormData] = useState({
@@ -26,9 +28,11 @@ export default function SignupPage() {
     password: '',
     confirmPassword: ''
   })
+  const [newsletterOptIn, setNewsletterOptIn] = useState(true)
   const [errors, setErrors] = useState({})
   const [loading, setLoading] = useState(false)
   const { signUp, signInWithGoogle } = useAuth()
+  const { subscribe } = useNewsletterSubscription()
   const navigate = useNavigate()
   const toast = useToast()
 
@@ -70,6 +74,12 @@ export default function SignupPage() {
       full_name: formData.fullName,
       phone: formData.phone
     })
+
+    // Subscribe to newsletter if opted in
+    if (!error && newsletterOptIn) {
+      await subscribe(formData.email, 'signup')
+    }
+
     setLoading(false)
 
     if (error) {
@@ -179,6 +189,17 @@ export default function SignupPage() {
                   />
                   <FormErrorMessage>{errors.confirmPassword}</FormErrorMessage>
                 </FormControl>
+
+                <Checkbox
+                  isChecked={newsletterOptIn}
+                  onChange={(e) => setNewsletterOptIn(e.target.checked)}
+                  colorScheme="brand"
+                  w="full"
+                >
+                  <Text fontSize="sm">
+                    Je souhaite recevoir la newsletter et les offres promotionnelles
+                  </Text>
+                </Checkbox>
 
                 <Button
                   type="submit"

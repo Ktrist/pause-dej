@@ -78,15 +78,27 @@ CREATE POLICY "Users can update own subscription"
   ON newsletter_subscribers FOR UPDATE
   USING (auth.uid() = user_id OR email = (SELECT email FROM auth.users WHERE id = auth.uid()));
 
--- Allow authenticated users to manage campaigns (can be restricted later)
-CREATE POLICY "Authenticated users can manage campaigns"
+-- Admin-only access to campaigns (requires role column in profiles)
+CREATE POLICY "Admins can manage campaigns"
   ON newsletter_campaigns FOR ALL
-  USING (auth.uid() IS NOT NULL);
+  USING (
+    EXISTS (
+      SELECT 1 FROM profiles
+      WHERE profiles.id = auth.uid()
+      AND profiles.role = 'admin'
+    )
+  );
 
--- Allow authenticated users to view recipients (can be restricted later)
-CREATE POLICY "Authenticated users can view recipients"
+-- Admin-only access to recipients (requires role column in profiles)
+CREATE POLICY "Admins can view recipients"
   ON campaign_recipients FOR SELECT
-  USING (auth.uid() IS NOT NULL);
+  USING (
+    EXISTS (
+      SELECT 1 FROM profiles
+      WHERE profiles.id = auth.uid()
+      AND profiles.role = 'admin'
+    )
+  );
 
 -- =====================================================
 -- Functions

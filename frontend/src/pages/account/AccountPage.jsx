@@ -36,7 +36,7 @@ import {
   AlertIcon
 } from '@chakra-ui/react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { FiUser, FiMapPin, FiShoppingBag, FiEdit2, FiTrash2, FiPlus, FiTruck, FiHeart, FiAward, FiMessageSquare } from 'react-icons/fi'
+import { FiUser, FiMapPin, FiShoppingBag, FiEdit2, FiTrash2, FiPlus, FiTruck, FiHeart, FiAward, FiMessageSquare, FiMail } from 'react-icons/fi'
 import { useAuth } from '../../context/AuthContext'
 import { useAddresses, useCreateAddress, useUpdateAddress, useDeleteAddress } from '../../hooks/useAddresses'
 import { useOrders } from '../../hooks/useOrders'
@@ -44,6 +44,7 @@ import { useFavorites } from '../../hooks/useFavorites'
 import { useProfile, DIETARY_PREFERENCES } from '../../hooks/useProfile'
 import { useLoyalty, useLoyaltyRewards, useLoyaltyRedemptions, useLoyaltyTransactions } from '../../hooks/useLoyalty'
 import { useUserReviews, useDeleteReview } from '../../hooks/useReviews'
+import { useNewsletterSubscription } from '../../hooks/useNewsletter'
 import LoadingSpinner from '../../components/common/LoadingSpinner'
 import DishCard from '../../components/catalogue/DishCard'
 import { StarRating } from '../../components/reviews/StarRating'
@@ -89,6 +90,16 @@ export default function AccountPage() {
   const { reviews: userReviews, loading: loadingReviews, refresh: refreshReviews } = useUserReviews()
   const { deleteReview, loading: deletingReview } = useDeleteReview()
 
+  // Newsletter hooks
+  const {
+    subscription,
+    isSubscribed,
+    loading: loadingNewsletter,
+    subscribe: subscribeNewsletter,
+    unsubscribe: unsubscribeNewsletter,
+    updatePreferences
+  } = useNewsletterSubscription()
+
   // Modal for add/edit address
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [editingAddress, setEditingAddress] = useState(null)
@@ -114,6 +125,7 @@ export default function AccountPage() {
     if (tab === 'addresses') setTabIndex(3)
     if (tab === 'favorites') setTabIndex(4)
     if (tab === 'reviews') setTabIndex(5)
+    if (tab === 'newsletter') setTabIndex(6)
   }, [searchParams])
 
   useEffect(() => {
@@ -272,6 +284,12 @@ export default function AccountPage() {
                 <HStack spacing={2}>
                   <FiMessageSquare />
                   <Text>Avis</Text>
+                </HStack>
+              </Tab>
+              <Tab>
+                <HStack spacing={2}>
+                  <FiMail />
+                  <Text>Newsletter</Text>
                 </HStack>
               </Tab>
             </TabList>
@@ -1069,6 +1087,213 @@ export default function AccountPage() {
                         </Card>
                       ))}
                     </VStack>
+                  )}
+                </VStack>
+              </TabPanel>
+
+              {/* Newsletter Tab */}
+              <TabPanel>
+                <VStack spacing={6} align="stretch">
+                  <Heading size="md">Newsletter</Heading>
+
+                  {loadingNewsletter ? (
+                    <LoadingSpinner message="Chargement..." />
+                  ) : (
+                    <Card>
+                      <CardBody>
+                        <VStack align="stretch" spacing={6}>
+                          <VStack align="start" spacing={3}>
+                            <HStack justify="space-between" w="full">
+                              <VStack align="start" spacing={1}>
+                                <Text fontWeight="600" fontSize="lg">
+                                  Abonnement newsletter
+                                </Text>
+                                <Text fontSize="sm" color="gray.600">
+                                  Gérez vos préférences d'emails marketing
+                                </Text>
+                              </VStack>
+                              <Badge
+                                colorScheme={isSubscribed ? 'green' : 'gray'}
+                                fontSize="md"
+                                px={3}
+                                py={1}
+                              >
+                                {isSubscribed ? 'Actif' : 'Inactif'}
+                              </Badge>
+                            </HStack>
+
+                            <Divider />
+
+                            {isSubscribed ? (
+                              <>
+                                <VStack align="start" spacing={3} w="full">
+                                  <Text fontWeight="600">Je souhaite recevoir :</Text>
+                                  <Stack spacing={3}>
+                                    <Checkbox
+                                      isChecked={subscription?.preferences?.weekly_newsletter}
+                                      onChange={async (e) => {
+                                        const newPrefs = {
+                                          ...subscription.preferences,
+                                          weekly_newsletter: e.target.checked
+                                        }
+                                        const { error } = await updatePreferences(newPrefs)
+                                        if (error) {
+                                          toast({
+                                            title: 'Erreur',
+                                            description: error,
+                                            status: 'error',
+                                            duration: 3000
+                                          })
+                                        } else {
+                                          toast({
+                                            title: 'Préférences mises à jour',
+                                            status: 'success',
+                                            duration: 2000
+                                          })
+                                        }
+                                      }}
+                                      colorScheme="brand"
+                                    >
+                                      <VStack align="start" spacing={0}>
+                                        <Text fontWeight="500">Newsletter hebdomadaire</Text>
+                                        <Text fontSize="xs" color="gray.600">
+                                          Nouveaux plats et actualités chaque semaine
+                                        </Text>
+                                      </VStack>
+                                    </Checkbox>
+
+                                    <Checkbox
+                                      isChecked={subscription?.preferences?.promotions}
+                                      onChange={async (e) => {
+                                        const newPrefs = {
+                                          ...subscription.preferences,
+                                          promotions: e.target.checked
+                                        }
+                                        const { error } = await updatePreferences(newPrefs)
+                                        if (error) {
+                                          toast({
+                                            title: 'Erreur',
+                                            description: error,
+                                            status: 'error',
+                                            duration: 3000
+                                          })
+                                        } else {
+                                          toast({
+                                            title: 'Préférences mises à jour',
+                                            status: 'success',
+                                            duration: 2000
+                                          })
+                                        }
+                                      }}
+                                      colorScheme="brand"
+                                    >
+                                      <VStack align="start" spacing={0}>
+                                        <Text fontWeight="500">Offres promotionnelles</Text>
+                                        <Text fontSize="xs" color="gray.600">
+                                          Codes promo et offres spéciales
+                                        </Text>
+                                      </VStack>
+                                    </Checkbox>
+
+                                    <Checkbox
+                                      isChecked={subscription?.preferences?.product_updates}
+                                      onChange={async (e) => {
+                                        const newPrefs = {
+                                          ...subscription.preferences,
+                                          product_updates: e.target.checked
+                                        }
+                                        const { error } = await updatePreferences(newPrefs)
+                                        if (error) {
+                                          toast({
+                                            title: 'Erreur',
+                                            description: error,
+                                            status: 'error',
+                                            duration: 3000
+                                          })
+                                        } else {
+                                          toast({
+                                            title: 'Préférences mises à jour',
+                                            status: 'success',
+                                            duration: 2000
+                                          })
+                                        }
+                                      }}
+                                      colorScheme="brand"
+                                    >
+                                      <VStack align="start" spacing={0}>
+                                        <Text fontWeight="500">Nouveaux plats et mises à jour</Text>
+                                        <Text fontSize="xs" color="gray.600">
+                                          Soyez informé de nos nouvelles créations
+                                        </Text>
+                                      </VStack>
+                                    </Checkbox>
+                                  </Stack>
+                                </VStack>
+
+                                <Divider />
+
+                                <Button
+                                  variant="ghost"
+                                  colorScheme="red"
+                                  size="sm"
+                                  onClick={async () => {
+                                    if (confirm('Êtes-vous sûr de vouloir vous désabonner ?')) {
+                                      const { error } = await unsubscribeNewsletter()
+                                      if (error) {
+                                        toast({
+                                          title: 'Erreur',
+                                          description: error,
+                                          status: 'error',
+                                          duration: 3000
+                                        })
+                                      } else {
+                                        toast({
+                                          title: 'Vous êtes désabonné',
+                                          description: 'Vous ne recevrez plus nos emails',
+                                          status: 'info',
+                                          duration: 3000
+                                        })
+                                      }
+                                    }
+                                  }}
+                                >
+                                  Se désabonner
+                                </Button>
+                              </>
+                            ) : (
+                              <VStack spacing={4} py={8}>
+                                <Text color="gray.600" textAlign="center">
+                                  Vous n'êtes pas abonné à notre newsletter
+                                </Text>
+                                <Button
+                                  colorScheme="brand"
+                                  onClick={async () => {
+                                    const { error } = await subscribeNewsletter(user.email, 'account')
+                                    if (error) {
+                                      toast({
+                                        title: 'Erreur',
+                                        description: error,
+                                        status: 'error',
+                                        duration: 3000
+                                      })
+                                    } else {
+                                      toast({
+                                        title: 'Inscription confirmée !',
+                                        description: 'Vous recevrez nos prochaines newsletters',
+                                        status: 'success',
+                                        duration: 3000
+                                      })
+                                    }
+                                  }}
+                                >
+                                  S'abonner à la newsletter
+                                </Button>
+                              </VStack>
+                            )}
+                          </VStack>
+                        </VStack>
+                      </CardBody>
+                    </Card>
                   )}
                 </VStack>
               </TabPanel>
