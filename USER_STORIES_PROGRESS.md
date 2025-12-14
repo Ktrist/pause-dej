@@ -1,12 +1,12 @@
 # 📊 Suivi des User Stories - Pause Dej'
 
-> **Dernière mise à jour** : 2025-12-13 (Session - Review Request Emails)
-> **Progression globale** : 72/144 User Stories (50.0%)
-> **Infrastructure** : ✅ Supabase entièrement intégré (58 hooks + migrations complètes + RPC functions) | ✅ Stripe paiements fonctionnels | ✅ Admin Dashboard 100% | ✅ Email notifications | ✅ Support client | ✅ Analytics | ✅ B2B Platform 100% (9/9) | ✅ User Personalization 100% (3/3) | ✅ Loyalty Program 100% (3/3) | ✅ Reviews & Ratings 100% (3/3)
+> **Dernière mise à jour** : 2025-12-14 (Session - Newsletter & Marketing Emails)
+> **Progression globale** : 75/144 User Stories (52.1%)
+> **Infrastructure** : ✅ Supabase entièrement intégré (62 hooks + migrations complètes + RPC functions) | ✅ Stripe paiements fonctionnels | ✅ Admin Dashboard 100% | ✅ Email notifications | ✅ Support client | ✅ Analytics | ✅ B2B Platform 100% (9/9) | ✅ User Personalization 100% (3/3) | ✅ Loyalty Program 100% (3/3) | ✅ Reviews & Ratings 100% (3/3) | ✅ Marketing Emails 100% (3/3)
 
 ---
 
-## ✅ User Stories Terminées (69)
+## ✅ User Stories Terminées (75)
 
 ### 🏠 Homepage - Web (5/5)
 | ID | Titre | Statut | Commit |
@@ -118,7 +118,7 @@
 | **A5.2** | Détail client | ✅ **Terminé** | 3d94d10 |
 | **A6.x** | Analytics | ✅ **Terminé** | e6c4ed4 |
 
-### 📧 Email Notifications (5/15)
+### 📧 Email Notifications (8/15)
 | ID | Titre | Statut | Commit |
 |---|---|---|---|
 | **N1.1** | Confirmation Compte | 🟡 **Supabase Auth** | Native |
@@ -128,9 +128,9 @@
 | **N1.5** | Livrée | ✅ **Terminé** | d20ae71 |
 | **N1.6** | Demande Avis | ✅ **Terminé** | 8770661 |
 | **N1.7** | Reset Password | 🟡 **Supabase Auth** | Native |
-| **N2.1** | Newsletter Hebdo | ⏳ À faire | - |
-| **N2.2** | Marketing Promo | ⏳ À faire | - |
-| **N2.3** | Réactivation | ⏳ À faire | - |
+| **N2.1** | Newsletter Hebdo | ✅ **Terminé** | 5c71718 |
+| **N2.2** | Marketing Promo | ✅ **Terminé** | 5c71718 |
+| **N2.3** | Réactivation | ✅ **Terminé** | 5c71718 |
 | **N3.1-N3.6** | Push Notifications | ⏳ À faire | - |
 | **N4.1-N4.3** | SMS | ⏳ À faire | - |
 
@@ -741,3 +741,57 @@
 ---
 
 **Dernière mise à jour** : 2025-12-13 - Session Claude Code (Review Request Emails - 50% Complete! 🎉)
+
+### Newsletter & Marketing Emails Implementation (Session 2025-12-14)
+| Composant | Description | Statut | Commits |
+|---|---|---|---|
+| **add_newsletter_system.sql** | 3 tables + RLS + functions | ✅ Terminé | 5c71718 |
+| **useNewsletter.js** | 4 hooks for newsletter management | ✅ Terminé | 5c71718 |
+| **NewsletterSubscribe** | 3 variants (inline/footer/modal) | ✅ Terminé | 5c71718 |
+| **AdminNewsletter** | Campaign management dashboard | ✅ Terminé | 5c71718 |
+| **send-newsletter Edge Function** | Batch email sending via Resend | ✅ Terminé | 5c71718 |
+
+**Fonctionnalités implémentées (N2.1-N2.3)** :
+- ✅ Database Schema (3 tables):
+  - newsletter_subscribers: email subscriptions with preferences
+  - newsletter_campaigns: campaign management (draft/scheduled/sent)
+  - campaign_recipients: individual send tracking
+- ✅ Subscription preferences:
+  - Weekly newsletter opt-in
+  - Promotions opt-in
+  - Product updates opt-in
+- ✅ 4 React hooks:
+  - useNewsletterSubscription() - subscribe/unsubscribe/preferences
+  - useNewsletterCampaigns() - CRUD campaigns
+  - useCampaignStats() - performance metrics
+  - useSubscriberStats() - subscriber analytics
+- ✅ Newsletter subscription component:
+  - Inline variant for homepage
+  - Footer variant for site footer
+  - Modal variant for popups
+  - Email validation and preferences selection
+- ✅ Admin campaign dashboard:
+  - Create/edit/delete campaigns
+  - 4 campaign types: newsletter, promo, reactivation, announcement
+  - Send campaigns to segmented subscribers
+  - Track sent/opened/clicked metrics
+  - Subscriber stats (active, by preference type)
+- ✅ Edge function send-newsletter:
+  - Batch sending to all subscribers
+  - Preference-based segmentation
+  - 3 professional HTML templates
+  - Error handling and tracking
+  - Unsubscribe link in every email
+- ✅ Email templates:
+  - Newsletter: weekly digest with featured dishes
+  - Promo: promotional offers with code
+  - Reactivation: win-back inactive customers with personalization
+- ✅ Helper functions:
+  - get_subscriber_count() - count by preference
+  - get_inactive_users() - identify reactivation targets
+- ✅ Integration:
+  - Newsletter subscription on homepage
+  - Admin newsletter link in sidebar
+  - Newsletter route in App.jsx
+- ✅ RLS policies for security
+- ✅ Auto-update timestamps via triggers
