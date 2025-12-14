@@ -28,6 +28,7 @@ import AdminOrderDetail from './pages/admin/AdminOrderDetail'
 import AdminDishes from './pages/admin/AdminDishes'
 import AdminCustomers from './pages/admin/AdminCustomers'
 import AdminReviews from './pages/admin/AdminReviews'
+import AdminNewsletter from './pages/admin/AdminNewsletter'
 import AdminDelivery from './pages/admin/AdminDelivery'
 import AdminAnalytics from './pages/admin/AdminAnalytics'
 import AdminB2B from './pages/admin/AdminB2B'
@@ -47,6 +48,7 @@ function App() {
               <Route path="dishes" element={<AdminDishes />} />
               <Route path="customers" element={<AdminCustomers />} />
               <Route path="reviews" element={<AdminReviews />} />
+              <Route path="newsletter" element={<AdminNewsletter />} />
               <Route path="delivery" element={<AdminDelivery />} />
               <Route path="analytics" element={<AdminAnalytics />} />
               <Route path="b2b" element={<AdminB2B />} />
