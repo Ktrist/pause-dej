@@ -19,26 +19,26 @@ export default function Footer() {
   const currentYear = new Date().getFullYear()
 
   return (
-    <Box bg="gray.900" color="white">
+    <Box bg="primary.500" color="white">
       <Container maxW="container.xl" py={12}>
         <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={8}>
           {/* Company Info */}
           <VStack align="start" spacing={4}>
-            <Heading size="md" color="brand.500">
+            <Heading size="md" color="white" fontWeight="extrabold">
               {APP_NAME}
             </Heading>
-            <Text fontSize="sm" color="gray.400">
+            <Text fontSize="sm" color="whiteAlpha.800" fontWeight="medium">
               Des plats frais livrés chaque matin.
               Votre pause déjeuner réinventée.
             </Text>
             <HStack spacing={3}>
-              <Link href="#" _hover={{ color: 'brand.500' }}>
+              <Link href="#" _hover={{ color: 'brand.400' }} transition="color 0.2s">
                 <Icon as={FiFacebook} boxSize={5} />
               </Link>
-              <Link href="#" _hover={{ color: 'brand.500' }}>
+              <Link href="#" _hover={{ color: 'brand.400' }} transition="color 0.2s">
                 <Icon as={FiInstagram} boxSize={5} />
               </Link>
-              <Link href="#" _hover={{ color: 'brand.500' }}>
+              <Link href="#" _hover={{ color: 'brand.400' }} transition="color 0.2s">
                 <Icon as={FiTwitter} boxSize={5} />
               </Link>
             </HStack>
@@ -46,15 +46,17 @@ export default function Footer() {
 
           {/* Quick Links */}
           <VStack align="start" spacing={3}>
-            <Heading size="sm" mb={2}>
+            <Heading size="sm" mb={2} color="white" fontWeight="bold">
               Liens rapides
             </Heading>
             <Link
               as={RouterLink}
               to="/"
               fontSize="sm"
-              color="gray.400"
-              _hover={{ color: 'white', textDecoration: 'none' }}
+              color="whiteAlpha.800"
+              fontWeight="medium"
+              _hover={{ color: 'brand.400', textDecoration: 'none' }}
+              transition="color 0.2s"
             >
               Accueil
             </Link>
@@ -62,8 +64,10 @@ export default function Footer() {
               as={RouterLink}
               to="/catalogue"
               fontSize="sm"
-              color="gray.400"
-              _hover={{ color: 'white', textDecoration: 'none' }}
+              color="whiteAlpha.800"
+              fontWeight="medium"
+              _hover={{ color: 'brand.400', textDecoration: 'none' }}
+              transition="color 0.2s"
             >
               Catalogue
             </Link>
@@ -71,8 +75,10 @@ export default function Footer() {
               as={RouterLink}
               to="/how-it-works"
               fontSize="sm"
-              color="gray.400"
-              _hover={{ color: 'white', textDecoration: 'none' }}
+              color="whiteAlpha.800"
+              fontWeight="medium"
+              _hover={{ color: 'brand.400', textDecoration: 'none' }}
+              transition="color 0.2s"
             >
               Comment ça marche
             </Link>
@@ -80,8 +86,10 @@ export default function Footer() {
               as={RouterLink}
               to="/b2b"
               fontSize="sm"
-              color="gray.400"
-              _hover={{ color: 'white', textDecoration: 'none' }}
+              color="whiteAlpha.800"
+              fontWeight="medium"
+              _hover={{ color: 'brand.400', textDecoration: 'none' }}
+              transition="color 0.2s"
             >
               Offre B2B
             </Link>
@@ -89,7 +97,7 @@ export default function Footer() {
 
           {/* Legal */}
           <VStack align="start" spacing={3}>
-            <Heading size="sm" mb={2}>
+            <Heading size="sm" mb={2} color="white" fontWeight="bold">
               Informations légales
             </Heading>
             {['Mentions légales', 'CGV', 'Politique de confidentialité', 'Cookies'].map((item) => (
@@ -97,8 +105,10 @@ export default function Footer() {
                 key={item}
                 href="#"
                 fontSize="sm"
-                color="gray.400"
-                _hover={{ color: 'white', textDecoration: 'none' }}
+                color="whiteAlpha.800"
+                fontWeight="medium"
+                _hover={{ color: 'brand.400', textDecoration: 'none' }}
+                transition="color 0.2s"
               >
                 {item}
               </Link>
@@ -107,55 +117,75 @@ export default function Footer() {
 
           {/* Contact */}
           <VStack align="start" spacing={3}>
-            <Heading size="sm" mb={2}>
+            <Heading size="sm" mb={2} color="white" fontWeight="bold">
               Contact
             </Heading>
             <HStack spacing={2} align="start">
-              <Icon as={FiMail} boxSize={4} color="brand.500" mt={1} />
+              <Icon as={FiMail} boxSize={4} color="brand.400" mt={1} />
               <Link
                 href={`mailto:${CONTACT_EMAIL}`}
                 fontSize="sm"
-                color="gray.400"
-                _hover={{ color: 'white' }}
+                color="whiteAlpha.800"
+                fontWeight="medium"
+                _hover={{ color: 'brand.400' }}
+                transition="color 0.2s"
               >
                 {CONTACT_EMAIL}
               </Link>
             </HStack>
             <HStack spacing={2} align="start">
-              <Icon as={FiPhone} boxSize={4} color="brand.500" mt={1} />
-              <Text fontSize="sm" color="gray.400">
+              <Icon as={FiPhone} boxSize={4} color="brand.400" mt={1} />
+              <Text fontSize="sm" color="whiteAlpha.800" fontWeight="medium">
                 01 23 45 67 89
               </Text>
             </HStack>
             <HStack spacing={2} align="start">
-              <Icon as={FiMapPin} boxSize={4} color="brand.500" mt={1} />
-              <Text fontSize="sm" color="gray.400">
+              <Icon as={FiMapPin} boxSize={4} color="brand.400" mt={1} />
+              <Text fontSize="sm" color="whiteAlpha.800" fontWeight="medium">
                 75001 Paris, France
               </Text>
             </HStack>
           </VStack>
         </SimpleGrid>
 
-        <Divider my={8} borderColor="gray.700" />
+        <Divider my={8} borderColor="whiteAlpha.300" />
 
         <Stack
           direction={{ base: 'column', md: 'row' }}
           justify="space-between"
           align="center"
           fontSize="sm"
-          color="gray.400"
+          color="whiteAlpha.700"
         >
-          <Text>
+          <Text fontWeight="medium">
             © {currentYear} {APP_NAME}. Tous droits réservés.
           </Text>
           <HStack spacing={4}>
-            <Link as={RouterLink} to="/support" _hover={{ color: 'white' }}>
+            <Link
+              as={RouterLink}
+              to="/support"
+              fontWeight="medium"
+              _hover={{ color: 'brand.400' }}
+              transition="color 0.2s"
+            >
               Aide
             </Link>
-            <Link as={RouterLink} to="/support" _hover={{ color: 'white' }}>
+            <Link
+              as={RouterLink}
+              to="/support"
+              fontWeight="medium"
+              _hover={{ color: 'brand.400' }}
+              transition="color 0.2s"
+            >
               FAQ
             </Link>
-            <Link as={RouterLink} to="/contact" _hover={{ color: 'white' }}>
+            <Link
+              as={RouterLink}
+              to="/contact"
+              fontWeight="medium"
+              _hover={{ color: 'brand.400' }}
+              transition="color 0.2s"
+            >
               Contact
             </Link>
           </HStack>

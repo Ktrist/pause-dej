@@ -48,28 +48,30 @@ export default function PopularDishes() {
   }
 
   return (
-    <Box py={{ base: 16, md: 20 }} bg="white">
+    <Box py={{ base: 16, md: 20 }} bg="background.card">
       <Container maxW="container.xl">
         <VStack spacing={12}>
           {/* Section Header */}
           <VStack spacing={4} textAlign="center">
             <HStack spacing={2} color="brand.500">
               <Icon as={FiTrendingUp} boxSize={6} />
-              <Text fontWeight="600" fontSize="sm" textTransform="uppercase" letterSpacing="wide">
+              <Text fontWeight="semibold" fontSize="sm" textTransform="uppercase" letterSpacing="wide">
                 Plats populaires
               </Text>
             </HStack>
             <Heading
               as="h2"
               size={{ base: 'xl', md: '2xl' }}
-              color="gray.800"
+              color="primary.500"
+              fontWeight="extrabold"
             >
               Les favoris de nos clients
             </Heading>
             <Text
               fontSize={{ base: 'md', md: 'lg' }}
-              color="gray.600"
+              color="text.secondary"
               maxW="2xl"
+              fontWeight="medium"
             >
               Découvrez les plats les plus commandés cette semaine
             </Text>
@@ -80,14 +82,14 @@ export default function PopularDishes() {
             {dishes.map((dish) => (
               <Box
                 key={dish.id}
-                bg="white"
-                borderRadius="xl"
+                bg="background.card"
+                borderRadius="12px"
                 overflow="hidden"
-                boxShadow="md"
+                boxShadow="card"
                 transition="all 0.3s"
                 _hover={{
                   transform: 'translateY(-4px)',
-                  boxShadow: 'xl'
+                  boxShadow: 'cardHover'
                 }}
               >
                 {/* Image */}
@@ -106,6 +108,9 @@ export default function PopularDishes() {
                       right={4}
                       colorScheme="red"
                       fontSize="xs"
+                      px={3}
+                      py={1}
+                      borderRadius="full"
                     >
                       Plus que {dish.stock} !
                     </Badge>
@@ -116,31 +121,38 @@ export default function PopularDishes() {
                 <VStack align="stretch" p={5} spacing={3}>
                   <VStack align="start" spacing={1}>
                     <HStack justify="space-between" w="full">
-                      <Heading as="h3" size="sm" color="gray.800">
+                      <Heading as="h3" size="sm" color="primary.500" fontWeight="bold">
                         {dish.name}
                       </Heading>
-                      <Text fontWeight="bold" fontSize="lg" color="brand.600">
+                      <Text fontWeight="bold" fontSize="lg" color="primary.500">
                         {dish.price.toFixed(2)}€
                       </Text>
                     </HStack>
-                    <Badge colorScheme="green" fontSize="xs">
+                    <Badge colorScheme="primary" fontSize="xs" variant="subtle" px={2} py={0.5} borderRadius="md">
                       {dish.category}
                     </Badge>
                   </VStack>
 
-                  <Text fontSize="sm" color="gray.600" noOfLines={2}>
+                  <Text fontSize="sm" color="text.secondary" noOfLines={2} fontWeight="medium">
                     {dish.description}
                   </Text>
 
                   <Button
                     leftIcon={<FiShoppingCart />}
-                    colorScheme="brand"
+                    bg="brand.500"
+                    color="white"
                     size="md"
                     w="full"
                     onClick={() => handleAddToCart(dish)}
                     _hover={{
-                      transform: 'scale(1.02)'
+                      bg: 'brand.600',
+                      transform: 'translateY(-2px)'
                     }}
+                    _active={{
+                      bg: 'brand.700'
+                    }}
+                    borderRadius="10px"
+                    fontWeight="semibold"
                   >
                     Ajouter au panier
                   </Button>

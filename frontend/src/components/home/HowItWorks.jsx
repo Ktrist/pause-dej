@@ -3,7 +3,7 @@ import { howItWorksSteps } from '../../data/mockData'
 
 export default function HowItWorks() {
   return (
-    <Box py={{ base: 16, md: 20 }} bg="gray.50">
+    <Box py={{ base: 16, md: 20 }} bg="background.main">
       <Container maxW="container.xl">
         <VStack spacing={12}>
           {/* Section Header */}
@@ -11,14 +11,16 @@ export default function HowItWorks() {
             <Heading
               as="h2"
               size={{ base: 'xl', md: '2xl' }}
-              color="gray.800"
+              color="primary.500"
+              fontWeight="extrabold"
             >
               Comment ça marche ?
             </Heading>
             <Text
               fontSize={{ base: 'md', md: 'lg' }}
-              color="gray.600"
+              color="text.secondary"
               maxW="2xl"
+              fontWeight="medium"
             >
               Une expérience simple et rapide en 3 étapes
             </Text>
@@ -31,14 +33,14 @@ export default function HowItWorks() {
                 key={step.id}
                 spacing={4}
                 p={8}
-                bg="white"
-                borderRadius="xl"
-                boxShadow="md"
+                bg="background.card"
+                borderRadius="12px"
+                boxShadow="card"
                 position="relative"
                 transition="all 0.3s"
                 _hover={{
                   transform: 'translateY(-4px)',
-                  boxShadow: 'xl'
+                  boxShadow: 'cardHover'
                 }}
               >
                 {/* Step Number */}
@@ -66,10 +68,10 @@ export default function HowItWorks() {
 
                 {/* Content */}
                 <VStack spacing={2} textAlign="center">
-                  <Heading as="h3" size="md" color="gray.800">
+                  <Heading as="h3" size="md" color="primary.500" fontWeight="bold">
                     {step.title}
                   </Heading>
-                  <Text color="gray.600" fontSize="sm">
+                  <Text color="text.secondary" fontSize="sm" fontWeight="medium">
                     {step.description}
                   </Text>
                 </VStack>
