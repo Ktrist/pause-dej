@@ -40,7 +40,6 @@ import {
   FiCalendar,
   FiClock,
   FiPackage,
-  FiDollarSign,
   FiTag,
   FiTruck,
   FiStar

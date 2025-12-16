@@ -175,7 +175,7 @@ export default function OrderConfirmationPage() {
                 </HStack>
                 <Text color="gray.700">{formattedDate}</Text>
                 <Text fontSize="sm" color="gray.600" mt={2}>
-                  ⚡ Livraison express en ~30 minutes
+                  📦 Livraison entre 7h et 9h le matin
                 </Text>
               </VStack>
             </Box>

@@ -73,6 +73,8 @@
 | **W3.3** | Panier | Panier persistant | 🔴 Critique | Sauvegarde LocalStorage si fermeture onglet. | W3.1 |
 | **W4.1** | Compte | Dashboard compte | 🔴 Critique | Sidebar navigation (Profil, Commandes, Factures). | Auth |
 | **W4.2** | Compte | Export factures | 🟡 Important | Liste factures, btn download PDF. | W4.1 |
+| **W4.3** | UX | Greeting personnalisé | 🟡 Important | À côté de l'icône USER, afficher "Bonjour/Bon après-midi/Bonsoir" + prénom en fonction de l'heure. Ex: "Bonjour Tristan". | Auth |
+| **W5.1** | Livraison | Zones de livraison limitées | 🔴 Critique | Limiter initialement à Annecy, Annecy-le-Vieux et Argonay. Système évolutif pour ajouter d'autres zones. Validation adresse au checkout. | W3.2 |
 
 ### Spécifique B2B
 | ID | Section | Titre | Priorité | Description / Critères | Dépendances |

@@ -21,10 +21,7 @@ export function useDishes({ enabled = true, category = null, availableOnly = tru
 
       let query = supabase
         .from('dishes')
-        .select(`
-          *,
-          category:categories(id, name, slug)
-        `)
+        .select('*')
 
       // Filter by availability
       if (availableOnly) {
@@ -51,31 +48,47 @@ export function useDishes({ enabled = true, category = null, availableOnly = tru
 
       if (fetchError) throw fetchError
 
+      // Fetch all categories to map category_id to category info
+      const { data: categories, error: categoriesError } = await supabase
+        .from('categories')
+        .select('id, name, slug')
+
+      if (categoriesError) throw categoriesError
+
+      // Create a map of category_id to category info
+      const categoryMap = {}
+      categories?.forEach(cat => {
+        categoryMap[cat.id] = { name: cat.name, slug: cat.slug }
+      })
+
       // Transform data to match mockData format
-      const transformedDishes = data.map(dish => ({
-        id: dish.id,
-        name: dish.name,
-        description: dish.description,
-        longDescription: dish.long_description,
-        price: parseFloat(dish.price),
-        image: dish.image_url,
-        category: dish.category?.slug || '',
-        categoryLabel: dish.category?.name || '',
-        stock: dish.stock,
-        isPopular: dish.is_popular,
-        allergens: dish.allergens || [],
-        dietaryTags: dish.dietary_tags || [], // M9.2 - Dietary preferences
-        averageRating: dish.average_rating || 0, // Reviews system
-        reviewCount: dish.review_count || 0, // Reviews system
-        nutritionInfo: {
-          calories: dish.calories,
-          protein: dish.protein,
-          carbs: dish.carbs,
-          fat: dish.fat
-        },
-        vegetarian: dish.is_vegetarian,
-        vegan: dish.is_vegan
-      }))
+      const transformedDishes = data.map(dish => {
+        const categoryInfo = dish.category_id ? categoryMap[dish.category_id] : null
+        return {
+          id: dish.id,
+          name: dish.name,
+          description: dish.description,
+          longDescription: dish.long_description,
+          price: parseFloat(dish.price),
+          image: dish.image_url,
+          category: categoryInfo?.slug || '',
+          categoryLabel: categoryInfo?.name || '',
+          stock: dish.stock,
+          isPopular: dish.is_popular,
+          allergens: dish.allergens || [],
+          dietaryTags: dish.dietary_tags || [], // M9.2 - Dietary preferences
+          averageRating: dish.average_rating || 0, // Reviews system
+          reviewCount: dish.review_count || 0, // Reviews system
+          nutritionInfo: {
+            calories: dish.calories,
+            protein: dish.protein,
+            carbs: dish.carbs,
+            fat: dish.fat
+          },
+          vegetarian: dish.is_vegetarian,
+          vegan: dish.is_vegan
+        }
+      })
 
       setDishes(transformedDishes)
     } catch (err) {
@@ -123,14 +136,22 @@ export function useDish(dishId) {
 
         const { data, error: fetchError } = await supabase
           .from('dishes')
-          .select(`
-            *,
-            category:categories(id, name, slug)
-          `)
+          .select('*')
           .eq('id', dishId)
           .single()
 
         if (fetchError) throw fetchError
+
+        // Fetch category info if category_id exists
+        let categoryInfo = null
+        if (data.category_id) {
+          const { data: category } = await supabase
+            .from('categories')
+            .select('id, name, slug')
+            .eq('id', data.category_id)
+            .single()
+          categoryInfo = category
+        }
 
         // Transform data
         const transformedDish = {
@@ -140,8 +161,8 @@ export function useDish(dishId) {
           longDescription: data.long_description,
           price: parseFloat(data.price),
           image: data.image_url,
-          category: data.category?.slug || '',
-          categoryLabel: data.category?.name || '',
+          category: categoryInfo?.slug || '',
+          categoryLabel: categoryInfo?.name || '',
           stock: data.stock,
           isPopular: data.is_popular,
           allergens: data.allergens || [],
@@ -191,41 +212,54 @@ export function usePopularDishes(limit = 6) {
 
         const { data, error: fetchError } = await supabase
           .from('dishes')
-          .select(`
-            *,
-            category:categories(id, name, slug)
-          `)
+          .select('*')
           .eq('is_available', true)
           .eq('is_popular', true)
           .limit(limit)
 
         if (fetchError) throw fetchError
 
+        // Fetch all categories to map category_id to category info
+        const { data: categories, error: categoriesError } = await supabase
+          .from('categories')
+          .select('id, name, slug')
+
+        if (categoriesError) throw categoriesError
+
+        // Create a map of category_id to category info
+        const categoryMap = {}
+        categories?.forEach(cat => {
+          categoryMap[cat.id] = { name: cat.name, slug: cat.slug }
+        })
+
         // Transform data
-        const transformedDishes = data.map(dish => ({
-          id: dish.id,
-          name: dish.name,
-          description: dish.description,
-          longDescription: dish.long_description,
-          price: parseFloat(dish.price),
-          image: dish.image_url,
-          category: dish.category?.slug || '',
-          categoryLabel: dish.category?.name || '',
-          stock: dish.stock,
-          isPopular: dish.is_popular,
-          allergens: dish.allergens || [],
-          dietaryTags: dish.dietary_tags || [], // M9.2 - Dietary preferences
-          averageRating: dish.average_rating || 0, // Reviews system
-          reviewCount: dish.review_count || 0, // Reviews system
-          nutritionInfo: {
-            calories: dish.calories,
-            protein: dish.protein,
-            carbs: dish.carbs,
-            fat: dish.fat
-          },
-          vegetarian: dish.is_vegetarian,
-          vegan: dish.is_vegan
-        }))
+        const transformedDishes = data.map(dish => {
+          const categoryInfo = dish.category_id ? categoryMap[dish.category_id] : null
+          return {
+            id: dish.id,
+            name: dish.name,
+            description: dish.description,
+            longDescription: dish.long_description,
+            price: parseFloat(dish.price),
+            image: dish.image_url,
+            category: categoryInfo?.slug || '',
+            categoryLabel: categoryInfo?.name || '',
+            stock: dish.stock,
+            isPopular: dish.is_popular,
+            allergens: dish.allergens || [],
+            dietaryTags: dish.dietary_tags || [], // M9.2 - Dietary preferences
+            averageRating: dish.average_rating || 0, // Reviews system
+            reviewCount: dish.review_count || 0, // Reviews system
+            nutritionInfo: {
+              calories: dish.calories,
+              protein: dish.protein,
+              carbs: dish.carbs,
+              fat: dish.fat
+            },
+            vegetarian: dish.is_vegetarian,
+            vegan: dish.is_vegan
+          }
+        })
 
         setDishes(transformedDishes)
       } catch (err) {

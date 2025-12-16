@@ -11,6 +11,7 @@ import {
   Divider,
   Heading
 } from '@chakra-ui/react'
+import { Link as RouterLink } from 'react-router-dom'
 import { FiMail, FiPhone, FiMapPin, FiFacebook, FiInstagram, FiTwitter } from 'react-icons/fi'
 import { APP_NAME, CONTACT_EMAIL } from '../../config'
 
@@ -27,7 +28,7 @@ export default function Footer() {
               {APP_NAME}
             </Heading>
             <Text fontSize="sm" color="gray.400">
-              Des plats frais livrés en 30 minutes.
+              Des plats frais livrés chaque matin.
               Votre pause déjeuner réinventée.
             </Text>
             <HStack spacing={3}>
@@ -48,17 +49,42 @@ export default function Footer() {
             <Heading size="sm" mb={2}>
               Liens rapides
             </Heading>
-            {['Menu du jour', 'Catalogue', 'Comment ça marche', 'Tarifs'].map((item) => (
-              <Link
-                key={item}
-                href="#"
-                fontSize="sm"
-                color="gray.400"
-                _hover={{ color: 'white', textDecoration: 'none' }}
-              >
-                {item}
-              </Link>
-            ))}
+            <Link
+              as={RouterLink}
+              to="/"
+              fontSize="sm"
+              color="gray.400"
+              _hover={{ color: 'white', textDecoration: 'none' }}
+            >
+              Accueil
+            </Link>
+            <Link
+              as={RouterLink}
+              to="/catalogue"
+              fontSize="sm"
+              color="gray.400"
+              _hover={{ color: 'white', textDecoration: 'none' }}
+            >
+              Catalogue
+            </Link>
+            <Link
+              as={RouterLink}
+              to="/how-it-works"
+              fontSize="sm"
+              color="gray.400"
+              _hover={{ color: 'white', textDecoration: 'none' }}
+            >
+              Comment ça marche
+            </Link>
+            <Link
+              as={RouterLink}
+              to="/b2b"
+              fontSize="sm"
+              color="gray.400"
+              _hover={{ color: 'white', textDecoration: 'none' }}
+            >
+              Offre B2B
+            </Link>
           </VStack>
 
           {/* Legal */}
@@ -123,14 +149,14 @@ export default function Footer() {
             © {currentYear} {APP_NAME}. Tous droits réservés.
           </Text>
           <HStack spacing={4}>
-            <Link href="#" _hover={{ color: 'white' }}>
+            <Link as={RouterLink} to="/support" _hover={{ color: 'white' }}>
               Aide
             </Link>
-            <Link href="#" _hover={{ color: 'white' }}>
+            <Link as={RouterLink} to="/support" _hover={{ color: 'white' }}>
               FAQ
             </Link>
-            <Link href="#" _hover={{ color: 'white' }}>
-              Support
+            <Link as={RouterLink} to="/contact" _hover={{ color: 'white' }}>
+              Contact
             </Link>
           </HStack>
         </Stack>

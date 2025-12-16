@@ -5,6 +5,7 @@ import {
   Heading,
   VStack,
   HStack,
+  Stack,
   Tabs,
   TabList,
   TabPanels,
@@ -32,11 +33,12 @@ import {
   useDisclosure,
   Textarea,
   Switch,
+  Checkbox,
   Alert,
   AlertIcon
 } from '@chakra-ui/react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { FiUser, FiMapPin, FiShoppingBag, FiEdit2, FiTrash2, FiPlus, FiTruck, FiHeart, FiAward, FiMessageSquare, FiMail } from 'react-icons/fi'
+import { FiUser, FiMapPin, FiShoppingBag, FiEdit2, FiTrash2, FiPlus, FiTruck, FiHeart, FiAward, FiMessageSquare, FiMail, FiBell, FiUsers } from 'react-icons/fi'
 import { useAuth } from '../../context/AuthContext'
 import { useAddresses, useCreateAddress, useUpdateAddress, useDeleteAddress } from '../../hooks/useAddresses'
 import { useOrders } from '../../hooks/useOrders'
@@ -48,6 +50,8 @@ import { useNewsletterSubscription } from '../../hooks/useNewsletter'
 import LoadingSpinner from '../../components/common/LoadingSpinner'
 import DishCard from '../../components/catalogue/DishCard'
 import { StarRating } from '../../components/reviews/StarRating'
+import NotificationSettings from '../../components/notifications/NotificationSettings'
+import ReferralDashboard from '../../components/referral/ReferralDashboard'
 
 export default function AccountPage() {
   const { user, loading } = useAuth()
@@ -126,6 +130,8 @@ export default function AccountPage() {
     if (tab === 'favorites') setTabIndex(4)
     if (tab === 'reviews') setTabIndex(5)
     if (tab === 'newsletter') setTabIndex(6)
+    if (tab === 'notifications') setTabIndex(7)
+    if (tab === 'referral') setTabIndex(8)
   }, [searchParams])
 
   useEffect(() => {
@@ -290,6 +296,18 @@ export default function AccountPage() {
                 <HStack spacing={2}>
                   <FiMail />
                   <Text>Newsletter</Text>
+                </HStack>
+              </Tab>
+              <Tab>
+                <HStack spacing={2}>
+                  <FiBell />
+                  <Text>Notifications</Text>
+                </HStack>
+              </Tab>
+              <Tab>
+                <HStack spacing={2}>
+                  <FiUsers />
+                  <Text>Parrainage</Text>
                 </HStack>
               </Tab>
             </TabList>
@@ -1296,6 +1314,23 @@ export default function AccountPage() {
                     </Card>
                   )}
                 </VStack>
+              </TabPanel>
+
+              {/* Notifications Tab */}
+              <TabPanel>
+                <VStack spacing={6} align="stretch">
+                  <Heading size="md">Notifications Push</Heading>
+                  <Card>
+                    <CardBody>
+                      <NotificationSettings />
+                    </CardBody>
+                  </Card>
+                </VStack>
+              </TabPanel>
+
+              {/* Referral Tab */}
+              <TabPanel>
+                <ReferralDashboard />
               </TabPanel>
             </TabPanels>
           </Tabs>

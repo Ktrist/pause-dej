@@ -43,15 +43,19 @@ import {
   TabPanel,
   Alert,
   AlertIcon,
-  Divider
+  Divider,
+  Radio,
+  RadioGroup,
+  Stack
 } from '@chakra-ui/react'
-import { FiPlus, FiSend, FiEdit2, FiTrash2, FiMail, FiUsers, FiTrendingUp } from 'react-icons/fi'
+import { FiPlus, FiSend, FiEdit2, FiTrash2, FiMail, FiUsers, FiTrendingUp, FiSmartphone } from 'react-icons/fi'
 import {
   useNewsletterCampaigns,
   useSubscriberStats,
   useCampaignStats
 } from '../../hooks/useNewsletter'
 import LoadingSpinner from '../../components/common/LoadingSpinner'
+import CampaignTemplatePreview, { EMAIL_TEMPLATES, SMS_TEMPLATES } from '../../components/newsletter/CampaignTemplatePreview'
 
 const CAMPAIGN_STATUS_COLORS = {
   draft: 'gray',
@@ -78,6 +82,8 @@ export default function AdminNewsletter() {
   const [campaignForm, setCampaignForm] = useState({
     name: '',
     campaign_type: 'newsletter',
+    channel: 'email',
+    template_id: '',
     subject: '',
     preview_text: '',
     content: ''
@@ -89,6 +95,8 @@ export default function AdminNewsletter() {
       setCampaignForm({
         name: campaign.name,
         campaign_type: campaign.campaign_type,
+        channel: campaign.channel || 'email',
+        template_id: campaign.template_id || '',
         subject: campaign.subject,
         preview_text: campaign.preview_text || '',
         content: campaign.content
@@ -98,6 +106,8 @@ export default function AdminNewsletter() {
       setCampaignForm({
         name: '',
         campaign_type: 'newsletter',
+        channel: 'email',
+        template_id: '',
         subject: '',
         preview_text: '',
         content: ''
@@ -396,7 +406,7 @@ export default function AdminNewsletter() {
                 <Select
                   value={campaignForm.campaign_type}
                   onChange={(e) =>
-                    setCampaignForm({ ...campaignForm, campaign_type: e.target.value })
+                    setCampaignForm({ ...campaignForm, campaign_type: e.target.value, template_id: '' })
                   }
                 >
                   {CAMPAIGN_TYPES.map((type) => (
@@ -408,46 +418,100 @@ export default function AdminNewsletter() {
               </FormControl>
 
               <FormControl isRequired>
-                <FormLabel>Sujet de l'email</FormLabel>
-                <Input
-                  placeholder="Découvrez nos nouveaux plats !"
-                  value={campaignForm.subject}
-                  onChange={(e) => setCampaignForm({ ...campaignForm, subject: e.target.value })}
-                />
+                <FormLabel>Canal de communication</FormLabel>
+                <RadioGroup
+                  value={campaignForm.channel}
+                  onChange={(value) =>
+                    setCampaignForm({ ...campaignForm, channel: value, template_id: '' })
+                  }
+                >
+                  <Stack direction="row" spacing={4}>
+                    <Radio value="email" colorScheme="brand">
+                      <HStack spacing={2}>
+                        <FiMail />
+                        <Text>Email</Text>
+                      </HStack>
+                    </Radio>
+                    <Radio value="sms" colorScheme="brand">
+                      <HStack spacing={2}>
+                        <FiSmartphone />
+                        <Text>SMS</Text>
+                      </HStack>
+                    </Radio>
+                  </Stack>
+                </RadioGroup>
               </FormControl>
 
-              <FormControl>
-                <FormLabel>Texte d'aperçu</FormLabel>
-                <Input
-                  placeholder="Texte visible dans la preview de l'email"
-                  value={campaignForm.preview_text}
-                  onChange={(e) =>
-                    setCampaignForm({ ...campaignForm, preview_text: e.target.value })
-                  }
-                />
-              </FormControl>
+              <Divider />
+
+              <CampaignTemplatePreview
+                campaignType={campaignForm.campaign_type}
+                selectedTemplate={campaignForm.template_id}
+                onTemplateSelect={(templateId) =>
+                  setCampaignForm({ ...campaignForm, template_id: templateId })
+                }
+                channel={campaignForm.channel}
+              />
+
+              <Divider />
+
+              {campaignForm.channel === 'email' && (
+                <>
+                  <FormControl isRequired>
+                    <FormLabel>Sujet de l'email</FormLabel>
+                    <Input
+                      placeholder="Découvrez nos nouveaux plats !"
+                      value={campaignForm.subject}
+                      onChange={(e) => setCampaignForm({ ...campaignForm, subject: e.target.value })}
+                    />
+                  </FormControl>
+
+                  <FormControl>
+                    <FormLabel>Texte d'aperçu</FormLabel>
+                    <Input
+                      placeholder="Texte visible dans la preview de l'email"
+                      value={campaignForm.preview_text}
+                      onChange={(e) =>
+                        setCampaignForm({ ...campaignForm, preview_text: e.target.value })
+                      }
+                    />
+                  </FormControl>
+                </>
+              )}
 
               <FormControl isRequired>
-                <FormLabel>Contenu HTML</FormLabel>
+                <FormLabel>
+                  {campaignForm.channel === 'email' ? 'Contenu (JSON)' : 'Message SMS'}
+                </FormLabel>
                 <Textarea
-                  placeholder="Contenu HTML de l'email..."
+                  placeholder={
+                    campaignForm.channel === 'email'
+                      ? '{"title": "Ma campagne", "content": "..."}'
+                      : 'Votre message SMS (max 160 caractères)'
+                  }
                   value={campaignForm.content}
                   onChange={(e) => setCampaignForm({ ...campaignForm, content: e.target.value })}
-                  rows={10}
+                  rows={campaignForm.channel === 'email' ? 10 : 4}
                   fontFamily="monospace"
                   fontSize="sm"
                 />
+                {campaignForm.channel === 'sms' && (
+                  <Text fontSize="xs" color="gray.600" mt={1}>
+                    {campaignForm.content.length} / 160 caractères
+                  </Text>
+                )}
               </FormControl>
 
               <Alert status="info" borderRadius="md">
                 <AlertIcon />
                 <VStack align="start" spacing={0}>
                   <Text fontSize="sm" fontWeight="600">
-                    Templates disponibles
+                    {campaignForm.channel === 'email' ? 'Templates Brevo' : 'SMS avec Brevo'}
                   </Text>
                   <Text fontSize="xs">
-                    Utilisez les templates dans l'Edge Function send-newsletter pour un design
-                    professionnel
+                    {campaignForm.channel === 'email'
+                      ? 'Les emails seront envoyés via Brevo avec le template sélectionné'
+                      : 'Les SMS seront envoyés via Brevo API (max 160 caractères)'}
                   </Text>
                 </VStack>
               </Alert>

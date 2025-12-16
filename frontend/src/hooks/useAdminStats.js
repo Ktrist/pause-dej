@@ -21,6 +21,14 @@ export function useAdminStats() {
       const tomorrow = new Date(today)
       tomorrow.setDate(tomorrow.getDate() + 1)
 
+      // Get current month range
+      const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1)
+      const firstDayOfNextMonth = new Date(today.getFullYear(), today.getMonth() + 1, 1)
+
+      // Get current year range
+      const firstDayOfYear = new Date(today.getFullYear(), 0, 1)
+      const firstDayOfNextYear = new Date(today.getFullYear() + 1, 0, 1)
+
       // Fetch today's orders
       const { data: todayOrders, error: ordersError } = await supabase
         .from('orders')
@@ -30,8 +38,29 @@ export function useAdminStats() {
 
       if (ordersError) throw ordersError
 
+      // Fetch current month's orders
+      const { data: monthOrders, error: monthError } = await supabase
+        .from('orders')
+        .select('total')
+        .gte('created_at', firstDayOfMonth.toISOString())
+        .lt('created_at', firstDayOfNextMonth.toISOString())
+
+      if (monthError) throw monthError
+
+      // Fetch current year's orders
+      const { data: yearOrders, error: yearError } = await supabase
+        .from('orders')
+        .select('total')
+        .gte('created_at', firstDayOfYear.toISOString())
+        .lt('created_at', firstDayOfNextYear.toISOString())
+
+      if (yearError) throw yearError
+
       // Calculate stats
       const totalRevenue = todayOrders.reduce((sum, order) => sum + parseFloat(order.total || 0), 0)
+      const monthRevenue = monthOrders.reduce((sum, order) => sum + parseFloat(order.total || 0), 0)
+      const yearRevenue = yearOrders.reduce((sum, order) => sum + parseFloat(order.total || 0), 0)
+
       const totalOrders = todayOrders.length
       const pendingOrders = todayOrders.filter(o => o.status === 'pending').length
       const preparingOrders = todayOrders.filter(o => o.status === 'preparing').length
@@ -49,6 +78,8 @@ export function useAdminStats() {
 
       setStats({
         totalRevenue,
+        monthRevenue,
+        yearRevenue,
         totalOrders,
         pendingOrders,
         preparingOrders,

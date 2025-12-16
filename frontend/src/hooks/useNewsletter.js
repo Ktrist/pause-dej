@@ -62,16 +62,45 @@ export function useNewsletterSubscription() {
         }
       }
 
-      const { data, error: insertError } = await supabase
+      // Try to check if subscription exists first
+      const { data: existing } = await supabase
         .from('newsletter_subscribers')
-        .upsert(subscribeData, {
-          onConflict: 'email',
-          ignoreDuplicates: false
-        })
-        .select()
-        .single()
+        .select('*')
+        .eq('email', subscribeData.email)
+        .maybeSingle()
 
-      if (insertError) throw insertError
+      let data, error
+
+      if (existing) {
+        // Update existing subscription
+        const { data: updateData, error: updateError } = await supabase
+          .from('newsletter_subscribers')
+          .update({
+            is_subscribed: true,
+            subscribed_at: new Date().toISOString(),
+            unsubscribed_at: null,
+            preferences: subscribeData.preferences,
+            user_id: subscribeData.user_id
+          })
+          .eq('email', subscribeData.email)
+          .select()
+          .single()
+
+        data = updateData
+        error = updateError
+      } else {
+        // Insert new subscription
+        const { data: insertData, error: insertError } = await supabase
+          .from('newsletter_subscribers')
+          .insert(subscribeData)
+          .select()
+          .single()
+
+        data = insertData
+        error = insertError
+      }
+
+      if (error) throw error
 
       setSubscription(data)
       return { data, error: null }

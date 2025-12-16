@@ -36,9 +36,9 @@ import {
   FiTrendingDown,
   FiCalendar,
   FiPackage,
-  FiDollarSign,
   FiClock
 } from 'react-icons/fi'
+import { TbCurrencyEuro } from 'react-icons/tb'
 import { useB2BQuotes, useB2BPackages } from '../hooks/useB2BQuotes'
 
 const FeatureCard = ({ icon, title, description }) => {
@@ -196,7 +196,7 @@ export default function B2BPage() {
               </Heading>
               <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6}>
                 <FeatureCard
-                  icon={FiDollarSign}
+                  icon={TbCurrencyEuro}
                   title="Tarifs Préférentiels"
                   description="Bénéficiez de remises volume et de tarifs négociés pour votre entreprise."
                 />

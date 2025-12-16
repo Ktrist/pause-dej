@@ -4,7 +4,7 @@ This guide explains how to set up and use the Newsletter & Marketing Email syste
 
 ## 🗄️ Database Setup
 
-You need to run **3 SQL migrations** in Supabase (in this order):
+You need to run **4 SQL migrations** in Supabase (in this order):
 
 ### 1. Add Admin Role to Profiles
 
@@ -35,26 +35,37 @@ This creates the newsletter tables and policies.
 -- Copy content from: supabase/migrations/add_newsletter_system.sql
 ```
 
-### 3. Verify Installation
+### 3. Add Brevo Support (Email & SMS)
+
+**File**: `supabase/migrations/add_brevo_support_to_campaigns.sql`
+
+This adds channel support and SMS capabilities.
+
+```sql
+-- Run this in Supabase SQL Editor
+-- Copy content from: supabase/migrations/add_brevo_support_to_campaigns.sql
+```
+
+### 4. Verify Installation
 
 In Supabase Table Editor, you should see:
 - ✅ `profiles` table has `role` column
-- ✅ `newsletter_subscribers` table
-- ✅ `newsletter_campaigns` table
+- ✅ `newsletter_subscribers` table with `phone` column
+- ✅ `newsletter_campaigns` table with `channel` and `template_id` columns
 - ✅ `campaign_recipients` table
 
-## 📧 Resend API Setup
+## 📧 Brevo API Setup
 
-The newsletter system uses Resend to send emails.
+The newsletter system uses Brevo (formerly Sendinblue) to send emails and SMS.
 
-1. **Get Resend API Key**
-   - Go to https://resend.com
+1. **Get Brevo API Key**
+   - Go to https://brevo.com
    - Create account and get API key
+   - Enable both Email and SMS services
 
 2. **Add to Supabase Secrets**
    - Go to Project Settings → Edge Functions
-   - Add secret: `RESEND_API_KEY` = `your_resend_key`
-   - (Should already exist if you set up transactional emails)
+   - Add secret: `BREVO_API_KEY` = `your_brevo_api_key`
 
 3. **Deploy Edge Function**
    ```bash
@@ -96,10 +107,11 @@ The newsletter system uses Resend to send emails.
 - **Reactivation**: Win-back inactive customers
 - **Announcement**: Important updates
 
-**3. Email Templates**
-- Professional HTML templates
-- Responsive design
-- Automatic unsubscribe links
+**3. Multi-Channel Support**
+- **Email Campaigns**: Professional HTML templates with responsive design
+- **SMS Campaigns**: Short text messages (max 160 characters)
+- Automatic unsubscribe links for emails
+- Template preview and selection in campaign creation
 
 ## 📝 How to Use (Admin)
 
@@ -109,15 +121,20 @@ The newsletter system uses Resend to send emails.
 2. Click "Nouvelle campagne"
 3. Fill in:
    - **Name**: Internal name (e.g., "Newsletter Janvier 2024")
-   - **Type**: Choose campaign type
-   - **Subject**: Email subject line
-   - **Preview Text**: Email preview (optional)
-   - **Content**: JSON data for template
+   - **Type**: Choose campaign type (newsletter, promo, reactivation, announcement)
+   - **Channel**: Select Email or SMS
+   - **Template**: Choose from available templates based on campaign type
+   - **Subject**: Email subject line (email only)
+   - **Preview Text**: Email preview (email only, optional)
+   - **Content**:
+     - For Email: JSON data for template
+     - For SMS: Plain text message (max 160 characters)
 
 4. Click "Créer"
 
 ### Campaign Content Format
 
+**For Email Campaigns:**
 The content field accepts JSON with template variables:
 
 **Newsletter Example:**
@@ -159,6 +176,19 @@ The content field accepts JSON with template variables:
 }
 ```
 
+**For SMS Campaigns:**
+Plain text message (max 160 characters):
+
+**SMS Promo Example:**
+```
+🎉 PAUSE DEJ: -20% avec le code PAUSE20 valable jusqu'au 31/01. Commander: pause-dej.fr
+```
+
+**SMS Reactivation Example:**
+```
+Ça faisait longtemps! 😊 -15% sur votre retour avec RETOUR15. On vous a manqué? pause-dej.fr
+```
+
 ### Send a Campaign
 
 1. Campaign must be in "draft" status
@@ -169,11 +199,17 @@ The content field accepts JSON with template variables:
 
 ## 🔍 Subscriber Segmentation
 
-Campaigns are automatically sent to the right subscribers based on preferences:
+Campaigns are automatically sent to the right subscribers based on channel and preferences:
 
+**Email Campaigns:**
 - **newsletter** type → Only sends to users with `weekly_newsletter: true`
 - **promo** type → Only sends to users with `promotions: true`
-- **announcement** type → Sends to all active subscribers
+- **announcement** type → Sends to all active email subscribers
+
+**SMS Campaigns:**
+- Only sends to subscribers with a phone number
+- Requires `sms_notifications: true` in preferences
+- Additional filtering by campaign type (if applicable)
 
 ## 📊 Analytics
 
@@ -206,11 +242,12 @@ Make sure you set your user as admin:
 UPDATE profiles SET role = 'admin' WHERE email = 'your-email@example.com';
 ```
 
-### Emails not sending
-1. Check Resend API key is set in Supabase secrets
+### Emails/SMS not sending
+1. Check Brevo API key is set in Supabase secrets
 2. Check Edge Function is deployed
-3. Check campaign has subscribers matching the type
-4. Check Resend dashboard for errors
+3. Check campaign has subscribers matching the type and channel
+4. For SMS: Ensure subscribers have phone numbers and SMS preferences enabled
+5. Check Brevo dashboard for errors and delivery status
 
 ### No subscribers found
 Users must opt-in via:

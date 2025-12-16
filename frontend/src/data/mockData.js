@@ -285,7 +285,7 @@ export const testimonials = [
     name: 'Thomas Dubois',
     role: 'Développeur',
     company: 'StartupXYZ',
-    comment: 'Gain de temps incroyable ! Je commande en 2 clics et je reçois mon repas en moins de 30 minutes.',
+    comment: 'Gain de temps incroyable ! Je commande en 2 clics et je reçois mon repas frais le lendemain matin.',
     rating: 5,
     avatar: 'https://i.pravatar.cc/150?img=2'
   },

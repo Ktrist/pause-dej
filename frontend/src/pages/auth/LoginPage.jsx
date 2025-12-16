@@ -17,6 +17,7 @@ import {
 } from '@chakra-ui/react'
 import { Link as RouterLink, useNavigate } from 'react-router-dom'
 import { FiMail, FiLock } from 'react-icons/fi'
+import { FcGoogle } from 'react-icons/fc'
 import { useAuth } from '../../context/AuthContext'
 
 export default function LoginPage() {
@@ -24,7 +25,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState('')
   const [errors, setErrors] = useState({})
   const [loading, setLoading] = useState(false)
-  const { signIn, signInWithGoogle } = useAuth()
+  const { signIn, signInWithGoogle, signInWithApple } = useAuth()
   const navigate = useNavigate()
   const toast = useToast()
 
@@ -74,6 +75,19 @@ export default function LoginPage() {
 
   const handleGoogleLogin = async () => {
     const { error } = await signInWithGoogle()
+    if (error) {
+      toast({
+        title: 'Erreur',
+        description: error.message,
+        status: 'error',
+        duration: 4000,
+        isClosable: true
+      })
+    }
+  }
+
+  const handleAppleLogin = async () => {
+    const { error } = await signInWithApple()
     if (error) {
       toast({
         title: 'Erreur',
@@ -158,10 +172,22 @@ export default function LoginPage() {
                   size="lg"
                   w="full"
                   onClick={handleGoogleLogin}
-                  leftIcon={<Text>🔍</Text>}
+                  leftIcon={<FcGoogle size={20} />}
                 >
                   Continuer avec Google
                 </Button>
+
+                {/* Apple OAuth - Commented for now
+                <Button
+                  variant="outline"
+                  size="lg"
+                  w="full"
+                  onClick={handleAppleLogin}
+                  leftIcon={<Text>🍎</Text>}
+                >
+                  Continuer avec Apple
+                </Button>
+                */}
 
                 <Text fontSize="sm" color="gray.600" textAlign="center">
                   Pas encore de compte ?{' '}

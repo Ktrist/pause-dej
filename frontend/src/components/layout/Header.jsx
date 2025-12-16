@@ -9,6 +9,7 @@ import {
   MenuButton,
   MenuList,
   MenuItem,
+  MenuDivider,
   Badge,
   useDisclosure,
   Drawer,
@@ -21,15 +22,16 @@ import {
   Text
 } from '@chakra-ui/react'
 import { Link as RouterLink, useNavigate } from 'react-router-dom'
-import { FiShoppingCart, FiMenu, FiUser, FiLogOut } from 'react-icons/fi'
+import { FiShoppingCart, FiMenu, FiUser, FiLogOut, FiSettings } from 'react-icons/fi'
 import { APP_NAME } from '../../config'
 import { useCart } from '../../context/CartContext'
 import { useAuth } from '../../context/AuthContext'
+import { getPersonalizedGreeting } from '../../utils/greeting'
 
 export default function Header() {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const { cartItemsCount } = useCart()
-  const { user, signOut } = useAuth()
+  const { user, isAdmin, signOut } = useAuth()
   const navigate = useNavigate()
 
   const handleSignOut = async () => {
@@ -40,7 +42,7 @@ export default function Header() {
   const navLinks = [
     { name: 'Accueil', path: '/' },
     { name: 'Catalogue', path: '/catalogue' },
-    { name: 'Comment ça marche', path: '/#how-it-works' },
+    { name: 'Comment ça marche', path: '/how-it-works' },
     { name: 'Contact', path: '/contact' }
   ]
 
@@ -121,25 +123,57 @@ export default function Header() {
 
             {/* User Menu */}
             {user ? (
-              <Menu>
-                <MenuButton
-                  as={IconButton}
-                  icon={<FiUser />}
-                  variant="ghost"
-                  colorScheme="brand"
-                  aria-label="Mon compte"
-                  fontSize="20px"
-                  display={{ base: 'none', md: 'flex' }}
-                />
-                <MenuList>
-                  <MenuItem as={RouterLink} to="/compte">Mon compte</MenuItem>
-                  <MenuItem as={RouterLink} to="/compte?tab=orders">Mes commandes</MenuItem>
-                  <MenuItem as={RouterLink} to="/compte?tab=addresses">Mes adresses</MenuItem>
-                  <MenuItem icon={<FiLogOut />} onClick={handleSignOut}>
-                    Se déconnecter
-                  </MenuItem>
-                </MenuList>
-              </Menu>
+              <HStack spacing={3} display={{ base: 'none', md: 'flex' }}>
+                <Menu>
+                  <MenuButton
+                    as={IconButton}
+                    icon={<FiUser />}
+                    variant="ghost"
+                    colorScheme="brand"
+                    aria-label="Mon compte"
+                    fontSize="20px"
+                  />
+                  <MenuList>
+                    {isAdmin && (
+                      <>
+                        <MenuItem
+                          as={RouterLink}
+                          to="/admin/dashboard"
+                          icon={<FiSettings />}
+                          fontWeight="600"
+                          color="brand.600"
+                        >
+                          Dashboard Admin
+                        </MenuItem>
+                        <MenuDivider />
+                      </>
+                    )}
+                    <MenuItem as={RouterLink} to="/compte">Mon compte</MenuItem>
+                    <MenuItem as={RouterLink} to="/compte?tab=orders">Mes commandes</MenuItem>
+                    <MenuItem as={RouterLink} to="/compte?tab=addresses">Mes adresses</MenuItem>
+                    <MenuItem icon={<FiLogOut />} onClick={handleSignOut}>
+                      Se déconnecter
+                    </MenuItem>
+                  </MenuList>
+                </Menu>
+                <Box
+                  px={3}
+                  py={1.5}
+                  bg="brand.50"
+                  borderRadius="full"
+                  borderWidth="1px"
+                  borderColor="brand.200"
+                >
+                  <Text
+                    fontSize="sm"
+                    color="brand.700"
+                    fontWeight="600"
+                    letterSpacing="tight"
+                  >
+                    {getPersonalizedGreeting(user)}
+                  </Text>
+                </Box>
+              </HStack>
             ) : (
               <Button
                 as={RouterLink}
@@ -181,7 +215,9 @@ export default function Header() {
         <DrawerOverlay />
         <DrawerContent>
           <DrawerCloseButton />
-          <DrawerHeader borderBottomWidth="1px">Menu</DrawerHeader>
+          <DrawerHeader borderBottomWidth="1px">
+            {user ? getPersonalizedGreeting(user) : 'Menu'}
+          </DrawerHeader>
           <DrawerBody>
             <VStack spacing={4} align="stretch" pt={4}>
               {navLinks.map((link) => (
@@ -210,6 +246,19 @@ export default function Header() {
 
               {user ? (
                 <>
+                  {isAdmin && (
+                    <Button
+                      as={RouterLink}
+                      to="/admin/dashboard"
+                      variant="solid"
+                      colorScheme="brand"
+                      size="lg"
+                      onClick={onClose}
+                      leftIcon={<FiSettings />}
+                    >
+                      Dashboard Admin
+                    </Button>
+                  )}
                   <Button
                     as={RouterLink}
                     to="/compte"

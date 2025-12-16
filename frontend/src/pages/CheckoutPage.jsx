@@ -30,6 +30,7 @@ import { useAuth } from '../context/AuthContext'
 import { useCreateOrder } from '../hooks/useOrders'
 import { calculateDiscount } from '../hooks/usePromoCodes'
 import { useEmail } from '../hooks/useEmail'
+import { validateDeliveryAddress, getDeliveryFee, formatDeliveryZones } from '../utils/deliveryZones'
 import AddressSelector from '../components/checkout/AddressSelector'
 import TimeSlotSelector from '../components/checkout/TimeSlotSelector'
 import OrderSummary from '../components/checkout/OrderSummary'
@@ -102,6 +103,21 @@ function CheckoutPageContent() {
       return
     }
 
+    // Validate delivery zone for selected address
+    if (activeStep === 0 && selectedAddress) {
+      const validation = validateDeliveryAddress(selectedAddress)
+      if (!validation.isValid) {
+        toast({
+          title: 'Zone de livraison non disponible',
+          description: validation.message,
+          status: 'error',
+          duration: 5000,
+          isClosable: true
+        })
+        return
+      }
+    }
+
     if (activeStep === 1 && !selectedTimeSlot) {
       toast({
         title: 'Créneau requis',
@@ -126,7 +142,9 @@ function CheckoutPageContent() {
 
       // Calculate totals
       const subtotal = getCartTotal()
-      const deliveryFee = subtotal >= 30 ? 0 : 3.90
+      // Get dynamic delivery fee based on delivery zone
+      const zoneDeliveryFee = getDeliveryFee(selectedAddress)
+      const deliveryFee = subtotal >= 30 ? 0 : zoneDeliveryFee
       const discount = appliedPromo ? calculateDiscount(appliedPromo, subtotal) : 0
       const total = subtotal + deliveryFee - discount
 
@@ -138,7 +156,7 @@ function CheckoutPageContent() {
         delivery_additional_info: selectedAddress.additional_info || null,
         delivery_address_id: selectedAddress.id,
         delivery_date: selectedTimeSlot.date,
-        delivery_time: selectedTimeSlot.time,
+        delivery_time: selectedTimeSlot.timeValue || '07:00:00', // Use timeValue for database format
         subtotal: subtotal,
         delivery_fee: deliveryFee,
         discount: discount,
@@ -249,10 +267,23 @@ function CheckoutPageContent() {
           {/* Step Content */}
           <Box>
             {activeStep === 0 && (
-              <AddressSelector
-                selectedAddress={selectedAddress}
-                onSelectAddress={setSelectedAddress}
-              />
+              <VStack spacing={4} align="stretch">
+                {/* Delivery zones info */}
+                <Alert status="info" variant="left-accent" rounded="lg">
+                  <AlertIcon />
+                  <Box>
+                    <AlertTitle fontSize="sm" mb={1}>Zones de livraison</AlertTitle>
+                    <AlertDescription fontSize="sm">
+                      Nous livrons actuellement à {formatDeliveryZones()}.
+                    </AlertDescription>
+                  </Box>
+                </Alert>
+
+                <AddressSelector
+                  selectedAddress={selectedAddress}
+                  onSelectAddress={setSelectedAddress}
+                />
+              </VStack>
             )}
 
             {activeStep === 1 && (

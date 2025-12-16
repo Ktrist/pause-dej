@@ -39,7 +39,7 @@ export default function HeroSection() {
           >
             <HStack spacing={2}>
               <FiClock />
-              <Text>Livraison en 30 minutes chrono</Text>
+              <Text>Livraison entre 7h et 9h le matin</Text>
             </HStack>
           </Badge>
 

@@ -1,7 +1,7 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.0'
 
-const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY')
+const BREVO_API_KEY = Deno.env.get('BREVO_API_KEY')
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
 
@@ -11,7 +11,7 @@ const corsHeaders = {
 }
 
 // Newsletter email templates
-const templates = {
+const emailTemplates = {
   'newsletter': (data: any) => `
 <!DOCTYPE html>
 <html>
@@ -178,7 +178,99 @@ const templates = {
   </div>
 </body>
 </html>
+  `,
+
+  'announcement': (data: any) => `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; background: #f5f5f5; }
+    .container { max-width: 600px; margin: 0 auto; background: white; }
+    .header { background: #4F46E5; color: white; padding: 50px 30px; text-align: center; }
+    .content { padding: 40px 30px; }
+    .button { display: inline-block; padding: 18px 50px; background: #4F46E5; color: white; text-decoration: none; border-radius: 8px; margin: 20px 0; font-weight: bold; font-size: 18px; }
+    .footer { background: #2D3748; color: white; padding: 30px; text-align: center; font-size: 14px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1 style="font-size: 32px; margin: 0;">${data.title || 'Annonce Importante'}</h1>
+    </div>
+    <div class="content">
+      ${data.content}
+
+      ${data.ctaText && data.ctaUrl ? `
+        <div style="text-align: center; margin-top: 40px;">
+          <a href="${data.ctaUrl}" class="button">
+            ${data.ctaText}
+          </a>
+        </div>
+      ` : ''}
+    </div>
+    <div class="footer">
+      <p><strong>Pause Dej'</strong></p>
+      <p style="margin-top: 20px; font-size: 12px; color: #A0AEC0;">
+        <a href="${data.unsubscribeUrl}" style="color: #A0AEC0;">Se désabonner</a>
+      </p>
+    </div>
+  </div>
+</body>
+</html>
   `
+}
+
+async function sendEmailViaBrevo(to: string, subject: string, htmlContent: string) {
+  const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+    method: 'POST',
+    headers: {
+      'accept': 'application/json',
+      'api-key': BREVO_API_KEY!,
+      'content-type': 'application/json'
+    },
+    body: JSON.stringify({
+      sender: {
+        name: 'Pause Dej\'',
+        email: 'newsletter@pause-dej.fr'
+      },
+      to: [{ email: to }],
+      subject: subject,
+      htmlContent: htmlContent
+    })
+  })
+
+  if (!response.ok) {
+    const error = await response.text()
+    throw new Error(`Brevo email error: ${error}`)
+  }
+
+  return await response.json()
+}
+
+async function sendSMSViaBrevo(to: string, content: string) {
+  const response = await fetch('https://api.brevo.com/v3/transactionalSMS/sms', {
+    method: 'POST',
+    headers: {
+      'accept': 'application/json',
+      'api-key': BREVO_API_KEY!,
+      'content-type': 'application/json'
+    },
+    body: JSON.stringify({
+      type: 'transactional',
+      sender: 'PauseDej',
+      recipient: to,
+      content: content
+    })
+  })
+
+  if (!response.ok) {
+    const error = await response.text()
+    throw new Error(`Brevo SMS error: ${error}`)
+  }
+
+  return await response.json()
 }
 
 serve(async (req) => {
@@ -190,8 +282,8 @@ serve(async (req) => {
   try {
     const { campaignId } = await req.json()
 
-    if (!RESEND_API_KEY) {
-      throw new Error('RESEND_API_KEY not configured')
+    if (!BREVO_API_KEY) {
+      throw new Error('BREVO_API_KEY not configured')
     }
 
     if (!campaignId) {
@@ -212,17 +304,27 @@ serve(async (req) => {
       throw new Error('Campaign not found')
     }
 
-    // Get subscribers based on campaign type
+    // Get subscribers based on campaign type and channel
     let subscribersQuery = supabase
       .from('newsletter_subscribers')
       .select('*')
       .eq('is_subscribed', true)
 
-    // Filter by preferences
-    if (campaign.campaign_type === 'newsletter') {
-      subscribersQuery = subscribersQuery.eq('preferences->>weekly_newsletter', 'true')
-    } else if (campaign.campaign_type === 'promo') {
-      subscribersQuery = subscribersQuery.eq('preferences->>promotions', 'true')
+    // Filter by channel
+    if (campaign.channel === 'sms') {
+      subscribersQuery = subscribersQuery.not('phone', 'is', null)
+      subscribersQuery = subscribersQuery.eq('preferences->>sms_notifications', 'true')
+    } else {
+      subscribersQuery = subscribersQuery.not('email', 'is', null)
+    }
+
+    // Filter by preferences for email campaigns
+    if (campaign.channel === 'email') {
+      if (campaign.campaign_type === 'newsletter') {
+        subscribersQuery = subscribersQuery.eq('preferences->>weekly_newsletter', 'true')
+      } else if (campaign.campaign_type === 'promo') {
+        subscribersQuery = subscribersQuery.eq('preferences->>promotions', 'true')
+      }
     }
 
     const { data: subscribers, error: subscribersError } = await subscribersQuery
@@ -244,72 +346,58 @@ serve(async (req) => {
       })
       .eq('id', campaignId)
 
-    // Get template function
-    const templateFn = templates[campaign.campaign_type as keyof typeof templates]
-    const baseTemplate = templateFn || templates.newsletter
-
-    // Send emails
+    // Send campaigns
     let sentCount = 0
     let errorCount = 0
 
     for (const subscriber of subscribers) {
       try {
-        // Parse content as JSON or use as-is
-        let emailData
-        try {
-          emailData = JSON.parse(campaign.content)
-        } catch {
-          emailData = { content: campaign.content }
-        }
-
-        // Add unsubscribe URL
-        emailData.unsubscribeUrl = `${Deno.env.get('SITE_URL') || 'https://pause-dej.fr'}/unsubscribe?email=${encodeURIComponent(subscriber.email)}`
-
-        const htmlContent = baseTemplate(emailData)
-
-        // Send via Resend
-        const response = await fetch('https://api.resend.com/emails', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${RESEND_API_KEY}`
-          },
-          body: JSON.stringify({
-            from: 'Pause Dej\' <newsletter@pause-dej.fr>',
-            to: subscriber.email,
-            subject: campaign.subject,
-            html: htmlContent
-          })
-        })
-
-        const result = await response.json()
-
-        if (response.ok) {
-          // Record successful send
-          await supabase
-            .from('campaign_recipients')
-            .insert({
-              campaign_id: campaignId,
-              subscriber_id: subscriber.id,
-              sent_at: new Date().toISOString()
-            })
-
-          sentCount++
+        if (campaign.channel === 'sms') {
+          // Send SMS
+          await sendSMSViaBrevo(subscriber.phone, campaign.content)
         } else {
-          // Record error
-          await supabase
-            .from('campaign_recipients')
-            .insert({
-              campaign_id: campaignId,
-              subscriber_id: subscriber.id,
-              bounced: true,
-              error_message: result.message || 'Failed to send'
-            })
+          // Send Email
+          // Parse content as JSON or use as-is
+          let emailData
+          try {
+            emailData = JSON.parse(campaign.content)
+          } catch {
+            emailData = { content: campaign.content }
+          }
 
-          errorCount++
+          // Add unsubscribe URL
+          emailData.unsubscribeUrl = `${Deno.env.get('SITE_URL') || 'https://pause-dej.fr'}/unsubscribe?email=${encodeURIComponent(subscriber.email)}`
+
+          // Get template function
+          const templateFn = emailTemplates[campaign.template_id as keyof typeof emailTemplates] || emailTemplates.newsletter
+          const htmlContent = templateFn(emailData)
+
+          await sendEmailViaBrevo(subscriber.email, campaign.subject, htmlContent)
         }
+
+        // Record successful send
+        await supabase
+          .from('campaign_recipients')
+          .insert({
+            campaign_id: campaignId,
+            subscriber_id: subscriber.id,
+            sent_at: new Date().toISOString()
+          })
+
+        sentCount++
       } catch (err) {
         console.error('Error sending to subscriber:', err)
+
+        // Record error
+        await supabase
+          .from('campaign_recipients')
+          .insert({
+            campaign_id: campaignId,
+            subscriber_id: subscriber.id,
+            bounced: true,
+            error_message: err.message || 'Failed to send'
+          })
+
         errorCount++
       }
     }
@@ -329,7 +417,8 @@ serve(async (req) => {
         success: true,
         sentCount,
         errorCount,
-        totalRecipients: subscribers.length
+        totalRecipients: subscribers.length,
+        channel: campaign.channel
       }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },

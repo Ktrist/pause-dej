@@ -49,7 +49,6 @@ import {
 import { useNavigate } from 'react-router-dom'
 import {
   FiUsers,
-  FiDollarSign,
   FiShoppingBag,
   FiEdit,
   FiTrash2,
@@ -57,6 +56,7 @@ import {
   FiTrendingUp,
   FiCalendar
 } from 'react-icons/fi'
+import { TbCurrencyEuro } from 'react-icons/tb'
 import { useB2BAccount, useB2BTeam } from '../hooks/useB2BQuotes'
 import { useB2BInvoices } from '../hooks/useB2BInvoices'
 import { useB2BContracts } from '../hooks/useB2BContracts'
@@ -259,7 +259,7 @@ export default function B2BDashboard() {
                 <Stat>
                   <StatLabel>
                     <HStack>
-                      <Icon as={FiDollarSign} />
+                      <Icon as={TbCurrencyEuro} />
                       <Text>Budget Total</Text>
                     </HStack>
                   </StatLabel>
@@ -319,7 +319,7 @@ export default function B2BDashboard() {
               </Tab>
               <Tab>
                 <HStack>
-                  <Icon as={FiDollarSign} />
+                  <Icon as={TbCurrencyEuro} />
                   <Text>Facturation</Text>
                 </HStack>
               </Tab>

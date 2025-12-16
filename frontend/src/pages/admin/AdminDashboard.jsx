@@ -1,3 +1,4 @@
+import React from 'react'
 import {
   Box,
   SimpleGrid,
@@ -16,6 +17,7 @@ import {
   HStack,
   Icon,
   Button,
+  ButtonGroup,
   Table,
   Thead,
   Tbody,
@@ -30,7 +32,6 @@ import {
   useColorModeValue
 } from '@chakra-ui/react'
 import {
-  FiDollarSign,
   FiShoppingCart,
   FiClock,
   FiTruck,
@@ -38,6 +39,7 @@ import {
   FiAlertTriangle,
   FiRefreshCw
 } from 'react-icons/fi'
+import { TbCurrencyEuro } from 'react-icons/tb'
 import { useNavigate } from 'react-router-dom'
 import { useAdminStats, useLiveOrders } from '../../hooks/useAdminStats'
 
@@ -93,11 +95,38 @@ export default function AdminDashboard() {
   const { orders, loading: ordersLoading, error: ordersError, refresh: refreshOrders } = useLiveOrders()
   const navigate = useNavigate()
   const bgColor = useColorModeValue('white', 'gray.800')
+  const [revenueFilter, setRevenueFilter] = React.useState('day') // 'day', 'month', 'year'
 
   const handleRefresh = () => {
     refreshStats()
     refreshOrders()
   }
+
+  // Get revenue data based on filter
+  const getRevenueData = () => {
+    if (!stats) return { value: 0, label: 'Chiffre d\'affaires' }
+
+    switch (revenueFilter) {
+      case 'month':
+        return {
+          value: stats.monthRevenue,
+          label: 'Chiffre d\'affaires du mois'
+        }
+      case 'year':
+        return {
+          value: stats.yearRevenue,
+          label: 'Chiffre d\'affaires de l\'année'
+        }
+      case 'day':
+      default:
+        return {
+          value: stats.totalRevenue,
+          label: 'Chiffre d\'affaires du jour'
+        }
+    }
+  }
+
+  const revenueData = getRevenueData()
 
   return (
     <VStack spacing={8} align="stretch">
@@ -153,36 +182,78 @@ export default function AdminDashboard() {
           <Spinner size="xl" color="brand.500" />
         </Box>
       ) : stats ? (
-        <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={6}>
-          <StatCard
-            title="Chiffre d'affaires du jour"
-            value={`${stats.totalRevenue.toFixed(2)}€`}
-            icon={FiDollarSign}
-            helpText="Aujourd'hui"
-            colorScheme="green"
-          />
-          <StatCard
-            title="Commandes totales"
-            value={stats.totalOrders}
-            icon={FiShoppingCart}
-            helpText={`${stats.deliveredOrders} livrées`}
-            colorScheme="blue"
-          />
-          <StatCard
-            title="En préparation"
-            value={stats.preparingOrders}
-            icon={FiClock}
-            helpText={`${stats.pendingOrders} en attente`}
-            colorScheme="purple"
-          />
-          <StatCard
-            title="En livraison"
-            value={stats.inTransitOrders}
-            icon={FiTruck}
-            helpText="Livreurs actifs"
-            colorScheme="orange"
-          />
-        </SimpleGrid>
+        <>
+          {/* Revenue Card with Filter */}
+          <Card bg={bgColor}>
+            <CardBody>
+              <VStack spacing={4} align="stretch">
+                <HStack justify="space-between" align="start">
+                  <HStack spacing={4}>
+                    <Box p={3} bg="green.50" borderRadius="lg">
+                      <Icon as={TbCurrencyEuro} boxSize={6} color="green.600" />
+                    </Box>
+                    <Stat flex={1}>
+                      <StatLabel fontSize="sm" color="gray.600">
+                        {revenueData.label}
+                      </StatLabel>
+                      <StatNumber fontSize="3xl" color="green.600">
+                        {revenueData.value.toFixed(2)}€
+                      </StatNumber>
+                    </Stat>
+                  </HStack>
+                  <ButtonGroup size="sm" isAttached variant="outline">
+                    <Button
+                      onClick={() => setRevenueFilter('day')}
+                      colorScheme={revenueFilter === 'day' ? 'green' : 'gray'}
+                      variant={revenueFilter === 'day' ? 'solid' : 'outline'}
+                    >
+                      Jour
+                    </Button>
+                    <Button
+                      onClick={() => setRevenueFilter('month')}
+                      colorScheme={revenueFilter === 'month' ? 'green' : 'gray'}
+                      variant={revenueFilter === 'month' ? 'solid' : 'outline'}
+                    >
+                      Mois
+                    </Button>
+                    <Button
+                      onClick={() => setRevenueFilter('year')}
+                      colorScheme={revenueFilter === 'year' ? 'green' : 'gray'}
+                      variant={revenueFilter === 'year' ? 'solid' : 'outline'}
+                    >
+                      Année
+                    </Button>
+                  </ButtonGroup>
+                </HStack>
+              </VStack>
+            </CardBody>
+          </Card>
+
+          {/* Other Stats */}
+          <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6}>
+            <StatCard
+              title="Commandes totales"
+              value={stats.totalOrders}
+              icon={FiShoppingCart}
+              helpText={`${stats.deliveredOrders} livrées`}
+              colorScheme="blue"
+            />
+            <StatCard
+              title="En préparation"
+              value={stats.preparingOrders}
+              icon={FiClock}
+              helpText={`${stats.pendingOrders} en attente`}
+              colorScheme="purple"
+            />
+            <StatCard
+              title="En livraison"
+              value={stats.inTransitOrders}
+              icon={FiTruck}
+              helpText="Livreurs actifs"
+              colorScheme="orange"
+            />
+          </SimpleGrid>
+        </>
       ) : null}
 
       {/* Live Orders (A1.2) */}

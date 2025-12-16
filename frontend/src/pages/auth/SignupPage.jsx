@@ -17,6 +17,7 @@ import {
   useToast
 } from '@chakra-ui/react'
 import { Link as RouterLink, useNavigate } from 'react-router-dom'
+import { FcGoogle } from 'react-icons/fc'
 import { useAuth } from '../../context/AuthContext'
 import { useNewsletterSubscription } from '../../hooks/useNewsletter'
 
@@ -31,7 +32,7 @@ export default function SignupPage() {
   const [newsletterOptIn, setNewsletterOptIn] = useState(true)
   const [errors, setErrors] = useState({})
   const [loading, setLoading] = useState(false)
-  const { signUp, signInWithGoogle } = useAuth()
+  const { signUp, signInWithGoogle, signInWithApple } = useAuth()
   const { subscribe } = useNewsletterSubscription()
   const navigate = useNavigate()
   const toast = useToast()
@@ -104,6 +105,19 @@ export default function SignupPage() {
 
   const handleGoogleSignup = async () => {
     const { error } = await signInWithGoogle()
+    if (error) {
+      toast({
+        title: 'Erreur',
+        description: error.message,
+        status: 'error',
+        duration: 4000,
+        isClosable: true
+      })
+    }
+  }
+
+  const handleAppleSignup = async () => {
+    const { error } = await signInWithApple()
     if (error) {
       toast({
         title: 'Erreur',
@@ -224,10 +238,22 @@ export default function SignupPage() {
                   size="lg"
                   w="full"
                   onClick={handleGoogleSignup}
-                  leftIcon={<Text>🔍</Text>}
+                  leftIcon={<FcGoogle size={20} />}
                 >
                   Continuer avec Google
                 </Button>
+
+                {/* Apple OAuth - Commented for now
+                <Button
+                  variant="outline"
+                  size="lg"
+                  w="full"
+                  onClick={handleAppleSignup}
+                  leftIcon={<Text>🍎</Text>}
+                >
+                  Continuer avec Apple
+                </Button>
+                */}
 
                 <Text fontSize="sm" color="gray.600" textAlign="center">
                   Déjà un compte ?{' '}

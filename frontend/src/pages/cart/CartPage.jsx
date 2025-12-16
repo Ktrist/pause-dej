@@ -142,7 +142,7 @@ export default function CartPage() {
                     Livraison rapide
                   </Text>
                   <Text fontSize="xs" color="gray.600">
-                    En 30 minutes chrono
+                    Entre 7h et 9h le matin
                   </Text>
                 </VStack>
               </HStack>

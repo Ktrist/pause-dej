@@ -31,7 +31,6 @@ import {
   Divider
 } from '@chakra-ui/react'
 import {
-  FiDollarSign,
   FiShoppingBag,
   FiUsers,
   FiTrendingUp,
@@ -40,6 +39,7 @@ import {
   FiClock,
   FiCalendar
 } from 'react-icons/fi'
+import { TbCurrencyEuro } from 'react-icons/tb'
 import { useAdminAnalytics } from '../../hooks/useAdminAnalytics'
 import LoadingSpinner from '../../components/common/LoadingSpinner'
 
@@ -179,7 +179,7 @@ export default function AdminAnalytics() {
               : `${summary.revenueGrowth.toFixed(1)}% vs période précédente`
             }
             growth={summary.revenueGrowth}
-            icon={FiDollarSign}
+            icon={TbCurrencyEuro}
             colorScheme="green"
           />
           <StatCard
@@ -275,27 +275,25 @@ export default function AdminAnalytics() {
             </CardHeader>
             <CardBody>
               <VStack spacing={3} align="stretch">
-                {Object.entries(revenueByCategory)
-                  .sort(([, a], [, b]) => b - a)
-                  .map(([category, revenue]) => {
-                    const percentage = (revenue / summary.totalRevenue) * 100
-                    return (
-                      <Box key={category}>
-                        <HStack justify="space-between" mb={1}>
-                          <Text fontSize="sm" fontWeight="500">
-                            {category}
-                          </Text>
-                          <Text fontWeight="600">{revenue.toFixed(2)}€</Text>
-                        </HStack>
-                        <Progress
-                          value={percentage}
-                          colorScheme="brand"
-                          size="sm"
-                          borderRadius="full"
-                        />
-                      </Box>
-                    )
-                  })}
+                {revenueByCategory?.map((category) => {
+                  const percentage = (category.revenue / summary.totalRevenue) * 100
+                  return (
+                    <Box key={category.name}>
+                      <HStack justify="space-between" mb={1}>
+                        <Text fontSize="sm" fontWeight="500">
+                          {category.name}
+                        </Text>
+                        <Text fontWeight="600">{category.revenue.toFixed(2)}€</Text>
+                      </HStack>
+                      <Progress
+                        value={percentage}
+                        colorScheme="brand"
+                        size="sm"
+                        borderRadius="full"
+                      />
+                    </Box>
+                  )
+                })}
               </VStack>
             </CardBody>
           </Card>

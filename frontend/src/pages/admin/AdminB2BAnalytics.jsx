@@ -28,13 +28,13 @@ import {
   Progress
 } from '@chakra-ui/react'
 import {
-  FiDollarSign,
   FiUsers,
   FiFileText,
   FiTrendingUp,
   FiPackage,
   FiShoppingBag
 } from 'react-icons/fi'
+import { TbCurrencyEuro } from 'react-icons/tb'
 import { useAdminB2BAnalytics } from '../../hooks/useB2BAnalytics'
 import LoadingSpinner from '../../components/common/LoadingSpinner'
 
@@ -91,7 +91,7 @@ export default function AdminB2BAnalytics() {
               <Stat>
                 <StatLabel>
                   <HStack>
-                    <Icon as={FiDollarSign} />
+                    <Icon as={TbCurrencyEuro} />
                     <Text>CA B2B</Text>
                   </HStack>
                 </StatLabel>

@@ -258,7 +258,7 @@ export default function CartSummary({ subtotal, onCheckout, appliedPromo, setApp
         </Button>
 
         <Text fontSize="xs" color="gray.500" textAlign="center">
-          Livraison en 30 minutes chrono ⚡
+          Livraison entre 7h et 9h le matin 📦
         </Text>
       </VStack>
     </Box>

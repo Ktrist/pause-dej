@@ -22,11 +22,10 @@ export function useAdminReviews() {
         .from('reviews')
         .select(`
           *,
-          dish:dishes(
+          dish:dish_id(
             id,
             name,
-            image_url,
-            category
+            image_url
           )
         `)
         .order('created_at', { ascending: false })

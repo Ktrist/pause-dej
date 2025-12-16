@@ -16,33 +16,36 @@ import {
 } from '@chakra-ui/react'
 import { FiClock, FiCalendar } from 'react-icons/fi'
 
-// Generate time slots for a given date
+// Generate time slots for a given date (Monday to Friday, 7h-9h morning delivery)
 const generateTimeSlots = (date) => {
+  const dayOfWeek = date.getDay()
+
+  // Only Monday (1) to Friday (5)
+  if (dayOfWeek === 0 || dayOfWeek === 6) {
+    return [] // No delivery on weekends
+  }
+
   const slots = []
-  const times = [
-    '12:00', '12:30', '13:00', '13:30',
-    '19:00', '19:30', '20:00', '20:30'
-  ]
 
-  times.forEach(time => {
-    const [hours, minutes] = time.split(':')
-    const slotDate = new Date(date)
-    slotDate.setHours(parseInt(hours), parseInt(minutes), 0, 0)
+  // Single morning slot: Livraison entre 7h et 9h
+  const slotDate = new Date(date)
+  slotDate.setHours(7, 0, 0, 0) // Set to 7:00 AM for display purposes
 
-    // Check if slot is in the past
-    const now = new Date()
-    const isPast = slotDate < now
+  // Check if slot is in the past
+  const now = new Date()
+  const isPast = slotDate < now
 
-    // Simulate availability (random for demo)
-    const available = Math.random() > 0.2 // 80% available
+  // Simulate availability (random for demo)
+  const available = Math.random() > 0.2 // 80% available
 
-    slots.push({
-      id: `${date.toISOString().split('T')[0]}-${time}`,
-      time,
-      date: slotDate,
-      available: !isPast && available,
-      spotsLeft: available ? Math.floor(Math.random() * 15) + 5 : 0
-    })
+  slots.push({
+    id: `${date.toISOString().split('T')[0]}-morning`,
+    time: 'Livraison entre 7h et 9h',
+    displayTime: '7h - 9h',
+    timeValue: '07:00:00', // Format for database (HH:MM:SS)
+    date: slotDate,
+    available: !isPast && available,
+    spotsLeft: available ? Math.floor(Math.random() * 15) + 5 : 0
   })
 
   return slots
@@ -53,17 +56,22 @@ export default function TimeSlotSelector({ selectedTimeSlot, onSelectTimeSlot })
   const [days, setDays] = useState([])
 
   useEffect(() => {
-    // Generate next 7 days
+    // Generate next 7 days (only weekdays will have slots)
     const nextDays = []
     for (let i = 0; i < 7; i++) {
       const date = new Date()
       date.setDate(date.getDate() + i)
-      nextDays.push({
-        date,
-        label: i === 0 ? 'Aujourd\'hui' : i === 1 ? 'Demain' : date.toLocaleDateString('fr-FR', { weekday: 'long' }),
-        fullLabel: date.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }),
-        slots: generateTimeSlots(date)
-      })
+      const slots = generateTimeSlots(date)
+
+      // Only add days with available slots (weekdays)
+      if (slots.length > 0) {
+        nextDays.push({
+          date,
+          label: i === 0 ? 'Aujourd\'hui' : i === 1 ? 'Demain' : date.toLocaleDateString('fr-FR', { weekday: 'long' }),
+          fullLabel: date.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }),
+          slots
+        })
+      }
     }
     setDays(nextDays)
   }, [])
@@ -133,41 +141,20 @@ export default function TimeSlotSelector({ selectedTimeSlot, onSelectTimeSlot })
                     </Text>
                   </HStack>
 
-                  {/* Lunch Slots */}
+                  {/* Morning Delivery Slot */}
                   <Box>
                     <Text fontSize="sm" fontWeight="bold" color="gray.700" mb={3}>
-                      🌞 Déjeuner
+                      🌅 Livraison du matin
                     </Text>
-                    <SimpleGrid columns={{ base: 2, md: 4 }} spacing={3}>
-                      {day.slots
-                        .filter(slot => parseInt(slot.time.split(':')[0]) < 15)
-                        .map(slot => (
-                          <TimeSlotButton
-                            key={slot.id}
-                            slot={slot}
-                            isSelected={selectedTimeSlot?.id === slot.id}
-                            onSelect={() => onSelectTimeSlot(slot)}
-                          />
-                        ))}
-                    </SimpleGrid>
-                  </Box>
-
-                  {/* Dinner Slots */}
-                  <Box>
-                    <Text fontSize="sm" fontWeight="bold" color="gray.700" mb={3}>
-                      🌙 Dîner
-                    </Text>
-                    <SimpleGrid columns={{ base: 2, md: 4 }} spacing={3}>
-                      {day.slots
-                        .filter(slot => parseInt(slot.time.split(':')[0]) >= 15)
-                        .map(slot => (
-                          <TimeSlotButton
-                            key={slot.id}
-                            slot={slot}
-                            isSelected={selectedTimeSlot?.id === slot.id}
-                            onSelect={() => onSelectTimeSlot(slot)}
-                          />
-                        ))}
+                    <SimpleGrid columns={{ base: 1, md: 2 }} spacing={3}>
+                      {day.slots.map(slot => (
+                        <TimeSlotButton
+                          key={slot.id}
+                          slot={slot}
+                          isSelected={selectedTimeSlot?.id === slot.id}
+                          onSelect={() => onSelectTimeSlot(slot)}
+                        />
+                      ))}
                     </SimpleGrid>
                   </Box>
                 </VStack>
@@ -182,10 +169,10 @@ export default function TimeSlotSelector({ selectedTimeSlot, onSelectTimeSlot })
             <Icon as={FiClock} color="blue.600" boxSize={5} />
             <VStack align="start" spacing={0} flex="1">
               <Text fontSize="sm" fontWeight="bold" color="blue.900">
-                Livraison express en 30 minutes
+                Livraison du lundi au vendredi uniquement
               </Text>
               <Text fontSize="xs" color="blue.700">
-                Dès la confirmation de votre commande, nous préparons vos plats !
+                Livraison entre 7h et 9h le matin. Commandez avant minuit pour une livraison le lendemain !
               </Text>
             </VStack>
           </HStack>

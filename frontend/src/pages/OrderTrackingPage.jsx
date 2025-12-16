@@ -252,7 +252,7 @@ export default function OrderTrackingPage() {
                 <Text color="gray.700">{formattedDate}</Text>
                 {!isDelivered && !isCancelled && (
                   <Text fontSize="sm" color="gray.600" mt={2}>
-                    ⚡ Livraison express en ~30 minutes
+                    📦 Livraison entre 7h et 9h le matin
                   </Text>
                 )}
               </VStack>

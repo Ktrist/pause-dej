@@ -48,7 +48,7 @@ export function useAdminAnalytics(period = '30days') {
             *,
             dishes (
               name,
-              category
+              category_id
             )
           ),
           users:user_id (
@@ -60,6 +60,19 @@ export function useAdminAnalytics(period = '30days') {
         .order('created_at', { ascending: true })
 
       if (ordersError) throw ordersError
+
+      // Fetch all categories to map category_id to category name
+      const { data: categories, error: categoriesError } = await supabase
+        .from('categories')
+        .select('id, name, slug')
+
+      if (categoriesError) throw categoriesError
+
+      // Create a map of category_id to category name
+      const categoryMap = {}
+      categories?.forEach(cat => {
+        categoryMap[cat.id] = cat.name
+      })
 
       // Calculate revenue analytics
       const totalRevenue = orders.reduce((sum, order) => sum + order.total, 0)
@@ -112,10 +125,26 @@ export function useAdminAnalytics(period = '30days') {
         .sort((a, b) => b.revenue - a.revenue)
         .slice(0, 10)
 
-      // Revenue by category (disabled - requires category join)
-      const revenueByCategory = {
-        'Non disponible': totalRevenue
-      }
+      // Revenue by category
+      const categoryRevenue = {}
+      orders.forEach(order => {
+        order.order_items?.forEach(item => {
+          const categoryId = item.dishes?.category_id
+          const categoryName = categoryId ? (categoryMap[categoryId] || 'Sans catégorie') : 'Sans catégorie'
+          if (!categoryRevenue[categoryName]) {
+            categoryRevenue[categoryName] = {
+              name: categoryName,
+              revenue: 0,
+              orders: 0
+            }
+          }
+          categoryRevenue[categoryName].revenue += item.subtotal
+          categoryRevenue[categoryName].orders += 1
+        })
+      })
+
+      const revenueByCategory = Object.values(categoryRevenue)
+        .sort((a, b) => b.revenue - a.revenue)
 
       // Customer analytics
       const uniqueCustomers = new Set(orders.map(o => o.user_id).filter(Boolean))

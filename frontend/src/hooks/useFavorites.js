@@ -32,8 +32,7 @@ export function useFavorites() {
           dish_id,
           created_at,
           dishes (
-            *,
-            category:categories(id, name, slug)
+            *
           )
         `)
         .eq('user_id', user.id)
@@ -41,34 +40,50 @@ export function useFavorites() {
 
       if (fetchError) throw fetchError
 
+      // Fetch all categories to map category_id to category info
+      const { data: categories, error: categoriesError } = await supabase
+        .from('categories')
+        .select('id, name, slug')
+
+      if (categoriesError) throw categoriesError
+
+      // Create a map of category_id to category info
+      const categoryMap = {}
+      categories?.forEach(cat => {
+        categoryMap[cat.id] = { name: cat.name, slug: cat.slug }
+      })
+
       // Transform dish data to match DishCard format
-      const transformedFavorites = (data || []).map(fav => ({
-        ...fav,
-        dishes: fav.dishes ? {
-          id: fav.dishes.id,
-          name: fav.dishes.name,
-          description: fav.dishes.description,
-          longDescription: fav.dishes.long_description,
-          price: parseFloat(fav.dishes.price),
-          image: fav.dishes.image_url,
-          category: fav.dishes.category?.slug || '',
-          categoryLabel: fav.dishes.category?.name || '',
-          stock: fav.dishes.stock,
-          isPopular: fav.dishes.is_popular,
-          allergens: fav.dishes.allergens || [],
-          dietaryTags: fav.dishes.dietary_tags || [],
-          averageRating: fav.dishes.average_rating || 0,
-          reviewCount: fav.dishes.review_count || 0,
-          nutritionInfo: {
-            calories: fav.dishes.calories,
-            protein: fav.dishes.protein,
-            carbs: fav.dishes.carbs,
-            fat: fav.dishes.fat
-          },
-          vegetarian: fav.dishes.is_vegetarian,
-          vegan: fav.dishes.is_vegan
-        } : null
-      }))
+      const transformedFavorites = (data || []).map(fav => {
+        const categoryInfo = fav.dishes?.category_id ? categoryMap[fav.dishes.category_id] : null
+        return {
+          ...fav,
+          dishes: fav.dishes ? {
+            id: fav.dishes.id,
+            name: fav.dishes.name,
+            description: fav.dishes.description,
+            longDescription: fav.dishes.long_description,
+            price: parseFloat(fav.dishes.price),
+            image: fav.dishes.image_url,
+            category: categoryInfo?.slug || '',
+            categoryLabel: categoryInfo?.name || '',
+            stock: fav.dishes.stock,
+            isPopular: fav.dishes.is_popular,
+            allergens: fav.dishes.allergens || [],
+            dietaryTags: fav.dishes.dietary_tags || [],
+            averageRating: fav.dishes.average_rating || 0,
+            reviewCount: fav.dishes.review_count || 0,
+            nutritionInfo: {
+              calories: fav.dishes.calories,
+              protein: fav.dishes.protein,
+              carbs: fav.dishes.carbs,
+              fat: fav.dishes.fat
+            },
+            vegetarian: fav.dishes.is_vegetarian,
+            vegan: fav.dishes.is_vegan
+          } : null
+        }
+      })
 
       setFavorites(transformedFavorites)
       setFavoriteIds(new Set(transformedFavorites.map(fav => fav.dish_id)))

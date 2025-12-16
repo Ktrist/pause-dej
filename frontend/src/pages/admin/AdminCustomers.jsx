@@ -36,7 +36,8 @@ import {
   Alert,
   AlertIcon
 } from '@chakra-ui/react'
-import { FiSearch, FiUsers, FiShoppingBag, FiDollarSign, FiEye } from 'react-icons/fi'
+import { FiSearch, FiUsers, FiShoppingBag, FiEye } from 'react-icons/fi'
+import { TbCurrencyEuro } from 'react-icons/tb'
 import { useAdminCustomers, useCustomerDetails } from '../../hooks/useAdminCustomers'
 import LoadingSpinner from '../../components/common/LoadingSpinner'
 
@@ -154,7 +155,7 @@ export default function AdminCustomers() {
                   <StatLabel>Chiffre d'Affaires</StatLabel>
                   <StatNumber>{totalRevenue.toFixed(2)}€</StatNumber>
                   <StatHelpText>
-                    <FiDollarSign style={{ display: 'inline', marginRight: '4px' }} />
+                    <TbCurrencyEuro style={{ display: 'inline', marginRight: '4px' }} />
                     CA total
                   </StatHelpText>
                 </Stat>
@@ -167,7 +168,7 @@ export default function AdminCustomers() {
                   <StatLabel>Panier Moyen</StatLabel>
                   <StatNumber>{averageOrderValue.toFixed(2)}€</StatNumber>
                   <StatHelpText>
-                    <FiDollarSign style={{ display: 'inline', marginRight: '4px' }} />
+                    <TbCurrencyEuro style={{ display: 'inline', marginRight: '4px' }} />
                     Par commande
                   </StatHelpText>
                 </Stat>

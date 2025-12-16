@@ -4,6 +4,7 @@ import { AuthProvider } from './context/AuthContext'
 import { CartProvider } from './context/CartContext'
 import Header from './components/layout/Header'
 import Footer from './components/layout/Footer'
+import PWAInstallPrompt from './components/common/PWAInstallPrompt'
 import HomePage from './pages/home/HomePage'
 import CataloguePage from './pages/catalogue/CataloguePage'
 import CartPage from './pages/cart/CartPage'
@@ -18,6 +19,8 @@ import SupportPage from './pages/SupportPage'
 import B2BPage from './pages/B2BPage'
 import B2BDashboard from './pages/B2BDashboard'
 import BulkOrderPage from './pages/BulkOrderPage'
+import ContactPage from './pages/ContactPage'
+import HowItWorksPage from './pages/HowItWorksPage'
 import NotFoundPage from './pages/NotFoundPage'
 
 // Admin pages
@@ -32,6 +35,7 @@ import AdminNewsletter from './pages/admin/AdminNewsletter'
 import AdminDelivery from './pages/admin/AdminDelivery'
 import AdminAnalytics from './pages/admin/AdminAnalytics'
 import AdminB2B from './pages/admin/AdminB2B'
+import AdminSettings from './pages/admin/AdminSettings'
 
 function App() {
   return (
@@ -52,7 +56,7 @@ function App() {
               <Route path="delivery" element={<AdminDelivery />} />
               <Route path="analytics" element={<AdminAnalytics />} />
               <Route path="b2b" element={<AdminB2B />} />
-              {/* Additional admin routes will be added here */}
+              <Route path="settings" element={<AdminSettings />} />
             </Route>
 
             {/* Public Routes - With Header/Footer */}
@@ -75,6 +79,8 @@ function App() {
                       <Route path="/track/:orderNumber" element={<OrderTrackingPage />} />
                       <Route path="/support" element={<SupportPage />} />
                       <Route path="/support/:ticketId" element={<SupportPage />} />
+                      <Route path="/contact" element={<ContactPage />} />
+                      <Route path="/how-it-works" element={<HowItWorksPage />} />
                       <Route path="/b2b" element={<B2BPage />} />
                       <Route path="/b2b/dashboard" element={<B2BDashboard />} />
                       <Route path="/b2b/bulk-order" element={<BulkOrderPage />} />
@@ -86,6 +92,7 @@ function App() {
               }
             />
           </Routes>
+          <PWAInstallPrompt />
         </CartProvider>
       </AuthProvider>
     </Router>

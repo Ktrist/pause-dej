@@ -102,7 +102,7 @@ export default function OrderSummary({ address, timeSlot, cart, total, appliedPr
                 })}
               </Text>
               <Text fontSize="sm" color="gray.600">
-                Livraison en ~30 minutes après validation
+                Livraison entre 7h et 9h le matin
               </Text>
             </VStack>
           ) : (
