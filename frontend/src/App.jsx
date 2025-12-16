@@ -36,6 +36,7 @@ import AdminDelivery from './pages/admin/AdminDelivery'
 import AdminAnalytics from './pages/admin/AdminAnalytics'
 import AdminB2B from './pages/admin/AdminB2B'
 import AdminSettings from './pages/admin/AdminSettings'
+import AdminPromoCodes from './pages/admin/AdminPromoCodes'
 
 function App() {
   return (
@@ -56,6 +57,7 @@ function App() {
               <Route path="delivery" element={<AdminDelivery />} />
               <Route path="analytics" element={<AdminAnalytics />} />
               <Route path="b2b" element={<AdminB2B />} />
+              <Route path="promo-codes" element={<AdminPromoCodes />} />
               <Route path="settings" element={<AdminSettings />} />
             </Route>
 

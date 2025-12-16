@@ -38,8 +38,9 @@ import {
   AlertIcon
 } from '@chakra-ui/react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { FiUser, FiMapPin, FiShoppingBag, FiEdit2, FiTrash2, FiPlus, FiTruck, FiHeart, FiAward, FiMessageSquare, FiMail, FiBell, FiUsers } from 'react-icons/fi'
+import { FiUser, FiMapPin, FiShoppingBag, FiEdit2, FiTrash2, FiPlus, FiTruck, FiHeart, FiAward, FiMessageSquare, FiMail, FiBell, FiUsers, FiDownload } from 'react-icons/fi'
 import { useAuth } from '../../context/AuthContext'
+import { printInvoice } from '../../utils/invoice'
 import { useAddresses, useCreateAddress, useUpdateAddress, useDeleteAddress } from '../../hooks/useAddresses'
 import { useOrders } from '../../hooks/useOrders'
 import { useFavorites } from '../../hooks/useFavorites'
@@ -549,7 +550,7 @@ export default function AccountPage() {
                               </HStack>
 
                               {/* Actions */}
-                              <HStack spacing={2}>
+                              <HStack spacing={2} flexWrap="wrap">
                                 <Button
                                   size="sm"
                                   colorScheme="brand"
@@ -567,6 +568,19 @@ export default function AccountPage() {
                                   href={`/confirmation/${order.order_number}`}
                                 >
                                   Voir détails
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  colorScheme="green"
+                                  leftIcon={<FiDownload />}
+                                  onClick={() => printInvoice(order, {
+                                    full_name: user?.user_metadata?.full_name || user?.email?.split('@')[0],
+                                    email: user?.email,
+                                    phone: user?.user_metadata?.phone
+                                  })}
+                                >
+                                  Facture
                                 </Button>
                                 {order.status !== 'cancelled' && order.status !== 'delivered' && (
                                   <Button

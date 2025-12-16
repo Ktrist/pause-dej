@@ -24,7 +24,8 @@ import {
   FiTruck,
   FiBriefcase,
   FiMessageSquare,
-  FiMail
+  FiMail,
+  FiTag
 } from 'react-icons/fi'
 import { useAuth } from '../../context/AuthContext'
 
@@ -133,6 +134,9 @@ export default function AdminLayout() {
               </SidebarLink>
               <SidebarLink to="/admin/newsletter" icon={FiMail}>
                 Newsletter
+              </SidebarLink>
+              <SidebarLink to="/admin/promo-codes" icon={FiTag}>
+                Codes Promo
               </SidebarLink>
               <SidebarLink to="/admin/delivery" icon={FiTruck}>
                 Livraisons
