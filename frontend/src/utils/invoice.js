@@ -1,179 +1,9 @@
 /**
  * Invoice Generation Utility
  *
- * Generates PDF invoices for orders
+ * Generates professional HTML invoices for orders
+ * Uses browser's print-to-PDF functionality - no external dependencies needed!
  */
-
-import { jsPDF } from 'jspdf'
-import 'jspdf-autotable'
-
-/**
- * Generate and download a PDF invoice for an order
- * @param {Object} order - The order object with all details
- * @param {Object} userProfile - User profile information
- */
-export const generateInvoicePDF = (order, userProfile) => {
-  const doc = new jsPDF()
-
-  // Company Info
-  const companyName = 'Pause Dej\''
-  const companyAddress = 'Annecy, France'
-  const companyEmail = 'contact@pause-dej.fr'
-  const companyPhone = '+33 1 23 45 67 89'
-
-  // Invoice header
-  doc.setFontSize(24)
-  doc.setFont('helvetica', 'bold')
-  doc.text(companyName, 20, 20)
-
-  doc.setFontSize(10)
-  doc.setFont('helvetica', 'normal')
-  doc.text(companyAddress, 20, 28)
-  doc.text(companyEmail, 20, 33)
-  doc.text(companyPhone, 20, 38)
-
-  // Invoice title
-  doc.setFontSize(18)
-  doc.setFont('helvetica', 'bold')
-  doc.text('FACTURE', 150, 20)
-
-  // Invoice details
-  doc.setFontSize(10)
-  doc.setFont('helvetica', 'normal')
-  doc.text(`N° ${order.order_number}`, 150, 28)
-  doc.text(
-    `Date : ${new Date(order.created_at).toLocaleDateString('fr-FR')}`,
-    150,
-    33
-  )
-
-  // Customer info
-  doc.setFontSize(12)
-  doc.setFont('helvetica', 'bold')
-  doc.text('Facturé à :', 20, 55)
-
-  doc.setFontSize(10)
-  doc.setFont('helvetica', 'normal')
-  doc.text(userProfile?.full_name || 'Client', 20, 62)
-  if (userProfile?.email) doc.text(userProfile.email, 20, 67)
-  if (userProfile?.phone) doc.text(userProfile.phone, 20, 72)
-
-  // Delivery address
-  if (order.delivery_street) {
-    doc.setFontSize(12)
-    doc.setFont('helvetica', 'bold')
-    doc.text('Adresse de livraison :', 20, 85)
-
-    doc.setFontSize(10)
-    doc.setFont('helvetica', 'normal')
-    doc.text(order.delivery_street, 20, 92)
-    doc.text(`${order.delivery_postal_code} ${order.delivery_city}`, 20, 97)
-    if (order.delivery_additional_info) {
-      doc.text(order.delivery_additional_info, 20, 102)
-    }
-  }
-
-  // Order items table
-  const tableStartY = order.delivery_street ? 115 : 90
-
-  const tableData = (order.order_items || []).map(item => [
-    item.dish_name,
-    item.quantity.toString(),
-    `${item.unit_price.toFixed(2)}€`,
-    `${item.subtotal.toFixed(2)}€`
-  ])
-
-  doc.autoTable({
-    startY: tableStartY,
-    head: [['Produit', 'Quantité', 'Prix unitaire', 'Total']],
-    body: tableData,
-    theme: 'striped',
-    headStyles: {
-      fillColor: [255, 165, 0], // Brand orange color
-      textColor: [255, 255, 255],
-      fontStyle: 'bold'
-    },
-    styles: {
-      fontSize: 10
-    },
-    columnStyles: {
-      0: { cellWidth: 80 },
-      1: { cellWidth: 30, halign: 'center' },
-      2: { cellWidth: 40, halign: 'right' },
-      3: { cellWidth: 40, halign: 'right' }
-    }
-  })
-
-  // Calculate final Y position for totals
-  const finalY = doc.lastAutoTable.finalY + 10
-
-  // Subtotal, delivery, discount, and total
-  const lineSpacing = 7
-  const labelX = 120
-  const valueX = 190
-
-  // Subtotal
-  const subtotal = order.subtotal || order.total
-  doc.setFontSize(10)
-  doc.text('Sous-total :', labelX, finalY, { align: 'right' })
-  doc.text(`${subtotal.toFixed(2)}€`, valueX, finalY, { align: 'right' })
-
-  // Delivery fee
-  const deliveryFee = order.delivery_fee || 0
-  if (deliveryFee > 0) {
-    doc.text('Livraison :', labelX, finalY + lineSpacing, { align: 'right' })
-    doc.text(`${deliveryFee.toFixed(2)}€`, valueX, finalY + lineSpacing, { align: 'right' })
-  }
-
-  // Discount
-  const discount = order.discount || 0
-  if (discount > 0) {
-    const discountY = deliveryFee > 0 ? finalY + lineSpacing * 2 : finalY + lineSpacing
-    doc.text('Réduction :', labelX, discountY, { align: 'right' })
-    doc.setTextColor(0, 150, 0) // Green color for discount
-    doc.text(`-${discount.toFixed(2)}€`, valueX, discountY, { align: 'right' })
-    doc.setTextColor(0, 0, 0) // Reset to black
-  }
-
-  // Total
-  const totalY = finalY + lineSpacing * (deliveryFee > 0 && discount > 0 ? 3 : deliveryFee > 0 || discount > 0 ? 2 : 1)
-  doc.setFontSize(12)
-  doc.setFont('helvetica', 'bold')
-  doc.text('Total TTC :', labelX, totalY, { align: 'right' })
-  doc.text(`${order.total.toFixed(2)}€`, valueX, totalY, { align: 'right' })
-
-  // TVA info
-  doc.setFontSize(8)
-  doc.setFont('helvetica', 'normal')
-  const tvaRate = 10 // 10% TVA for food in France
-  const tvaAmount = (order.total / (1 + tvaRate / 100)) * (tvaRate / 100)
-  doc.text(`dont TVA ${tvaRate}% : ${tvaAmount.toFixed(2)}€`, 20, totalY + 10)
-
-  // Delivery date
-  if (order.delivery_date) {
-    doc.setFontSize(10)
-    doc.setFont('helvetica', 'normal')
-    doc.text(
-      `Livraison prévue le ${new Date(order.delivery_date).toLocaleDateString('fr-FR')} à ${order.delivery_time || '7h-9h'}`,
-      20,
-      totalY + 20
-    )
-  }
-
-  // Footer
-  doc.setFontSize(8)
-  doc.setTextColor(128, 128, 128)
-  doc.text(
-    'Merci de votre confiance ! Pour toute question, contactez-nous à contact@pause-dej.fr',
-    105,
-    280,
-    { align: 'center' }
-  )
-
-  // Save the PDF
-  const fileName = `facture-${order.order_number}.pdf`
-  doc.save(fileName)
-}
 
 /**
  * Generate a printable HTML invoice (alternative to PDF)
@@ -399,10 +229,10 @@ export const generateInvoiceHTML = (order, userProfile) => {
       </div>
 
       <div class="no-print" style="text-align: center; margin-top: 30px;">
-        <button onclick="window.print()" style="padding: 10px 20px; font-size: 14px; cursor: pointer;">
+        <button onclick="window.print()" style="padding: 10px 20px; font-size: 14px; cursor: pointer; background: #FFA500; color: white; border: none; border-radius: 4px;">
           Imprimer / Enregistrer en PDF
         </button>
-        <button onclick="window.close()" style="padding: 10px 20px; font-size: 14px; cursor: pointer; margin-left: 10px;">
+        <button onclick="window.close()" style="padding: 10px 20px; font-size: 14px; cursor: pointer; margin-left: 10px; background: #666; color: white; border: none; border-radius: 4px;">
           Fermer
         </button>
       </div>
@@ -419,6 +249,13 @@ export const generateInvoiceHTML = (order, userProfile) => {
 export const printInvoice = (order, userProfile) => {
   const html = generateInvoiceHTML(order, userProfile)
   const printWindow = window.open('', '_blank')
-  printWindow.document.write(html)
-  printWindow.document.close()
+  if (printWindow) {
+    printWindow.document.write(html)
+    printWindow.document.close()
+  } else {
+    alert('Veuillez autoriser les pop-ups pour télécharger la facture')
+  }
 }
+
+// Export printInvoice as default for backward compatibility
+export default printInvoice

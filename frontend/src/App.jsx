@@ -34,9 +34,18 @@ import AdminReviews from './pages/admin/AdminReviews'
 import AdminNewsletter from './pages/admin/AdminNewsletter'
 import AdminDelivery from './pages/admin/AdminDelivery'
 import AdminAnalytics from './pages/admin/AdminAnalytics'
-import AdminB2B from './pages/admin/AdminB2B'
+import AdminB2BQuotes from './pages/admin/AdminB2BQuotes'
+import AdminB2BAccounts from './pages/admin/AdminB2BAccounts'
+import AdminB2BAnalytics from './pages/admin/AdminB2BAnalytics'
 import AdminSettings from './pages/admin/AdminSettings'
 import AdminPromoCodes from './pages/admin/AdminPromoCodes'
+
+// B2B Business pages
+import B2BQuoteRequestPage from './pages/B2BQuoteRequestPage'
+import EmployeeManagement from './pages/EmployeeManagement'
+import BudgetManagement from './pages/BudgetManagement'
+import B2BAnalytics from './pages/B2BAnalytics'
+import MonthlyInvoices from './pages/MonthlyInvoices'
 
 function App() {
   return (
@@ -56,7 +65,9 @@ function App() {
               <Route path="newsletter" element={<AdminNewsletter />} />
               <Route path="delivery" element={<AdminDelivery />} />
               <Route path="analytics" element={<AdminAnalytics />} />
-              <Route path="b2b" element={<AdminB2B />} />
+              <Route path="b2b/quotes" element={<AdminB2BQuotes />} />
+              <Route path="b2b/accounts" element={<AdminB2BAccounts />} />
+              <Route path="b2b/analytics" element={<AdminB2BAnalytics />} />
               <Route path="promo-codes" element={<AdminPromoCodes />} />
               <Route path="settings" element={<AdminSettings />} />
             </Route>
@@ -83,9 +94,19 @@ function App() {
                       <Route path="/support/:ticketId" element={<SupportPage />} />
                       <Route path="/contact" element={<ContactPage />} />
                       <Route path="/how-it-works" element={<HowItWorksPage />} />
+
+                      {/* B2B Public Routes */}
                       <Route path="/b2b" element={<B2BPage />} />
+                      <Route path="/b2b/quote" element={<B2BQuoteRequestPage />} />
+
+                      {/* B2B Business Routes (Protected) */}
                       <Route path="/b2b/dashboard" element={<B2BDashboard />} />
+                      <Route path="/b2b/employees" element={<EmployeeManagement />} />
+                      <Route path="/b2b/budgets" element={<BudgetManagement />} />
+                      <Route path="/b2b/analytics" element={<B2BAnalytics />} />
+                      <Route path="/b2b/invoices" element={<MonthlyInvoices />} />
                       <Route path="/b2b/bulk-order" element={<BulkOrderPage />} />
+
                       <Route path="*" element={<NotFoundPage />} />
                     </Routes>
                   </Box>

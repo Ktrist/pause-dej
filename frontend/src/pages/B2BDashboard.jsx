@@ -1,218 +1,177 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   Box,
-  Container,
-  Heading,
-  VStack,
-  HStack,
-  SimpleGrid,
+  Button,
   Card,
   CardBody,
   CardHeader,
+  Container,
+  Heading,
   Text,
-  Button,
-  Stat,
-  StatLabel,
-  StatNumber,
-  StatHelpText,
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
-  Badge,
-  IconButton,
+  VStack,
+  HStack,
+  SimpleGrid,
+  Icon,
   useColorModeValue,
-  useToast,
+  Spinner,
   Alert,
   AlertIcon,
-  Tabs,
-  TabList,
-  TabPanels,
-  Tab,
-  TabPanel,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  ModalCloseButton,
-  FormControl,
-  FormLabel,
-  Input,
-  Select,
-  useDisclosure,
-  Icon
+  Badge,
+  Progress,
+  Divider
 } from '@chakra-ui/react'
 import { useNavigate } from 'react-router-dom'
 import {
   FiUsers,
+  FiDollarSign,
   FiShoppingBag,
-  FiEdit,
-  FiTrash2,
-  FiUserPlus,
   FiTrendingUp,
-  FiCalendar
+  FiFileText,
+  FiSettings,
+  FiBarChart2,
+  FiCreditCard
 } from 'react-icons/fi'
-import { TbCurrencyEuro } from 'react-icons/tb'
-import { useB2BAccount, useB2BTeam } from '../hooks/useB2BQuotes'
-import { useB2BInvoices } from '../hooks/useB2BInvoices'
-import { useB2BContracts } from '../hooks/useB2BContracts'
 import { useAuth } from '../context/AuthContext'
-import LoadingSpinner from '../components/common/LoadingSpinner'
+import { useBusinessEmployees, useBusinessBudgets, useB2BAnalytics } from '../hooks/useB2B'
+import { supabase } from '../supabaseClient'
+
+const StatCard = ({ icon, label, value, subValue, colorScheme = 'brand', onClick }) => {
+  const bg = useColorModeValue('white', 'gray.800')
+  const hoverBg = useColorModeValue('gray.50', 'gray.700')
+
+  return (
+    <Card
+      bg={bg}
+      cursor={onClick ? 'pointer' : 'default'}
+      _hover={onClick ? { bg: hoverBg, transform: 'translateY(-2px)', shadow: 'md' } : {}}
+      transition="all 0.2s"
+      onClick={onClick}
+    >
+      <CardBody>
+        <HStack spacing={4}>
+          <Box p={3} bg={`${colorScheme}.100`} borderRadius="lg">
+            <Icon as={icon} boxSize={6} color={`${colorScheme}.500`} />
+          </Box>
+          <VStack align="start" spacing={0} flex={1}>
+            <Text fontSize="sm" color="gray.600">{label}</Text>
+            <Heading size="lg">{value}</Heading>
+            {subValue && (
+              <Text fontSize="xs" color="gray.500">{subValue}</Text>
+            )}
+          </VStack>
+        </HStack>
+      </CardBody>
+    </Card>
+  )
+}
+
+const QuickActionCard = ({ icon, title, description, onClick, colorScheme = 'brand' }) => {
+  const bg = useColorModeValue('white', 'gray.800')
+  const hoverBg = useColorModeValue('gray.50', 'gray.700')
+
+  return (
+    <Card
+      bg={bg}
+      cursor="pointer"
+      _hover={{ bg: hoverBg, transform: 'translateY(-2px)', shadow: 'md' }}
+      transition="all 0.2s"
+      onClick={onClick}
+    >
+      <CardBody>
+        <VStack spacing={3}>
+          <Box p={4} bg={`${colorScheme}.100`} borderRadius="full">
+            <Icon as={icon} boxSize={8} color={`${colorScheme}.500`} />
+          </Box>
+          <VStack spacing={1}>
+            <Text fontWeight="bold" textAlign="center">{title}</Text>
+            <Text fontSize="sm" color="gray.600" textAlign="center">{description}</Text>
+          </VStack>
+        </VStack>
+      </CardBody>
+    </Card>
+  )
+}
 
 export default function B2BDashboard() {
-  const { user } = useAuth()
   const navigate = useNavigate()
-  const { account, loading: accountLoading, isB2BCustomer } = useB2BAccount()
-  const { teamMembers, loading: teamLoading, addTeamMember, updateTeamMember, removeTeamMember } = useB2BTeam(account?.id)
-  const { invoices, loading: invoicesLoading, stats: invoiceStats } = useB2BInvoices(account?.id)
-  const { contracts, loading: contractsLoading, stats: contractStats } = useB2BContracts(account?.id)
+  const { user } = useAuth()
+  const [business, setBusiness] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+
   const bgColor = useColorModeValue('gray.50', 'gray.900')
-  const toast = useToast()
-  const { isOpen, onOpen, onClose } = useDisclosure()
 
-  const [formData, setFormData] = useState({
-    email: '',
-    full_name: '',
-    monthly_budget: '',
-    role: 'member'
+  // Fetch business info
+  useEffect(() => {
+    const fetchBusiness = async () => {
+      try {
+        setLoading(true)
+        const { data, error } = await supabase
+          .from('business_accounts')
+          .select('*')
+          .eq('manager_user_id', user.id)
+          .eq('status', 'active')
+          .single()
+
+        if (error) throw error
+        setBusiness(data)
+      } catch (err) {
+        console.error('Error fetching business:', err)
+        setError('Impossible de charger les informations de l\'entreprise')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    if (user) {
+      fetchBusiness()
+    }
+  }, [user])
+
+  const businessId = business?.id
+
+  // Use hooks to fetch data
+  const { employees } = useBusinessEmployees(businessId)
+  const { budgets } = useBusinessBudgets(businessId)
+  const { analytics } = useB2BAnalytics(businessId)
+
+  // Calculate current budget info
+  const currentBudget = budgets.find(b => {
+    const now = new Date()
+    const start = new Date(b.period_start)
+    const end = new Date(b.period_end)
+    return now >= start && now <= end && b.is_active
   })
-  const [editingMember, setEditingMember] = useState(null)
 
-  // Redirect if not B2B customer
-  if (!accountLoading && !isB2BCustomer) {
+  const budgetUsagePercent = currentBudget
+    ? (currentBudget.used_amount / currentBudget.total_budget) * 100
+    : 0
+
+  if (loading) {
     return (
-      <Container maxW="container.xl" py={16}>
-        <VStack spacing={6}>
-          <Alert status="warning">
-            <AlertIcon />
-            Vous n'avez pas de compte B2B. Contactez-nous pour créer un compte entreprise.
-          </Alert>
-          <Button colorScheme="brand" onClick={() => navigate('/b2b')}>
-            En savoir plus sur l'offre B2B
-          </Button>
-        </VStack>
+      <Container maxW="container.xl" py={8}>
+        <Box textAlign="center" py={20}>
+          <Spinner size="xl" color="brand.500" />
+          <Text mt={4} color="gray.600">Chargement du tableau de bord...</Text>
+        </Box>
       </Container>
     )
   }
 
-  if (accountLoading || teamLoading || invoicesLoading || contractsLoading) {
-    return <LoadingSpinner message="Chargement de votre compte B2B..." />
-  }
-
-  const handleAddMember = async (e) => {
-    e.preventDefault()
-
-    const { error } = await addTeamMember({
-      email: formData.email,
-      full_name: formData.full_name,
-      monthly_budget: parseFloat(formData.monthly_budget) || 0,
-      role: formData.role
-    })
-
-    if (error) {
-      toast({
-        title: 'Erreur',
-        description: "Impossible d'ajouter le membre.",
-        status: 'error',
-        duration: 3000
-      })
-    } else {
-      toast({
-        title: 'Membre ajouté',
-        description: 'Le membre a été ajouté avec succès.',
-        status: 'success',
-        duration: 3000
-      })
-      setFormData({ email: '', full_name: '', monthly_budget: '', role: 'member' })
-      onClose()
-    }
-  }
-
-  const handleRemoveMember = async (memberId) => {
-    if (!window.confirm('Êtes-vous sûr de vouloir retirer ce membre ?')) return
-
-    const { error } = await removeTeamMember(memberId)
-
-    if (error) {
-      toast({
-        title: 'Erreur',
-        description: 'Impossible de retirer le membre.',
-        status: 'error',
-        duration: 3000
-      })
-    } else {
-      toast({
-        title: 'Membre retiré',
-        description: 'Le membre a été retiré avec succès.',
-        status: 'success',
-        duration: 3000
-      })
-    }
-  }
-
-  const handleToggleActive = async (member) => {
-    const { error } = await updateTeamMember(member.id, {
-      is_active: !member.is_active
-    })
-
-    if (error) {
-      toast({
-        title: 'Erreur',
-        description: 'Impossible de modifier le statut.',
-        status: 'error',
-        duration: 3000
-      })
-    } else {
-      toast({
-        title: 'Statut modifié',
-        description: `Le membre a été ${member.is_active ? 'désactivé' : 'activé'}.`,
-        status: 'success',
-        duration: 3000
-      })
-    }
-  }
-
-  const activeMembers = teamMembers.filter(m => m.is_active).length
-  const totalBudget = teamMembers.reduce((sum, m) => sum + (m.monthly_budget || 0), 0)
-
-  const statusBadgeColors = {
-    draft: 'gray',
-    sent: 'blue',
-    paid: 'green',
-    overdue: 'red',
-    cancelled: 'gray'
-  }
-
-  const statusLabels = {
-    draft: 'Brouillon',
-    sent: 'Envoyée',
-    paid: 'Payée',
-    overdue: 'En retard',
-    cancelled: 'Annulée'
-  }
-
-  const statusColors = {
-    active: 'green',
-    suspended: 'orange',
-    closed: 'red'
-  }
-
-  const roleLabels = {
-    admin: 'Administrateur',
-    manager: 'Manager',
-    member: 'Membre'
-  }
-
-  const documentTypeLabels = {
-    contract: 'Contrat',
-    amendment: 'Avenant',
-    terms: 'Conditions',
-    nda: 'NDA',
-    other: 'Autre'
+  if (error || !business) {
+    return (
+      <Container maxW="container.xl" py={8}>
+        <Alert status="error" rounded="lg">
+          <AlertIcon />
+          <VStack align="start" spacing={1}>
+            <Text fontWeight="bold">Erreur</Text>
+            <Text fontSize="sm">
+              {error || 'Aucun compte B2B actif trouvé pour votre compte utilisateur.'}
+            </Text>
+          </VStack>
+        </Alert>
+      </Container>
+    )
   }
 
   return (
@@ -220,574 +179,213 @@ export default function B2BDashboard() {
       <Container maxW="container.xl">
         <VStack spacing={8} align="stretch">
           {/* Header */}
-          <HStack justify="space-between">
-            <VStack align="start" spacing={1}>
-              <Heading size="lg">{account.company_name}</Heading>
-              <HStack>
-                <Badge colorScheme={statusColors[account.status]}>
-                  {account.status === 'active' ? 'Actif' : account.status}
-                </Badge>
-                {account.payment_terms && (
-                  <Badge>{account.payment_terms.toUpperCase()}</Badge>
-                )}
-              </HStack>
-            </VStack>
-            <Button leftIcon={<FiUserPlus />} colorScheme="brand" onClick={onOpen}>
-              Ajouter un membre
-            </Button>
-          </HStack>
+          <Box>
+            <HStack justify="space-between" mb={2}>
+              <Heading size="xl">{business.company_name}</Heading>
+              <Badge colorScheme="green" fontSize="md" px={3} py={1}>
+                Compte Actif
+              </Badge>
+            </HStack>
+            <Text color="gray.600">
+              Tableau de bord de gestion B2B
+            </Text>
+          </Box>
 
-          {/* Stats */}
-          <SimpleGrid columns={{ base: 1, md: 4 }} spacing={4}>
-            <Card>
-              <CardBody>
-                <Stat>
-                  <StatLabel>
-                    <HStack>
-                      <Icon as={FiUsers} />
-                      <Text>Membres</Text>
-                    </HStack>
-                  </StatLabel>
-                  <StatNumber>{teamMembers.length}</StatNumber>
-                  <StatHelpText>{activeMembers} actifs</StatHelpText>
-                </Stat>
-              </CardBody>
-            </Card>
-
-            <Card>
-              <CardBody>
-                <Stat>
-                  <StatLabel>
-                    <HStack>
-                      <Icon as={TbCurrencyEuro} />
-                      <Text>Budget Total</Text>
-                    </HStack>
-                  </StatLabel>
-                  <StatNumber>{totalBudget.toFixed(2)}€</StatNumber>
-                  <StatHelpText>Par mois</StatHelpText>
-                </Stat>
-              </CardBody>
-            </Card>
-
-            <Card>
-              <CardBody>
-                <Stat>
-                  <StatLabel>
-                    <HStack>
-                      <Icon as={FiShoppingBag} />
-                      <Text>Commandes</Text>
-                    </HStack>
-                  </StatLabel>
-                  <StatNumber>0</StatNumber>
-                  <StatHelpText>Ce mois-ci</StatHelpText>
-                </Stat>
-              </CardBody>
-            </Card>
-
-            <Card>
-              <CardBody>
-                <Stat>
-                  <StatLabel>
-                    <HStack>
-                      <Icon as={FiTrendingUp} />
-                      <Text>Limite Crédit</Text>
-                    </HStack>
-                  </StatLabel>
-                  <StatNumber>{account.credit_limit?.toFixed(2) || 0}€</StatNumber>
-                  {account.discount_rate > 0 && (
-                    <StatHelpText>-{account.discount_rate}% remise</StatHelpText>
-                  )}
-                </Stat>
-              </CardBody>
-            </Card>
+          {/* Key Stats */}
+          <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={6}>
+            <StatCard
+              icon={FiUsers}
+              label="Employés actifs"
+              value={employees.filter(e => e.status === 'active').length}
+              subValue={`${employees.length} total`}
+              colorScheme="blue"
+              onClick={() => navigate('/b2b/employees')}
+            />
+            <StatCard
+              icon={FiDollarSign}
+              label="Budget du mois"
+              value={currentBudget ? `${currentBudget.total_budget.toFixed(0)}€` : 'N/A'}
+              subValue={currentBudget ? `${currentBudget.remaining_amount.toFixed(0)}€ restant` : 'Aucun budget actif'}
+              colorScheme="green"
+              onClick={() => navigate('/b2b/budgets')}
+            />
+            <StatCard
+              icon={FiShoppingBag}
+              label="Commandes ce mois"
+              value={analytics?.summary?.total_orders || 0}
+              subValue={`${analytics?.summary?.total_spent?.toFixed(2) || 0}€ dépensés`}
+              colorScheme="orange"
+              onClick={() => navigate('/b2b/analytics')}
+            />
+            <StatCard
+              icon={FiTrendingUp}
+              label="Panier moyen"
+              value={analytics?.summary?.avg_order_value ? `${analytics.summary.avg_order_value.toFixed(2)}€` : '0€'}
+              subValue="Par commande"
+              colorScheme="purple"
+            />
           </SimpleGrid>
 
-          {/* Tabs */}
-          <Tabs colorScheme="brand">
-            <TabList>
-              <Tab>
-                <HStack>
-                  <Icon as={FiUsers} />
-                  <Text>Équipe</Text>
+          {/* Budget Progress */}
+          {currentBudget && (
+            <Card bg={useColorModeValue('white', 'gray.800')}>
+              <CardHeader>
+                <HStack justify="space-between">
+                  <Heading size="md">Budget du mois en cours</Heading>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => navigate('/b2b/budgets')}
+                  >
+                    Gérer les budgets
+                  </Button>
                 </HStack>
-              </Tab>
-              <Tab>
-                <HStack>
-                  <Icon as={FiShoppingBag} />
-                  <Text>Commandes</Text>
-                </HStack>
-              </Tab>
-              <Tab>
-                <HStack>
-                  <Icon as={TbCurrencyEuro} />
-                  <Text>Facturation</Text>
-                </HStack>
-              </Tab>
-              <Tab>
-                <HStack>
-                  <Icon as={FiCalendar} />
-                  <Text>Contrat</Text>
-                </HStack>
-              </Tab>
-            </TabList>
+              </CardHeader>
+              <CardBody>
+                <VStack spacing={4} align="stretch">
+                  <HStack justify="space-between">
+                    <Text fontSize="sm" color="gray.600">
+                      Période: {new Date(currentBudget.period_start).toLocaleDateString('fr-FR')} - {new Date(currentBudget.period_end).toLocaleDateString('fr-FR')}
+                    </Text>
+                    <Text fontWeight="bold">
+                      {currentBudget.used_amount.toFixed(2)}€ / {currentBudget.total_budget.toFixed(2)}€
+                    </Text>
+                  </HStack>
+                  <Progress
+                    value={budgetUsagePercent}
+                    colorScheme={budgetUsagePercent > 90 ? 'red' : budgetUsagePercent > 75 ? 'orange' : 'green'}
+                    size="lg"
+                    borderRadius="full"
+                  />
+                  <HStack justify="space-between">
+                    <Text fontSize="sm" color="gray.600">
+                      {budgetUsagePercent.toFixed(1)}% utilisé
+                    </Text>
+                    <Text fontSize="sm" fontWeight="medium" color="green.500">
+                      {currentBudget.remaining_amount.toFixed(2)}€ disponible
+                    </Text>
+                  </HStack>
+                </VStack>
+              </CardBody>
+            </Card>
+          )}
 
-            <TabPanels>
-              {/* Team Tab */}
-              <TabPanel>
-                <Card>
-                  <CardHeader>
-                    <Heading size="md">Membres de l'équipe</Heading>
-                  </CardHeader>
-                  <CardBody>
-                    {teamMembers.length === 0 ? (
-                      <VStack py={8} spacing={4}>
-                        <Text color="gray.500">Aucun membre dans l'équipe</Text>
-                        <Button leftIcon={<FiUserPlus />} colorScheme="brand" onClick={onOpen}>
-                          Ajouter le premier membre
-                        </Button>
+          <Divider />
+
+          {/* Quick Actions */}
+          <Box>
+            <Heading size="md" mb={6}>Actions rapides</Heading>
+            <SimpleGrid columns={{ base: 2, md: 4 }} spacing={6}>
+              <QuickActionCard
+                icon={FiUsers}
+                title="Gérer les employés"
+                description="Ajouter, modifier ou supprimer des employés"
+                onClick={() => navigate('/b2b/employees')}
+                colorScheme="blue"
+              />
+              <QuickActionCard
+                icon={FiCreditCard}
+                title="Budgets"
+                description="Configurer les budgets mensuels"
+                onClick={() => navigate('/b2b/budgets')}
+                colorScheme="green"
+              />
+              <QuickActionCard
+                icon={FiBarChart2}
+                title="Statistiques"
+                description="Voir les analyses et rapports"
+                onClick={() => navigate('/b2b/analytics')}
+                colorScheme="purple"
+              />
+              <QuickActionCard
+                icon={FiFileText}
+                title="Factures"
+                description="Consulter les factures mensuelles"
+                onClick={() => navigate('/b2b/invoices')}
+                colorScheme="orange"
+              />
+            </SimpleGrid>
+          </Box>
+
+          {/* Recent Activity */}
+          <Card bg={useColorModeValue('white', 'gray.800')}>
+            <CardHeader>
+              <Heading size="md">Activité récente</Heading>
+            </CardHeader>
+            <CardBody>
+              {analytics?.employeeSpending && analytics.employeeSpending.length > 0 ? (
+                <VStack align="stretch" spacing={3}>
+                  {analytics.employeeSpending.slice(0, 5).map((emp, idx) => (
+                    <HStack key={idx} justify="space-between" p={3} bg={useColorModeValue('gray.50', 'gray.700')} borderRadius="md">
+                      <VStack align="start" spacing={0}>
+                        <Text fontWeight="medium">{emp.first_name} {emp.last_name}</Text>
+                        <Text fontSize="sm" color="gray.600">{emp.email}</Text>
                       </VStack>
-                    ) : (
-                      <Table variant="simple">
-                        <Thead>
-                          <Tr>
-                            <Th>Nom</Th>
-                            <Th>Email</Th>
-                            <Th>Rôle</Th>
-                            <Th>Budget Mensuel</Th>
-                            <Th>Statut</Th>
-                            <Th>Actions</Th>
-                          </Tr>
-                        </Thead>
-                        <Tbody>
-                          {teamMembers.map((member) => (
-                            <Tr key={member.id}>
-                              <Td>{member.full_name || '-'}</Td>
-                              <Td>{member.email}</Td>
-                              <Td>
-                                <Badge>{roleLabels[member.role]}</Badge>
-                              </Td>
-                              <Td>{member.monthly_budget?.toFixed(2) || 0}€</Td>
-                              <Td>
-                                <Badge colorScheme={member.is_active ? 'green' : 'gray'}>
-                                  {member.is_active ? 'Actif' : 'Inactif'}
-                                </Badge>
-                              </Td>
-                              <Td>
-                                <HStack spacing={2}>
-                                  <IconButton
-                                    icon={<FiEdit />}
-                                    size="sm"
-                                    variant="ghost"
-                                    onClick={() => handleToggleActive(member)}
-                                    aria-label="Toggle status"
-                                  />
-                                  <IconButton
-                                    icon={<FiTrash2 />}
-                                    size="sm"
-                                    variant="ghost"
-                                    colorScheme="red"
-                                    onClick={() => handleRemoveMember(member.id)}
-                                    aria-label="Remove member"
-                                  />
-                                </HStack>
-                              </Td>
-                            </Tr>
-                          ))}
-                        </Tbody>
-                      </Table>
-                    )}
-                  </CardBody>
-                </Card>
-              </TabPanel>
-
-              {/* Orders Tab */}
-              <TabPanel>
-                <Card>
-                  <CardBody>
-                    <VStack py={8} spacing={4}>
-                      <Text color="gray.500">Aucune commande pour le moment</Text>
-                      <HStack spacing={4}>
-                        <Button colorScheme="brand" onClick={() => navigate('/catalogue')}>
-                          Commander maintenant
-                        </Button>
-                        <Button variant="outline" colorScheme="brand" onClick={() => navigate('/b2b/bulk-order')}>
-                          Commande groupée
-                        </Button>
-                      </HStack>
-                    </VStack>
-                  </CardBody>
-                </Card>
-              </TabPanel>
-
-              {/* Billing Tab */}
-              <TabPanel>
-                <VStack spacing={6} align="stretch">
-                  {/* Billing Info Card */}
-                  <Card>
-                    <CardHeader>
-                      <Heading size="md">Informations de facturation</Heading>
-                    </CardHeader>
-                    <CardBody>
-                      <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
-                        <Box>
-                          <Text fontSize="sm" color="gray.600">Email de facturation</Text>
-                          <Text fontWeight="600">{account.billing_email}</Text>
-                        </Box>
-                        {account.vat_number && (
-                          <Box>
-                            <Text fontSize="sm" color="gray.600">Numéro TVA</Text>
-                            <Text fontWeight="600">{account.vat_number}</Text>
-                          </Box>
-                        )}
-                        {account.company_registration && (
-                          <Box>
-                            <Text fontSize="sm" color="gray.600">SIRET</Text>
-                            <Text fontWeight="600">{account.company_registration}</Text>
-                          </Box>
-                        )}
-                        <Box>
-                          <Text fontSize="sm" color="gray.600">Conditions de paiement</Text>
-                          <Text fontWeight="600">{account.payment_terms.toUpperCase()}</Text>
-                        </Box>
-                      </SimpleGrid>
-                    </CardBody>
-                  </Card>
-
-                  {/* Invoice Stats */}
-                  <SimpleGrid columns={{ base: 1, md: 4 }} spacing={4}>
-                    <Card>
-                      <CardBody>
-                        <Stat>
-                          <StatLabel>Total</StatLabel>
-                          <StatNumber fontSize="lg">{invoiceStats.total.toFixed(2)}€</StatNumber>
-                          <StatHelpText>{invoices.length} factures</StatHelpText>
-                        </Stat>
-                      </CardBody>
-                    </Card>
-                    <Card>
-                      <CardBody>
-                        <Stat>
-                          <StatLabel>Payées</StatLabel>
-                          <StatNumber fontSize="lg" color="green.500">{invoiceStats.paid}</StatNumber>
-                        </Stat>
-                      </CardBody>
-                    </Card>
-                    <Card>
-                      <CardBody>
-                        <Stat>
-                          <StatLabel>En attente</StatLabel>
-                          <StatNumber fontSize="lg" color="blue.500">{invoiceStats.pending}</StatNumber>
-                        </Stat>
-                      </CardBody>
-                    </Card>
-                    <Card>
-                      <CardBody>
-                        <Stat>
-                          <StatLabel>En retard</StatLabel>
-                          <StatNumber fontSize="lg" color="red.500">{invoiceStats.overdue}</StatNumber>
-                        </Stat>
-                      </CardBody>
-                    </Card>
-                  </SimpleGrid>
-
-                  {/* Invoices Table */}
-                  <Card>
-                    <CardHeader>
-                      <Heading size="md">Factures</Heading>
-                    </CardHeader>
-                    <CardBody>
-                      {invoices.length === 0 ? (
-                        <VStack py={8}>
-                          <Text color="gray.500">Aucune facture disponible</Text>
-                        </VStack>
-                      ) : (
-                        <Table variant="simple">
-                          <Thead>
-                            <Tr>
-                              <Th>Numéro</Th>
-                              <Th>Période</Th>
-                              <Th>Montant</Th>
-                              <Th>Date d'échéance</Th>
-                              <Th>Statut</Th>
-                              <Th>Actions</Th>
-                            </Tr>
-                          </Thead>
-                          <Tbody>
-                            {invoices.map((invoice) => (
-                              <Tr key={invoice.id}>
-                                <Td fontWeight="600">{invoice.invoice_number}</Td>
-                                <Td>
-                                  <Text fontSize="sm">
-                                    {new Date(invoice.period_start).toLocaleDateString('fr-FR')} -{' '}
-                                    {new Date(invoice.period_end).toLocaleDateString('fr-FR')}
-                                  </Text>
-                                </Td>
-                                <Td fontWeight="600">{parseFloat(invoice.total).toFixed(2)}€</Td>
-                                <Td>
-                                  {invoice.due_date ? (
-                                    <Text
-                                      fontSize="sm"
-                                      color={
-                                        invoice.status === 'overdue'
-                                          ? 'red.500'
-                                          : new Date(invoice.due_date) < new Date()
-                                          ? 'orange.500'
-                                          : 'inherit'
-                                      }
-                                    >
-                                      {new Date(invoice.due_date).toLocaleDateString('fr-FR')}
-                                    </Text>
-                                  ) : (
-                                    '-'
-                                  )}
-                                </Td>
-                                <Td>
-                                  <Badge colorScheme={statusBadgeColors[invoice.status]}>
-                                    {statusLabels[invoice.status] || invoice.status}
-                                  </Badge>
-                                </Td>
-                                <Td>
-                                  <Button size="sm" variant="ghost" colorScheme="brand">
-                                    Télécharger
-                                  </Button>
-                                </Td>
-                              </Tr>
-                            ))}
-                          </Tbody>
-                        </Table>
-                      )}
-                    </CardBody>
-                  </Card>
+                      <VStack align="end" spacing={0}>
+                        <Text fontWeight="bold">{emp.total_spent?.toFixed(2) || 0}€</Text>
+                        <Text fontSize="sm" color="gray.600">{emp.order_count || 0} commandes</Text>
+                      </VStack>
+                    </HStack>
+                  ))}
                 </VStack>
-              </TabPanel>
+              ) : (
+                <Text color="gray.500" textAlign="center" py={8}>
+                  Aucune activité récente
+                </Text>
+              )}
+            </CardBody>
+          </Card>
 
-              {/* Contract Tab */}
-              <TabPanel>
-                <VStack spacing={6} align="stretch">
-                  {/* Contract Info Card */}
-                  <Card>
-                    <CardHeader>
-                      <Heading size="md">Informations contractuelles</Heading>
-                    </CardHeader>
-                    <CardBody>
-                      <SimpleGrid columns={{ base: 1, md: 3 }} spacing={4}>
-                        {account.contract_start_date && (
-                          <Box>
-                            <Text fontSize="sm" color="gray.600">Date de début</Text>
-                            <Text fontWeight="600">
-                              {new Date(account.contract_start_date).toLocaleDateString('fr-FR')}
-                            </Text>
-                          </Box>
-                        )}
-                        {account.contract_end_date && (
-                          <Box>
-                            <Text fontSize="sm" color="gray.600">Date de fin</Text>
-                            <Text fontWeight="600">
-                              {new Date(account.contract_end_date).toLocaleDateString('fr-FR')}
-                            </Text>
-                          </Box>
-                        )}
-                        {account.contract_start_date && account.contract_end_date && (
-                          <Box>
-                            <Text fontSize="sm" color="gray.600">Durée</Text>
-                            <Text fontWeight="600">
-                              {Math.ceil(
-                                (new Date(account.contract_end_date) - new Date(account.contract_start_date)) /
-                                (1000 * 60 * 60 * 24 * 30)
-                              )}{' '}
-                              mois
-                            </Text>
-                          </Box>
-                        )}
-                      </SimpleGrid>
-                    </CardBody>
-                  </Card>
-
-                  {/* Contract Stats */}
-                  <SimpleGrid columns={{ base: 1, md: 4 }} spacing={4}>
-                    <Card>
-                      <CardBody>
-                        <Stat>
-                          <StatLabel>Total Documents</StatLabel>
-                          <StatNumber fontSize="lg">{contractStats.total}</StatNumber>
-                        </Stat>
-                      </CardBody>
-                    </Card>
-                    <Card>
-                      <CardBody>
-                        <Stat>
-                          <StatLabel>Actifs</StatLabel>
-                          <StatNumber fontSize="lg" color="green.500">{contractStats.active}</StatNumber>
-                        </Stat>
-                      </CardBody>
-                    </Card>
-                    <Card>
-                      <CardBody>
-                        <Stat>
-                          <StatLabel>À renouveler</StatLabel>
-                          <StatNumber fontSize="lg" color="orange.500">{contractStats.expiring}</StatNumber>
-                        </Stat>
-                      </CardBody>
-                    </Card>
-                    <Card>
-                      <CardBody>
-                        <Stat>
-                          <StatLabel>Expirés</StatLabel>
-                          <StatNumber fontSize="lg" color="red.500">{contractStats.expired}</StatNumber>
-                        </Stat>
-                      </CardBody>
-                    </Card>
-                  </SimpleGrid>
-
-                  {/* Documents Table */}
-                  <Card>
-                    <CardHeader>
-                      <Heading size="md">Documents contractuels</Heading>
-                    </CardHeader>
-                    <CardBody>
-                      {contracts.length === 0 ? (
-                        <VStack py={8}>
-                          <Text color="gray.500">Aucun document disponible</Text>
-                        </VStack>
-                      ) : (
-                        <Table variant="simple">
-                          <Thead>
-                            <Tr>
-                              <Th>Document</Th>
-                              <Th>Type</Th>
-                              <Th>Version</Th>
-                              <Th>Date de signature</Th>
-                              <Th>Expiration</Th>
-                              <Th>Statut</Th>
-                              <Th>Actions</Th>
-                            </Tr>
-                          </Thead>
-                          <Tbody>
-                            {contracts.map((contract) => (
-                              <Tr key={contract.id}>
-                                <Td fontWeight="600">{contract.document_name}</Td>
-                                <Td>
-                                  <Badge>{documentTypeLabels[contract.document_type]}</Badge>
-                                </Td>
-                                <Td>{contract.version || '-'}</Td>
-                                <Td>
-                                  {contract.signed_date
-                                    ? new Date(contract.signed_date).toLocaleDateString('fr-FR')
-                                    : '-'}
-                                </Td>
-                                <Td>
-                                  {contract.expiry_date ? (
-                                    <Text
-                                      fontSize="sm"
-                                      color={
-                                        new Date(contract.expiry_date) < new Date()
-                                          ? 'red.500'
-                                          : Math.ceil((new Date(contract.expiry_date) - new Date()) / (1000 * 60 * 60 * 24)) <= 30
-                                          ? 'orange.500'
-                                          : 'inherit'
-                                      }
-                                    >
-                                      {new Date(contract.expiry_date).toLocaleDateString('fr-FR')}
-                                    </Text>
-                                  ) : (
-                                    '-'
-                                  )}
-                                </Td>
-                                <Td>
-                                  <Badge colorScheme={contract.is_active ? 'green' : 'gray'}>
-                                    {contract.is_active ? 'Actif' : 'Inactif'}
-                                  </Badge>
-                                </Td>
-                                <Td>
-                                  <Button
-                                    size="sm"
-                                    variant="ghost"
-                                    colorScheme="brand"
-                                    as="a"
-                                    href={contract.document_url}
-                                    target="_blank"
-                                  >
-                                    Télécharger
-                                  </Button>
-                                </Td>
-                              </Tr>
-                            ))}
-                          </Tbody>
-                        </Table>
-                      )}
-                    </CardBody>
-                  </Card>
+          {/* Company Info */}
+          <Card bg={useColorModeValue('white', 'gray.800')}>
+            <CardHeader>
+              <HStack justify="space-between">
+                <Heading size="md">Informations de l'entreprise</Heading>
+                <Button
+                  size="sm"
+                  leftIcon={<FiSettings />}
+                  variant="ghost"
+                  onClick={() => navigate('/b2b/settings')}
+                >
+                  Paramètres
+                </Button>
+              </HStack>
+            </CardHeader>
+            <CardBody>
+              <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6}>
+                <VStack align="start" spacing={3}>
+                  <Box>
+                    <Text fontSize="sm" color="gray.600">SIRET</Text>
+                    <Text fontWeight="medium">{business.siret}</Text>
+                  </Box>
+                  {business.vat_number && (
+                    <Box>
+                      <Text fontSize="sm" color="gray.600">N° TVA</Text>
+                      <Text fontWeight="medium">{business.vat_number}</Text>
+                    </Box>
+                  )}
+                  <Box>
+                    <Text fontSize="sm" color="gray.600">Contact principal</Text>
+                    <Text fontWeight="medium">{business.contact_name}</Text>
+                    <Text fontSize="sm">{business.contact_email}</Text>
+                  </Box>
                 </VStack>
-              </TabPanel>
-            </TabPanels>
-          </Tabs>
+                <VStack align="start" spacing={3}>
+                  <Box>
+                    <Text fontSize="sm" color="gray.600">Adresse de facturation</Text>
+                    <Text fontWeight="medium">{business.billing_address_street}</Text>
+                    <Text>{business.billing_address_postal_code} {business.billing_address_city}</Text>
+                  </Box>
+                  <Box>
+                    <Text fontSize="sm" color="gray.600">Email de facturation</Text>
+                    <Text fontWeight="medium">{business.billing_email}</Text>
+                  </Box>
+                </VStack>
+              </SimpleGrid>
+            </CardBody>
+          </Card>
         </VStack>
       </Container>
-
-      {/* Add Member Modal */}
-      <Modal isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Ajouter un membre</ModalHeader>
-          <ModalCloseButton />
-          <form onSubmit={handleAddMember}>
-            <ModalBody>
-              <VStack spacing={4}>
-                <FormControl isRequired>
-                  <FormLabel>Email</FormLabel>
-                  <Input
-                    type="email"
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    placeholder="membre@entreprise.com"
-                  />
-                </FormControl>
-
-                <FormControl>
-                  <FormLabel>Nom complet</FormLabel>
-                  <Input
-                    value={formData.full_name}
-                    onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
-                    placeholder="Jean Dupont"
-                  />
-                </FormControl>
-
-                <FormControl>
-                  <FormLabel>Budget mensuel (€)</FormLabel>
-                  <Input
-                    type="number"
-                    step="0.01"
-                    value={formData.monthly_budget}
-                    onChange={(e) => setFormData({ ...formData, monthly_budget: e.target.value })}
-                    placeholder="100"
-                  />
-                </FormControl>
-
-                <FormControl>
-                  <FormLabel>Rôle</FormLabel>
-                  <Select
-                    value={formData.role}
-                    onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-                  >
-                    <option value="member">Membre</option>
-                    <option value="manager">Manager</option>
-                    <option value="admin">Administrateur</option>
-                  </Select>
-                </FormControl>
-              </VStack>
-            </ModalBody>
-
-            <ModalFooter>
-              <Button variant="ghost" mr={3} onClick={onClose}>
-                Annuler
-              </Button>
-              <Button type="submit" colorScheme="brand">
-                Ajouter
-              </Button>
-            </ModalFooter>
-          </form>
-        </ModalContent>
-      </Modal>
     </Box>
   )
 }
