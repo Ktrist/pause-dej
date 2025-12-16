@@ -4,8 +4,8 @@
   "description": "Commandez vos repas frais livrés entre 7h et 9h du lundi au vendredi à Annecy",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#48BB78",
+  "background_color": "#F8F9FA",
+  "theme_color": "#E85D04",
   "orientation": "portrait-primary",
   "icons": [
     {
