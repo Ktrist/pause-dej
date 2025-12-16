@@ -29,7 +29,7 @@ import {
   useColorModeValue
 } from '@chakra-ui/react'
 import { useNavigate } from 'react-router-dom'
-import { FiCheckCircle, FiBuilding, FiMail, FiPhone, FiUsers } from 'react-icons/fi'
+import { FiCheckCircle, FiBriefcase, FiMail, FiPhone, FiUsers } from 'react-icons/fi'
 import { supabase } from '../supabaseClient'
 
 export default function B2BQuoteRequestPage() {
@@ -218,7 +218,7 @@ export default function B2BQuoteRequestPage() {
                   {/* Company Information */}
                   <Box>
                     <HStack spacing={2} mb={6}>
-                      <Icon as={FiBuilding} color="brand.500" boxSize={6} />
+                      <Icon as={FiBriefcase} color="brand.500" boxSize={6} />
                       <Heading size="md">Informations sur l'entreprise</Heading>
                     </HStack>
 
