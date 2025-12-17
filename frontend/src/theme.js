@@ -72,31 +72,39 @@ const theme = extendTheme({
   },
   styles: {
     global: {
+      '*': {
+        fontFamily: `'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif`,
+      },
       body: {
         bg: 'background.main', // #F8F9FA - bg-cream
         color: 'text.primary', // #004E64 - deep-blue
         margin: 0,
         padding: 0,
+        fontFamily: `'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif`,
       },
       h1: {
+        fontFamily: `'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif`,
         fontWeight: 800,
         fontSize: '3.5rem',
         lineHeight: '1.1',
         color: 'text.primary',
       },
       h2: {
+        fontFamily: `'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif`,
         fontWeight: 700,
         fontSize: '2.25rem',
         lineHeight: '1.2',
         color: 'text.primary',
       },
       h3: {
+        fontFamily: `'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif`,
         fontWeight: 700,
         fontSize: '1.25rem',
         lineHeight: '1.3',
         color: 'text.primary',
       },
       p: {
+        fontFamily: `'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif`,
         fontWeight: 400,
         fontSize: '1rem',
         lineHeight: '1.6',
@@ -153,8 +161,14 @@ const theme = extendTheme({
     },
     Heading: {
       baseStyle: {
+        fontFamily: `'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif`,
         color: 'text.primary', // Deep Lake Blue
         fontWeight: 'bold',
+      },
+    },
+    Text: {
+      baseStyle: {
+        fontFamily: `'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif`,
       },
     },
     Badge: {
