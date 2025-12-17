@@ -103,7 +103,7 @@ export default function B2BReassuranceBanner() {
 
           {/* Additional trust indicators */}
           <HStack
-            spacing={8}
+            spacing={2}
             pt={6}
             fontSize="sm"
             color="text.light"
@@ -111,8 +111,7 @@ export default function B2BReassuranceBanner() {
             flexWrap="wrap"
             justify="center"
           >
-            <Text>✓ Livraison gratuite dès 3 plats</Text>
-            <Text>✓ Facture mensuelle pour les entreprises • Tickets restaurant acceptés</Text>
+            <Text>✓ Livraison gratuite dès 3 plats • ✓ Facture mensuelle pour les entreprises • ✓ Tickets restaurant acceptés</Text>
           </HStack>
         </VStack>
       </Container>
