@@ -91,7 +91,7 @@ export default function Footer() {
               _hover={{ color: 'brand.400', textDecoration: 'none' }}
               transition="color 0.2s"
             >
-              Pause Dej' at work
+              Pause Dej' At Work
             </Link>
           </VStack>
 
