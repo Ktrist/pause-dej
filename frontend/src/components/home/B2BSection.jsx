@@ -129,7 +129,7 @@ export default function B2BSection() {
               </HStack>
 
               <Text fontSize="sm" color="gray.500">
-                ✓ Sans engagement  ✓ Réponse sous 24h  ✓ Offre sur mesure
+                ✓ Sans engagement    ✓ Réponse sous 24h    ✓ Offre sur mesure
               </Text>
             </VStack>
           </Box>
