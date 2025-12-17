@@ -179,7 +179,12 @@ export default function B2BPage() {
               exceptionnelle à vos collaborateurs.
             </Text>
             <HStack spacing={4}>
-              <Button colorScheme="brand" size="lg" onClick={onOpen}>
+              <Button
+                colorScheme="brand"
+                size="lg"
+                onClick={onOpen}
+                borderRadius="12px"
+              >
                 Demander un devis
               </Button>
               <Button
@@ -191,10 +196,6 @@ export default function B2BPage() {
                 color="primary.500"
                 borderWidth="1px"
                 borderRadius="12px"
-                px={8}
-                py={7}
-                fontSize="md"
-                fontWeight="semibold"
                 _hover={{
                   bg: 'primary.50'
                 }}
