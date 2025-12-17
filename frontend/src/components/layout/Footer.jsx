@@ -142,7 +142,7 @@ export default function Footer() {
             <HStack spacing={2} align="start">
               <Icon as={FiMapPin} boxSize={4} color="brand.400" mt={1} />
               <Text fontSize="sm" color="whiteAlpha.800" fontWeight="medium">
-                75001 Paris, France
+                Annecy
               </Text>
             </HStack>
           </VStack>
@@ -168,16 +168,7 @@ export default function Footer() {
               _hover={{ color: 'brand.400' }}
               transition="color 0.2s"
             >
-              Aide
-            </Link>
-            <Link
-              as={RouterLink}
-              to="/support"
-              fontWeight="medium"
-              _hover={{ color: 'brand.400' }}
-              transition="color 0.2s"
-            >
-              FAQ
+              FAQ & Support
             </Link>
             <Link
               as={RouterLink}
