@@ -212,7 +212,7 @@ export default function B2BPage() {
                 />
                 <FeatureCard
                   icon={FiPackage}
-                  title="Packages Personnalisés"
+                  title="Formules Personnalisées"
                   description="Des offres sur mesure adaptées aux besoins de votre entreprise."
                 />
                 <FeatureCard
@@ -284,7 +284,7 @@ export default function B2BPage() {
             <Box>
               <VStack spacing={8}>
                 <Heading size="xl" textAlign="center" id="packages">
-                  Nos Packages Entreprise
+                  Nos Formules Entreprise
                 </Heading>
                 <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6} w="full">
                   {packages.map((pkg) => (
@@ -292,7 +292,7 @@ export default function B2BPage() {
                   ))}
                 </SimpleGrid>
                 <Text textAlign="center" color="gray.600">
-                  Tous nos packages sont personnalisables selon vos besoins
+                  Toutes nos formules sont personnalisables selon vos besoins
                 </Text>
               </VStack>
             </Box>

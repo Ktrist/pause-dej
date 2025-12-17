@@ -84,17 +84,17 @@ const PackageModal = ({ isOpen, onClose, onSave, editingPackage }) => {
     <Modal isOpen={isOpen} onClose={onClose} size="xl">
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>{editingPackage ? 'Modifier' : 'Créer'} un package</ModalHeader>
+        <ModalHeader>{editingPackage ? 'Modifier' : 'Créer'} une formule</ModalHeader>
         <ModalCloseButton />
         <form onSubmit={handleSubmit}>
           <ModalBody>
             <VStack spacing={4}>
               <FormControl isRequired>
-                <FormLabel>Nom du package</FormLabel>
+                <FormLabel>Nom de la formule</FormLabel>
                 <Input
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  placeholder="Package Standard"
+                  placeholder="Formule Standard"
                 />
               </FormControl>
 
@@ -103,7 +103,7 @@ const PackageModal = ({ isOpen, onClose, onSave, editingPackage }) => {
                 <Textarea
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  placeholder="Description du package..."
+                  placeholder="Description de la formule..."
                   rows={3}
                 />
               </FormControl>
@@ -145,7 +145,7 @@ const PackageModal = ({ isOpen, onClose, onSave, editingPackage }) => {
               </SimpleGrid>
 
               <FormControl display="flex" alignItems="center">
-                <FormLabel mb={0}>Package actif</FormLabel>
+                <FormLabel mb={0}>Formule active</FormLabel>
                 <Switch
                   isChecked={formData.is_active}
                   onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
@@ -204,7 +204,7 @@ export default function AdminB2B() {
     } else {
       toast({
         title: 'Succès',
-        description: `Package ${editingPackage ? 'modifié' : 'créé'} avec succès`,
+        description: `Formule ${editingPackage ? 'modifiée' : 'créée'} avec succès`,
         status: 'success',
         duration: 3000
       })
@@ -214,7 +214,7 @@ export default function AdminB2B() {
   }
 
   const handleDeletePackage = async (packageId) => {
-    if (!window.confirm('Êtes-vous sûr de vouloir supprimer ce package ?')) return
+    if (!window.confirm('Êtes-vous sûr de vouloir supprimer cette formule ?')) return
 
     const { error } = await deletePackage(packageId)
 
@@ -227,7 +227,7 @@ export default function AdminB2B() {
       })
     } else {
       toast({
-        title: 'Package supprimé',
+        title: 'Formule supprimée',
         status: 'success',
         duration: 3000
       })
@@ -246,7 +246,7 @@ export default function AdminB2B() {
       })
     } else {
       toast({
-        title: `Package ${pkg.is_active ? 'désactivé' : 'activé'}`,
+        title: `Formule ${pkg.is_active ? 'désactivée' : 'activée'}`,
         status: 'success',
         duration: 3000
       })
@@ -339,7 +339,7 @@ export default function AdminB2B() {
                 <StatLabel>
                   <HStack>
                     <Icon as={FiPackage} />
-                    <Text>Packages</Text>
+                    <Text>Formules</Text>
                   </HStack>
                 </StatLabel>
                 <StatNumber>{packages.length}</StatNumber>
@@ -392,7 +392,7 @@ export default function AdminB2B() {
         {/* Tabs */}
         <Tabs colorScheme="brand">
           <TabList>
-            <Tab>Packages</Tab>
+            <Tab>Formules</Tab>
             <Tab>Demandes de Devis</Tab>
             <Tab>Comptes B2B</Tab>
             <Tab>Factures</Tab>
@@ -404,7 +404,7 @@ export default function AdminB2B() {
               <Card>
                 <CardHeader>
                   <HStack justify="space-between">
-                    <Heading size="md">Packages Corporatifs</Heading>
+                    <Heading size="md">Formules Corporatives</Heading>
                     <Button
                       leftIcon={<FiPlus />}
                       colorScheme="brand"
@@ -413,14 +413,14 @@ export default function AdminB2B() {
                         onOpen()
                       }}
                     >
-                      Nouveau package
+                      Nouvelle formule
                     </Button>
                   </HStack>
                 </CardHeader>
                 <CardBody>
                   {packages.length === 0 ? (
                     <VStack py={8}>
-                      <Text color="gray.500">Aucun package créé</Text>
+                      <Text color="gray.500">Aucune formule créée</Text>
                     </VStack>
                   ) : (
                     <Table variant="simple">
