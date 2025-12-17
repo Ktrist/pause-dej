@@ -53,6 +53,15 @@ export default function DishDetailModal({ dish, isOpen, onClose }) {
             objectFit="cover"
             borderTopRadius="md"
           />
+          <Text
+            textAlign="center"
+            color="#b1b1b1"
+            fontSize="0.7em"
+            pt="5px"
+            pb="10px"
+          >
+            Photo d'illustration non contractuelle
+          </Text>
         </ModalHeader>
 
         <ModalBody p={6}>
