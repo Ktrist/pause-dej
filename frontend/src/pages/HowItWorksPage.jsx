@@ -98,13 +98,13 @@ export default function HowItWorksPage() {
   return (
     <Box bg={bgColor} minH="calc(100vh - 64px)">
       {/* Hero Section */}
-      <Box bg="primary.500" color="white" py={16}>
+      <Box bg="primary.500" color="#FFFFFF" py={16}>
         <Container maxW="container.xl">
           <VStack spacing={6} textAlign="center" maxW="3xl" mx="auto">
-            <Badge colorScheme="whiteAlpha" fontSize="md" px={3} py={1}>
+            <Badge colorScheme="whiteAlpha" fontSize="md" px={3} py={1} color="#FFFFFF">
               Simple et Rapide
             </Badge>
-            <Heading size="2xl" color="white">Comment ça marche ?</Heading>
+            <Heading size="2xl" color="#FFFFFF">Comment ça marche ?</Heading>
             <Text fontSize="xl" opacity={0.9}>
               Commandez des plats frais et savoureux en 4 étapes simples. Livraison rapide
               à Annecy et ses environs.
