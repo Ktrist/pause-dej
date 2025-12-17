@@ -51,7 +51,7 @@ export default function CartPage() {
                 size="lg"
                 leftIcon={<FiShoppingCart />}
               >
-                Voir le catalogue
+                Voir la carte
               </Button>
               <Button
                 as={RouterLink}

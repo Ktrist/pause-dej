@@ -69,7 +69,7 @@ export default function Footer() {
               _hover={{ color: 'brand.400', textDecoration: 'none' }}
               transition="color 0.2s"
             >
-              Catalogue
+              A la carte
             </Link>
             <Link
               as={RouterLink}

@@ -106,7 +106,7 @@ export default function CataloguePage() {
     return (
       <Box bg="gray.50" minH="calc(100vh - 64px)" py={8}>
         <Container maxW="container.xl">
-          <LoadingSpinner message="Chargement du catalogue..." />
+          <LoadingSpinner message="Chargement de la carte..." />
         </Container>
       </Box>
     )
@@ -119,7 +119,7 @@ export default function CataloguePage() {
         <Container maxW="container.xl">
           <Alert status="error" borderRadius="md">
             <AlertIcon />
-            <AlertTitle>Erreur de chargement du catalogue</AlertTitle>
+            <AlertTitle>Erreur de chargement de la carte</AlertTitle>
           </Alert>
         </Container>
       </Box>
@@ -133,7 +133,7 @@ export default function CataloguePage() {
           {/* Header */}
           <VStack spacing={4} align="start">
             <Heading as="h1" size="xl" color="gray.800">
-              Notre Catalogue
+              Notre Carte
             </Heading>
             <Text color="gray.600">
               Découvrez nos {allDishes.length} plats frais et savoureux

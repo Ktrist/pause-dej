@@ -96,7 +96,7 @@ export default function ForYouSection() {
                   }}
                   transition="all 0.2s"
                 >
-                  Voir tout le catalogue
+                  Voir toute la carte
                 </Button>
               </HStack>
             </>

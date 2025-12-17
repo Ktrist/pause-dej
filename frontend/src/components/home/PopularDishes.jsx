@@ -170,7 +170,7 @@ export default function PopularDishes() {
             colorScheme="brand"
             px={8}
           >
-            Voir tout le catalogue
+            Voir toute la carte
           </Button>
         </VStack>
       </Container>

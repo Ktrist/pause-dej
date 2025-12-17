@@ -149,7 +149,7 @@ export default function SupportPage() {
                         <VStack align="start" spacing={3}>
                           <Heading size="sm">Comment passer commande ?</Heading>
                           <Text fontSize="sm" color="gray.600">
-                            Parcourez notre catalogue, ajoutez vos plats préférés au panier,
+                            Parcourez notre carte, ajoutez vos plats préférés au panier,
                             choisissez votre créneau de livraison et finalisez votre commande.
                           </Text>
                         </VStack>

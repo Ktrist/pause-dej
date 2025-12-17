@@ -129,7 +129,7 @@ export default function HowItWorksPage() {
               <StepCard
                 number="1"
                 icon={FiSearch}
-                title="Parcourez le catalogue"
+                title="Parcourez la carte"
                 description="Découvrez notre sélection de plats frais, préparés chaque jour par nos chefs."
                 details={[
                   'Filtres par catégorie et préférences alimentaires',
@@ -275,12 +275,12 @@ export default function HowItWorksPage() {
               <VStack spacing={6} textAlign="center" py={8}>
                 <Heading size="lg">Prêt à commander ?</Heading>
                 <Text fontSize="lg" color="gray.700" maxW="2xl">
-                  Découvrez notre catalogue de plats frais et passez votre première commande en
+                  Découvrez notre carte de plats frais et passez votre première commande en
                   quelques clics
                 </Text>
                 <HStack spacing={4}>
                   <Button as={RouterLink} to="/catalogue" colorScheme="brand" size="lg">
-                    Voir le catalogue
+                    Voir la carte
                   </Button>
                   <Button as={RouterLink} to="/contact" variant="outline" size="lg">
                     Nous contacter

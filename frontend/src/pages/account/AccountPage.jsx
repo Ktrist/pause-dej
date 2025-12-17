@@ -423,7 +423,7 @@ export default function AccountPage() {
                           <VStack align="start" spacing={1}>
                             <Text fontWeight="600">Vos préférences sont actives</Text>
                             <Text fontSize="sm">
-                              Le catalogue filtrera automatiquement les plats compatibles avec vos choix
+                              La carte filtrera automatiquement les plats compatibles avec vos choix
                             </Text>
                           </VStack>
                         </Alert>
@@ -463,7 +463,7 @@ export default function AccountPage() {
                           colorScheme="brand"
                           size="lg"
                         >
-                          Voir le catalogue
+                          Voir la carte
                         </Button>
                       </VStack>
                     </Box>
@@ -960,7 +960,7 @@ export default function AccountPage() {
                           colorScheme="brand"
                           size="lg"
                         >
-                          Voir le catalogue
+                          Voir la carte
                         </Button>
                       </VStack>
                     </Box>
@@ -1003,7 +1003,7 @@ export default function AccountPage() {
                           colorScheme="brand"
                           size="lg"
                         >
-                          Voir le catalogue
+                          Voir la carte
                         </Button>
                       </VStack>
                     </Box>

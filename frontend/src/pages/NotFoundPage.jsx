@@ -46,7 +46,7 @@ export default function NotFoundPage() {
               colorScheme="brand"
               size="lg"
             >
-              Voir le catalogue
+              Voir la carte
             </Button>
           </HStack>
 
