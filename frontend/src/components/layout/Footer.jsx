@@ -156,9 +156,13 @@ export default function Footer() {
           align="center"
           fontSize="sm"
           color="whiteAlpha.700"
+          spacing={{ base: 4, md: 0 }}
         >
           <Text fontWeight="medium">
             © {currentYear} {APP_NAME}. Tous droits réservés.
+          </Text>
+          <Text fontWeight="medium" display={{ base: 'block', md: 'block' }}>
+            Fait avec ❤️ à Annecy
           </Text>
           <HStack spacing={4}>
             <Link
