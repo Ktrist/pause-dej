@@ -319,7 +319,7 @@ export default function B2BPage() {
           <Card bg="brand.50" borderColor="brand.200" borderWidth={2}>
             <CardBody>
               <VStack spacing={6} textAlign="center">
-                <Heading size="lg">Prêt à améliorer l'expérience repas de votre équipe ?</Heading>
+                <Heading as="h4" size="lg">Prêt à améliorer l'expérience repas de votre équipe ?</Heading>
                 <Text fontSize="lg" color="gray.700">
                   Contactez-nous pour une étude personnalisée et un devis gratuit
                 </Text>
