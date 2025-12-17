@@ -50,6 +50,7 @@ export default function B2BReassuranceBanner() {
             color="text.secondary"
             fontWeight="medium"
             maxW="600px"
+            whiteSpace="nowrap"
           >
             Livraison offerte pour les commandes groupées (dès 3 plats) !
           </Text>
@@ -113,7 +114,7 @@ export default function B2BReassuranceBanner() {
             flexWrap="wrap"
             justify="center"
           >
-            <Text>✓ Livraison gratuite dès 3 plats • ✓ Facture mensuelle pour les entreprises • ✓ Tickets restaurant acceptés</Text>
+            <Text whiteSpace="nowrap">✓ Livraison gratuite dès 3 plats • ✓ Facture mensuelle pour les entreprises • ✓ Tickets restaurant acceptés</Text>
           </HStack>
         </VStack>
       </Container>
