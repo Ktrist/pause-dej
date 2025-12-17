@@ -281,9 +281,9 @@ export default function B2BPage() {
 
           {/* Packages */}
           {packages.length > 0 && (
-            <Box id="packages">
+            <Box>
               <VStack spacing={8}>
-                <Heading size="xl" textAlign="center">
+                <Heading size="xl" textAlign="center" id="packages">
                   Nos Packages Entreprise
                 </Heading>
                 <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6} w="full">
