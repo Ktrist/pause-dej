@@ -114,7 +114,7 @@ export default function B2BReassuranceBanner() {
             flexWrap="wrap"
             justify="center"
           >
-            <Text whiteSpace="nowrap">✓ Livraison gratuite dès 3 plats • ✓ Facture mensuelle pour les entreprises • ✓ Tickets restaurant acceptés</Text>
+            <Text whiteSpace="nowrap">✓ Livraison gratuite dès 3 plats ✓ Facture mensuelle pour les entreprises ✓ Tickets restaurant acceptés</Text>
           </HStack>
         </VStack>
       </Container>
