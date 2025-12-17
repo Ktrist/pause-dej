@@ -1,6 +1,5 @@
 import { Box, Container } from '@chakra-ui/react'
 import HeroSection from '../../components/home/HeroSection'
-import SearchFiltersBar from '../../components/home/SearchFiltersBar'
 import HowItWorks from '../../components/home/HowItWorks'
 import ForYouSection from '../../components/home/ForYouSection'
 import PopularDishes from '../../components/home/PopularDishes'
@@ -12,7 +11,6 @@ export default function HomePage() {
   return (
     <Box>
       <HeroSection />
-      <SearchFiltersBar />
       <HowItWorks />
       <ForYouSection />
       <PopularDishes />
