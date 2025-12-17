@@ -112,8 +112,7 @@ export default function B2BReassuranceBanner() {
             justify="center"
           >
             <Text>✓ Livraison gratuite dès 3 plats</Text>
-            <Text>✓ Facture mensuelle pour les entreprises</Text>
-            <Text>✓ Tickets restaurant acceptés</Text>
+            <Text>✓ Facture mensuelle pour les entreprises • Tickets restaurant acceptés</Text>
           </HStack>
         </VStack>
       </Container>
