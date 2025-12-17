@@ -159,14 +159,14 @@ export default function Header() {
                 <Box
                   px={3}
                   py={1.5}
-                  bg="brand.50"
+                  bg="primary.50"
                   borderRadius="full"
                   borderWidth="1px"
-                  borderColor="brand.200"
+                  borderColor="primary.200"
                 >
                   <Text
                     fontSize="sm"
-                    color="brand.700"
+                    color="primary.700"
                     fontWeight="600"
                     letterSpacing="tight"
                   >
