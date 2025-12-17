@@ -110,6 +110,7 @@ export default function B2BSection() {
                   colorScheme="brand"
                   rightIcon={<FiArrowRight />}
                   px={8}
+                  borderRadius="12px"
                   onClick={() => navigate('/b2b')}
                 >
                   Demander un devis
@@ -119,6 +120,7 @@ export default function B2BSection() {
                   variant="outline"
                   colorScheme="brand"
                   px={8}
+                  borderRadius="12px"
                   onClick={() => navigate('/b2b')}
                 >
                   En savoir plus
