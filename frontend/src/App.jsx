@@ -5,6 +5,7 @@ import { CartProvider } from './context/CartContext'
 import Header from './components/layout/Header'
 import Footer from './components/layout/Footer'
 import PWAInstallPrompt from './components/common/PWAInstallPrompt'
+import ScrollToTop from './components/common/ScrollToTop'
 import HomePage from './pages/home/HomePage'
 import CataloguePage from './pages/catalogue/CataloguePage'
 import CartPage from './pages/cart/CartPage'
@@ -50,6 +51,7 @@ import MonthlyInvoices from './pages/MonthlyInvoices'
 function App() {
   return (
     <Router>
+      <ScrollToTop />
       <AuthProvider>
         <CartProvider>
           <Routes>
