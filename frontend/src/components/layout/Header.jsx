@@ -73,15 +73,16 @@ export default function Header() {
           </RouterLink>
 
           {/* Desktop Navigation */}
-          <HStack spacing={8} display={{ base: 'none', md: 'flex' }}>
+          <HStack spacing={5} display={{ base: 'none', md: 'flex' }}>
             {navLinks.map((link) => (
               <RouterLink key={link.path} to={link.path}>
                 <Text
-                  fontSize="md"
+                  fontSize="sm"
                   fontWeight="500"
                   color="gray.700"
                   _hover={{ color: 'brand.500' }}
                   transition="color 0.2s"
+                  whiteSpace="nowrap"
                 >
                   {link.name}
                 </Text>
