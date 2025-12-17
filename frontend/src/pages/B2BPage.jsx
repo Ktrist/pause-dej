@@ -182,8 +182,24 @@ export default function B2BPage() {
               <Button colorScheme="brand" size="lg" onClick={onOpen}>
                 Demander un devis
               </Button>
-              <Button variant="outline" size="lg" as="a" href="#packages">
-                Voir nos packages
+              <Button
+                variant="outline"
+                size="lg"
+                as="a"
+                href="#packages"
+                borderColor="primary.500"
+                color="primary.500"
+                borderWidth="1px"
+                borderRadius="12px"
+                px={8}
+                py={7}
+                fontSize="md"
+                fontWeight="semibold"
+                _hover={{
+                  bg: 'primary.50'
+                }}
+              >
+                Voir nos formules
               </Button>
             </HStack>
           </VStack>
