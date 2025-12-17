@@ -91,7 +91,7 @@ export default function Footer() {
               _hover={{ color: 'brand.400', textDecoration: 'none' }}
               transition="color 0.2s"
             >
-              Offre B2B
+              Pause Dej' at work
             </Link>
           </VStack>
 
