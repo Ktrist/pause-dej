@@ -96,6 +96,8 @@ export default function B2BReassuranceBanner() {
               fontSize="md"
               fontWeight="semibold"
               borderRadius="12px"
+              borderWidth="1px"
+              borderColor="primary.500"
             >
               En savoir plus
             </Button>

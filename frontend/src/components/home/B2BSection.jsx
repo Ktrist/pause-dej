@@ -121,6 +121,7 @@ export default function B2BSection() {
                   colorScheme="brand"
                   px={8}
                   borderRadius="12px"
+                  borderWidth="1px"
                   onClick={() => navigate('/b2b')}
                 >
                   En savoir plus
