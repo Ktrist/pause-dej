@@ -43,7 +43,8 @@ export default function Header() {
     { name: 'Accueil', path: '/' },
     { name: 'Catalogue', path: '/catalogue' },
     { name: 'Comment ça marche', path: '/how-it-works' },
-    { name: 'Contact', path: '/contact' }
+    { name: 'Pause Dej\' At Work', path: '/b2b' },
+    { name: 'Contact', path: '/contact' },
   ]
 
   return (
