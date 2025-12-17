@@ -41,7 +41,7 @@ export default function B2BReassuranceBanner() {
             color="primary.500"
             lineHeight="1.2"
           >
-            La pause est meilleure ensemble.
+            La pause est meilleure ensemble
           </Heading>
 
           {/* Subtext */}
