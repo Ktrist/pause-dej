@@ -16,14 +16,14 @@ export function useB2BContracts(accountId) {
 
       // Subscribe to contract changes
       const subscription = supabase
-        .channel('b2b_contract_documents_changes')
+        .channel('business_contract_documents_changes')
         .on(
           'postgres_changes',
           {
             event: '*',
             schema: 'public',
-            table: 'b2b_contract_documents',
-            filter: `b2b_account_id=eq.${accountId}`
+            table: 'business_contract_documents',
+            filter: `business_id=eq.${accountId}`
           },
           () => {
             fetchContracts()
@@ -47,9 +47,9 @@ export function useB2BContracts(accountId) {
       setError(null)
 
       const { data, error: fetchError } = await supabase
-        .from('b2b_contract_documents')
+        .from('business_contract_documents')
         .select('*')
-        .eq('b2b_account_id', accountId)
+        .eq('business_id', accountId)
         .order('created_at', { ascending: false })
 
       if (fetchError) throw fetchError
@@ -102,13 +102,13 @@ export function useAdminB2BContracts(accountId = null) {
 
     // Subscribe to all contract changes
     const subscription = supabase
-      .channel('admin_b2b_contract_documents_changes')
+      .channel('admin_business_contract_documents_changes')
       .on(
         'postgres_changes',
         {
           event: '*',
           schema: 'public',
-          table: 'b2b_contract_documents'
+          table: 'business_contract_documents'
         },
         () => {
           fetchContracts()
@@ -127,12 +127,12 @@ export function useAdminB2BContracts(accountId = null) {
       setError(null)
 
       let query = supabase
-        .from('b2b_contract_documents')
+        .from('business_contract_documents')
         .select(`
           *,
-          account:b2b_account_id (
+          account:business_id (
             company_name,
-            user:user_id (
+            manager:manager_user_id (
               full_name,
               email
             )
@@ -146,7 +146,7 @@ export function useAdminB2BContracts(accountId = null) {
 
       // Filter by account if specified
       if (accountId) {
-        query = query.eq('b2b_account_id', accountId)
+        query = query.eq('business_id', accountId)
       }
 
       const { data, error: fetchError } = await query
@@ -165,7 +165,7 @@ export function useAdminB2BContracts(accountId = null) {
   const createContract = async (contractData) => {
     try {
       const { data, error: createError } = await supabase
-        .from('b2b_contract_documents')
+        .from('business_contract_documents')
         .insert([{
           ...contractData,
           uploaded_by: user?.id
@@ -186,7 +186,7 @@ export function useAdminB2BContracts(accountId = null) {
   const updateContract = async (contractId, updates) => {
     try {
       const { data, error: updateError } = await supabase
-        .from('b2b_contract_documents')
+        .from('business_contract_documents')
         .update(updates)
         .eq('id', contractId)
         .select()
@@ -205,7 +205,7 @@ export function useAdminB2BContracts(accountId = null) {
   const deleteContract = async (contractId) => {
     try {
       const { error: deleteError } = await supabase
-        .from('b2b_contract_documents')
+        .from('business_contract_documents')
         .delete()
         .eq('id', contractId)
 

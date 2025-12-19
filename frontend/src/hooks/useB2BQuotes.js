@@ -25,7 +25,7 @@ export function useB2BQuotes() {
       setError(null)
 
       const { data, error: fetchError } = await supabase
-        .from('b2b_quote_requests')
+        .from('business_quote_requests')
         .select('*')
         .order('created_at', { ascending: false })
 
@@ -43,7 +43,7 @@ export function useB2BQuotes() {
   const createQuote = async (quoteData) => {
     try {
       const { data, error: createError } = await supabase
-        .from('b2b_quote_requests')
+        .from('business_quote_requests')
         .insert([quoteData])
         .select()
         .single()
@@ -85,7 +85,7 @@ export function useB2BPackages() {
       setError(null)
 
       const { data, error: fetchError } = await supabase
-        .from('b2b_packages')
+        .from('business_pricing_tiers')
         .select('*')
         .eq('is_active', true)
         .order('price_per_person', { ascending: true })
@@ -134,9 +134,9 @@ export function useB2BAccount() {
       setError(null)
 
       const { data, error: fetchError } = await supabase
-        .from('b2b_accounts')
+        .from('business_accounts')
         .select('*')
-        .eq('user_id', user.id)
+        .eq('manager_user_id', user.id)
         .maybeSingle()
 
       if (fetchError) throw fetchError
@@ -183,7 +183,7 @@ export function useB2BTeam(accountId) {
       setError(null)
 
       const { data, error: fetchError } = await supabase
-        .from('b2b_team_members')
+        .from('business_employees')
         .select(`
           *,
           user:user_id (
@@ -191,7 +191,7 @@ export function useB2BTeam(accountId) {
             email
           )
         `)
-        .eq('b2b_account_id', accountId)
+        .eq('business_id', accountId)
         .order('created_at', { ascending: false })
 
       if (fetchError) throw fetchError
@@ -208,8 +208,8 @@ export function useB2BTeam(accountId) {
   const addTeamMember = async (memberData) => {
     try {
       const { data, error: addError } = await supabase
-        .from('b2b_team_members')
-        .insert([{ ...memberData, b2b_account_id: accountId }])
+        .from('business_employees')
+        .insert([{ ...memberData, business_id: accountId }])
         .select()
         .single()
 
@@ -226,7 +226,7 @@ export function useB2BTeam(accountId) {
   const updateTeamMember = async (memberId, updates) => {
     try {
       const { data, error: updateError } = await supabase
-        .from('b2b_team_members')
+        .from('business_employees')
         .update(updates)
         .eq('id', memberId)
         .select()
@@ -245,7 +245,7 @@ export function useB2BTeam(accountId) {
   const removeTeamMember = async (memberId) => {
     try {
       const { error: deleteError } = await supabase
-        .from('b2b_team_members')
+        .from('business_employees')
         .delete()
         .eq('id', memberId)
 

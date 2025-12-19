@@ -16,14 +16,14 @@ export function useB2BInvoices(accountId) {
 
       // Subscribe to invoice changes
       const subscription = supabase
-        .channel('b2b_invoices_changes')
+        .channel('business_invoices_changes')
         .on(
           'postgres_changes',
           {
             event: '*',
             schema: 'public',
-            table: 'b2b_invoices',
-            filter: `b2b_account_id=eq.${accountId}`
+            table: 'business_invoices',
+            filter: `business_id=eq.${accountId}`
           },
           () => {
             fetchInvoices()
@@ -47,9 +47,9 @@ export function useB2BInvoices(accountId) {
       setError(null)
 
       const { data, error: fetchError } = await supabase
-        .from('b2b_invoices')
+        .from('business_invoices')
         .select('*')
-        .eq('b2b_account_id', accountId)
+        .eq('business_id', accountId)
         .order('created_at', { ascending: false })
 
       if (fetchError) throw fetchError
@@ -95,13 +95,13 @@ export function useAdminB2BInvoices(accountId = null) {
 
     // Subscribe to all invoice changes
     const subscription = supabase
-      .channel('admin_b2b_invoices_changes')
+      .channel('admin_business_invoices_changes')
       .on(
         'postgres_changes',
         {
           event: '*',
           schema: 'public',
-          table: 'b2b_invoices'
+          table: 'business_invoices'
         },
         () => {
           fetchInvoices()
@@ -120,13 +120,13 @@ export function useAdminB2BInvoices(accountId = null) {
       setError(null)
 
       let query = supabase
-        .from('b2b_invoices')
+        .from('business_invoices')
         .select(`
           *,
-          account:b2b_account_id (
+          account:business_id (
             company_name,
             billing_email,
-            user:user_id (
+            manager:manager_user_id (
               full_name,
               email
             )
@@ -136,7 +136,7 @@ export function useAdminB2BInvoices(accountId = null) {
 
       // Filter by account if specified
       if (accountId) {
-        query = query.eq('b2b_account_id', accountId)
+        query = query.eq('business_id', accountId)
       }
 
       const { data, error: fetchError } = await query
@@ -154,18 +154,10 @@ export function useAdminB2BInvoices(accountId = null) {
 
   const createInvoice = async (invoiceData) => {
     try {
-      // Generate invoice number
-      const { data: invoiceNumber, error: rpcError } = await supabase
-        .rpc('generate_b2b_invoice_number')
-
-      if (rpcError) throw rpcError
-
+      // Invoice number will be generated automatically by database trigger
       const { data, error: createError } = await supabase
-        .from('b2b_invoices')
-        .insert([{
-          ...invoiceData,
-          invoice_number: invoiceNumber
-        }])
+        .from('business_invoices')
+        .insert([invoiceData])
         .select()
         .single()
 
@@ -182,7 +174,7 @@ export function useAdminB2BInvoices(accountId = null) {
   const updateInvoice = async (invoiceId, updates) => {
     try {
       const { data, error: updateError } = await supabase
-        .from('b2b_invoices')
+        .from('business_invoices')
         .update(updates)
         .eq('id', invoiceId)
         .select()
@@ -209,7 +201,7 @@ export function useAdminB2BInvoices(accountId = null) {
   const deleteInvoice = async (invoiceId) => {
     try {
       const { error: deleteError } = await supabase
-        .from('b2b_invoices')
+        .from('business_invoices')
         .delete()
         .eq('id', invoiceId)
 
@@ -250,7 +242,7 @@ export function useAdminB2BInvoices(accountId = null) {
 
       // Get account for discount rate and tax calculation
       const { data: account, error: accountError } = await supabase
-        .from('b2b_accounts')
+        .from('business_accounts')
         .select('discount_rate, payment_terms')
         .eq('id', accountId)
         .single()
@@ -274,7 +266,7 @@ export function useAdminB2BInvoices(accountId = null) {
 
       // Create invoice
       return await createInvoice({
-        b2b_account_id: accountId,
+        business_id: accountId,
         period_start: periodStart,
         period_end: periodEnd,
         subtotal,
