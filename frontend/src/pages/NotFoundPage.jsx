@@ -5,7 +5,8 @@ import {
   Heading,
   Text,
   Button,
-  HStack
+  HStack,
+  Link as ChakraLink
 } from '@chakra-ui/react'
 import { Link as RouterLink } from 'react-router-dom'
 import { FiHome, FiShoppingCart } from 'react-icons/fi'
@@ -52,7 +53,7 @@ export default function NotFoundPage() {
 
           <Box pt={8}>
             <Text fontSize="sm" color="gray.500" textAlign="center">
-              Besoin d'aide ? <Link as={RouterLink} to="/" color="brand.500">Contactez-nous</Link>
+              Besoin d'aide ? <ChakraLink as={RouterLink} to="/support" color="brand.500">Contactez-nous</ChakraLink>
             </Text>
           </Box>
         </VStack>
