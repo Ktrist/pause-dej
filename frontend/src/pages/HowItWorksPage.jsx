@@ -96,26 +96,49 @@ export default function HowItWorksPage() {
   const bgColor = useColorModeValue('gray.50', 'gray.900')
 
   return (
-    <Box bg={bgColor} minH="calc(100vh - 64px)">
-      {/* Hero Section */}
-      <Box bg="primary.500" color="#FFFFFF" py={16}>
-        <Container maxW="container.xl">
+    <Box bg={bgColor} minH="100vh" py={16}>
+      <Container maxW="container.xl">
+        <VStack spacing={16} align="stretch">
+          {/* Hero Section */}
           <VStack spacing={6} textAlign="center" maxW="3xl" mx="auto">
-            <Badge colorScheme="whiteAlpha" fontSize="md" px={3} py={1} color="#FFFFFF">
+            <Badge colorScheme="brand" fontSize="md" px={3} py={1}>
               Simple et Rapide
             </Badge>
-            <Heading size="2xl" color="#FFFFFF">Comment ça marche ?</Heading>
-            <Text fontSize="xl" opacity={0.9}>
+            <Heading size="2xl">
+              Comment ça marche ?
+            </Heading>
+            <Text fontSize="xl" color="gray.600">
               Commandez des plats frais et savoureux en 4 étapes simples. Livraison rapide
-              à Annecy et ses environs.
+              à Annecy et ses environs. Une expérience culinaire pensée pour vous simplifier
+              la vie au quotidien.
             </Text>
+            <HStack spacing={4}>
+              <Button
+                as={RouterLink}
+                to="/catalogue"
+                colorScheme="brand"
+                size="lg"
+                borderRadius="12px"
+              >
+                Voir la carte
+              </Button>
+              <Button
+                as={RouterLink}
+                to="/contact"
+                variant="outline"
+                size="lg"
+                borderColor="primary.500"
+                color="primary.500"
+                borderWidth="1px"
+                borderRadius="12px"
+                _hover={{
+                  bg: 'primary.50'
+                }}
+              >
+                Nous contacter
+              </Button>
+            </HStack>
           </VStack>
-        </Container>
-      </Box>
-
-      {/* Steps Section */}
-      <Container maxW="container.xl" py={16}>
-        <VStack spacing={16} align="stretch">
           {/* Main Steps */}
           <VStack spacing={8}>
             <VStack spacing={4} textAlign="center" maxW="2xl" mx="auto">
@@ -272,20 +295,19 @@ export default function HowItWorksPage() {
           {/* CTA Section */}
           <Card bg="brand.50" borderColor="brand.200" borderWidth={2}>
             <CardBody>
-              <VStack spacing={6} textAlign="center" py={8}>
-                <Heading size="lg">Prêt à commander ?</Heading>
-                <Text fontSize="lg" color="gray.700" maxW="2xl">
-                  Découvrez notre carte de plats frais et passez votre première commande en
-                  quelques clics
+              <VStack spacing={6} textAlign="center">
+                <Heading as="h3" size="md">Prêt à commander ?</Heading>
+                <Text fontSize="lg" color="gray.700">
+                  Découvrez notre carte de plats frais et passez votre première commande
                 </Text>
-                <HStack spacing={4}>
-                  <Button as={RouterLink} to="/catalogue" colorScheme="brand" size="lg">
-                    Voir la carte
-                  </Button>
-                  <Button as={RouterLink} to="/contact" variant="outline" size="lg">
-                    Nous contacter
-                  </Button>
-                </HStack>
+                <Button
+                  as={RouterLink}
+                  to="/catalogue"
+                  colorScheme="brand"
+                  size="lg"
+                >
+                  Voir la carte
+                </Button>
               </VStack>
             </CardBody>
           </Card>
