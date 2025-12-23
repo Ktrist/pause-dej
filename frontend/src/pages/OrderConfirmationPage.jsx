@@ -174,9 +174,17 @@ export default function OrderConfirmationPage() {
                   </Badge>
                 </HStack>
                 <Text color="gray.700">{formattedDate}</Text>
-                <Text fontSize="sm" color="gray.600" mt={2}>
-                  📦 Livraison entre 7h et 9h le matin
-                </Text>
+                <VStack align="start" spacing={1} mt={2}>
+                  <Text fontSize="sm" color="gray.600">
+                    📦 Livraison entre 7h et 9h le matin
+                  </Text>
+                  <HStack spacing={1}>
+                    <Badge colorScheme="purple" fontSize="2xs">Bientôt</Badge>
+                    <Text fontSize="2xs" color="purple.700">
+                      Créneaux de 30 min (7h-13h30)
+                    </Text>
+                  </HStack>
+                </VStack>
               </VStack>
             </Box>
           </SimpleGrid>

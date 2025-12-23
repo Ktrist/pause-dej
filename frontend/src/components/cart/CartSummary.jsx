@@ -257,9 +257,17 @@ export default function CartSummary({ subtotal, onCheckout, appliedPromo, setApp
           Commander - {total.toFixed(2)}€
         </Button>
 
-        <Text fontSize="xs" color="gray.500" textAlign="center">
-          Livraison entre 7h et 9h le matin 📦
-        </Text>
+        <VStack spacing={1}>
+          <Text fontSize="xs" color="gray.500" textAlign="center">
+            Livraison entre 7h et 9h le matin 📦
+          </Text>
+          <HStack spacing={1}>
+            <Badge colorScheme="purple" fontSize="2xs">Bientôt</Badge>
+            <Text fontSize="2xs" color="purple.700">
+              Créneaux de 30 min (7h-13h30)
+            </Text>
+          </HStack>
+        </VStack>
       </VStack>
     </Box>
   )

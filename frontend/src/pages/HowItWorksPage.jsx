@@ -28,12 +28,12 @@ import {
   FiRefreshCw
 } from 'react-icons/fi'
 
-const StepCard = ({ number, icon, title, description, details }) => {
+const StepCard = ({ number, icon, title, description, details, badge }) => {
   const bgColor = useColorModeValue('white', 'gray.800')
   const numberBg = useColorModeValue('brand.50', 'brand.900')
 
   return (
-    <Card bg={bgColor} h="full">
+    <Card bg={bgColor} h="full" position="relative">
       <CardBody>
         <VStack align="start" spacing={4}>
           <HStack spacing={4}>
@@ -64,6 +64,26 @@ const StepCard = ({ number, icon, title, description, details }) => {
                 </ListItem>
               ))}
             </List>
+          )}
+          {badge && (
+            <Box
+              bg="purple.50"
+              p={3}
+              rounded="lg"
+              border="1px solid"
+              borderColor="purple.200"
+              w="full"
+              mt={2}
+            >
+              <HStack spacing={2} mb={1}>
+                <Badge colorScheme="purple" fontSize="xs">
+                  {badge.text}
+                </Badge>
+              </HStack>
+              <Text fontSize="xs" color="purple.800" fontWeight="medium">
+                {badge.info}
+              </Text>
+            </Box>
           )}
         </VStack>
       </CardBody>
@@ -181,6 +201,7 @@ export default function HowItWorksPage() {
                   'Créneau de livraison entre 7h et 9h',
                   'Commandez avant minuit pour le lendemain'
                 ]}
+                badge={{ text: 'Bientôt', info: 'Créneaux de 30 min de 7h à 13h30' }}
               />
               <StepCard
                 number="4"

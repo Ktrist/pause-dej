@@ -101,9 +101,17 @@ export default function OrderSummary({ address, timeSlot, cart, total, appliedPr
                   year: 'numeric'
                 })}
               </Text>
-              <Text fontSize="sm" color="gray.600">
-                Livraison entre 7h et 9h le matin
-              </Text>
+              <VStack align="start" spacing={1}>
+                <Text fontSize="sm" color="gray.600">
+                  Livraison entre 7h et 9h le matin
+                </Text>
+                <HStack spacing={1}>
+                  <Badge colorScheme="purple" fontSize="2xs">Bientôt</Badge>
+                  <Text fontSize="2xs" color="purple.700">
+                    Créneaux de 30 min (7h-13h30)
+                  </Text>
+                </HStack>
+              </VStack>
             </VStack>
           ) : (
             <Text color="gray.500" pl={10}>Aucun créneau sélectionné</Text>

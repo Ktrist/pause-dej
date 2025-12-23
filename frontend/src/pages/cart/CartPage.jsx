@@ -8,7 +8,8 @@ import {
   Button,
   Text,
   SimpleGrid,
-  useToast
+  useToast,
+  Badge
 } from '@chakra-ui/react'
 import { Link as RouterLink, useNavigate } from 'react-router-dom'
 import { FiShoppingCart, FiArrowLeft } from 'react-icons/fi'
@@ -135,15 +136,21 @@ export default function CartPage() {
           {/* Trust Indicators */}
           <Box bg="blue.50" p={6} borderRadius="lg" mt={4}>
             <SimpleGrid columns={{ base: 1, md: 3 }} spacing={4}>
-              <HStack spacing={3}>
+              <HStack spacing={3} align="start">
                 <Text fontSize="2xl">⚡</Text>
-                <VStack align="start" spacing={0}>
+                <VStack align="start" spacing={1}>
                   <Text fontWeight="600" fontSize="sm">
                     Livraison rapide
                   </Text>
                   <Text fontSize="xs" color="gray.600">
                     Entre 7h et 9h le matin
                   </Text>
+                  <HStack spacing={1} mt={1}>
+                    <Badge colorScheme="purple" fontSize="2xs">Bientôt</Badge>
+                    <Text fontSize="2xs" color="purple.700">
+                      Créneaux 30 min (7h-13h30)
+                    </Text>
+                  </HStack>
                 </VStack>
               </HStack>
               <HStack spacing={3}>
