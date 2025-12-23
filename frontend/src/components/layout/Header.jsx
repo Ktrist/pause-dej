@@ -68,13 +68,13 @@ export default function Header() {
       zIndex={1000}
     >
       <Container maxW="container.xl">
-        <Flex h={16} alignItems="center" justifyContent="space-between">
+        <Flex h={{ base: '70px', md: '90px' }} alignItems="center" justifyContent="space-between">
           {/* Logo */}
           <RouterLink to="/">
             <Image
               src={logo}
               alt={APP_NAME}
-              h={{ base: '50px', md: '65px' }}
+              h={{ base: '60px', md: '80px' }}
               objectFit="contain"
               _hover={{ opacity: 0.8 }}
               transition="opacity 0.2s"
