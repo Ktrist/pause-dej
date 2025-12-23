@@ -95,7 +95,7 @@ export default function TimeSlotSelector({ selectedTimeSlot, onSelectTimeSlot })
           </Text>
         </Box>
 
-        <Flex gap={4} direction={{ base: 'column', lg: 'row' }} align={{ base: 'stretch', lg: 'start' }}>
+        <Flex gap={4} direction={{ base: 'column', lg: 'row' }} align={{ base: 'stretch', lg: 'center' }}>
           {/* Day Tabs */}
           <Box flex="1">
             <Tabs
