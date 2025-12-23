@@ -149,8 +149,8 @@ export default function CataloguePage() {
             </Text>
           </VStack>
 
-          {/* B2B Mode Banner */}
-          {isB2BMode && (
+          {/* B2B Mode Banner - Commented out: no preferential pricing, will use promo codes instead */}
+          {/* {isB2BMode && (
             <Alert
               status="info"
               variant="left-accent"
@@ -168,7 +168,7 @@ export default function CataloguePage() {
                 </AlertDescription>
               </Box>
             </Alert>
-          )}
+          )} */}
 
           {/* Personalized Recommendations - M9.3 */}
           {user && hasPersonalizedSuggestions && suggestions.length > 0 && (
