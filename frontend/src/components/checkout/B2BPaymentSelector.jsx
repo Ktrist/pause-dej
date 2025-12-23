@@ -13,9 +13,15 @@ import {
   AlertIcon,
   AlertTitle,
   AlertDescription,
-  Progress
+  Progress,
+  Button
 } from '@chakra-ui/react'
 import { FiCreditCard, FiBriefcase, FiAlertCircle } from 'react-icons/fi'
+import { Elements } from '@stripe/react-stripe-js'
+import PaymentForm from '../payment/PaymentForm'
+import getStripe from '../../stripeClient'
+
+const stripePromise = getStripe()
 
 /**
  * B2B Payment Selector Component
@@ -25,14 +31,23 @@ export default function B2BPaymentSelector({
   employee,
   budget,
   business,
-  orderTotal,
-  paymentMethod,
-  onPaymentMethodChange
+  total,
+  orderTotal, // For backward compatibility
+  selectedMethod,
+  paymentMethod, // For backward compatibility
+  onSelectMethod,
+  onPaymentMethodChange, // For backward compatibility
+  onPlaceOrder,
+  disabled
 }) {
+  // Support both old and new prop names
+  const amount = total || orderTotal
+  const method = selectedMethod || paymentMethod
+  const onMethodChange = onSelectMethod || onPaymentMethodChange
   if (!employee || !budget) return null
 
   const employeeBudget = budget.employee_budget
-  const canUseBudget = employeeBudget && employeeBudget.remaining >= orderTotal
+  const canUseBudget = employeeBudget && employeeBudget.remaining >= amount
   const budgetWarningLevel = getBudgetWarningLevel(employeeBudget)
 
   function getBudgetWarningLevel(employeeBudget) {
@@ -49,15 +64,15 @@ export default function B2BPaymentSelector({
         Mode de paiement
       </Text>
 
-      <RadioGroup value={paymentMethod} onChange={onPaymentMethodChange}>
+      <RadioGroup value={method} onChange={onMethodChange}>
         <VStack spacing={4} align="stretch">
           {/* Budget Payment Option */}
           <Card
             variant="outline"
             borderWidth={2}
-            borderColor={paymentMethod === 'budget' ? 'brand.500' : 'gray.200'}
+            borderColor={method === 'budget' ? 'brand.500' : 'gray.200'}
             cursor="pointer"
-            onClick={() => canUseBudget && onPaymentMethodChange('budget')}
+            onClick={() => canUseBudget && onMethodChange('budget')}
             opacity={canUseBudget ? 1 : 0.6}
             _hover={canUseBudget ? { borderColor: 'brand.400', shadow: 'md' } : {}}
           >
@@ -124,14 +139,14 @@ export default function B2BPaymentSelector({
                     )}
 
                     {/* Order total check */}
-                    {orderTotal && canUseBudget && (
+                    {amount && canUseBudget && (
                       <Text fontSize="xs" color="green.600" mt={1}>
-                        ✓ Cette commande ({orderTotal.toFixed(2)}€) sera déduite de votre budget
+                        ✓ Cette commande ({amount.toFixed(2)}€) sera déduite de votre budget
                       </Text>
                     )}
-                    {orderTotal && !canUseBudget && (
+                    {amount && !canUseBudget && (
                       <Text fontSize="xs" color="red.600" mt={1}>
-                        ✗ Budget insuffisant pour cette commande ({orderTotal.toFixed(2)}€)
+                        ✗ Budget insuffisant pour cette commande ({amount.toFixed(2)}€)
                       </Text>
                     )}
                   </VStack>
@@ -144,9 +159,9 @@ export default function B2BPaymentSelector({
           <Card
             variant="outline"
             borderWidth={2}
-            borderColor={paymentMethod === 'card' ? 'brand.500' : 'gray.200'}
+            borderColor={method === 'card' ? 'brand.500' : 'gray.200'}
             cursor="pointer"
-            onClick={() => onPaymentMethodChange('card')}
+            onClick={() => onMethodChange('card')}
             _hover={{ borderColor: 'brand.400', shadow: 'md' }}
           >
             <CardBody>
@@ -166,7 +181,7 @@ export default function B2BPaymentSelector({
       </RadioGroup>
 
       {/* Budget Warning Alerts */}
-      {budgetWarningLevel === 'critical' && paymentMethod === 'budget' && (
+      {budgetWarningLevel === 'critical' && method === 'budget' && (
         <Alert status="error" mt={4} borderRadius="md">
           <AlertIcon />
           <Box>
@@ -178,7 +193,7 @@ export default function B2BPaymentSelector({
         </Alert>
       )}
 
-      {budgetWarningLevel === 'warning' && paymentMethod === 'budget' && (
+      {budgetWarningLevel === 'warning' && method === 'budget' && (
         <Alert status="warning" mt={4} borderRadius="md">
           <AlertIcon />
           <Box>
@@ -213,6 +228,38 @@ export default function B2BPaymentSelector({
             </AlertDescription>
           </Box>
         </Alert>
+      )}
+
+      {/* Payment Action - Only show if onPlaceOrder is provided */}
+      {onPlaceOrder && (
+        <Box mt={6}>
+          {method === 'budget' ? (
+            // Budget Payment - Direct order placement
+            <Button
+              colorScheme="brand"
+              size="lg"
+              width="full"
+              onClick={onPlaceOrder}
+              isDisabled={disabled || !canUseBudget || business?.status !== 'active'}
+              isLoading={disabled}
+              loadingText="Commande en cours..."
+            >
+              Valider la commande
+            </Button>
+          ) : method === 'card' ? (
+            // Card Payment - Stripe form
+            <Elements stripe={stripePromise}>
+              <PaymentForm
+                amount={amount}
+                onSuccess={onPlaceOrder}
+                onError={(error) => {
+                  console.error('Payment error:', error)
+                }}
+                disabled={disabled}
+              />
+            </Elements>
+          ) : null}
+        </Box>
       )}
     </Box>
   )

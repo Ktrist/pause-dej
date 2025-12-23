@@ -1,12 +1,14 @@
 import { Box, Image, VStack, HStack, Text, Button, Badge, Icon, IconButton, useToast, Wrap, WrapItem } from '@chakra-ui/react'
 import { FiShoppingCart, FiEye, FiHeart, FiStar } from 'react-icons/fi'
 import { useCart } from '../../context/CartContext'
+import { useCartDrawer } from '../../context/CartDrawerContext'
 import { useFavorites } from '../../hooks/useFavorites'
 import { useAuth } from '../../context/AuthContext'
 import { getPreferenceIcon, getPreferenceLabel } from '../../hooks/useProfile'
 
 export default function DishCard({ dish, onViewDetails }) {
   const { addToCart } = useCart()
+  const { openCartDrawer } = useCartDrawer()
   const { user } = useAuth()
   const { isFavorite, toggleFavorite } = useFavorites()
   const toast = useToast()
@@ -14,14 +16,8 @@ export default function DishCard({ dish, onViewDetails }) {
   const handleAddToCart = (e) => {
     e.stopPropagation()
     addToCart(dish)
-    toast({
-      title: 'Ajouté au panier',
-      description: `${dish.name} a été ajouté à votre panier`,
-      status: 'success',
-      duration: 2000,
-      isClosable: true,
-      position: 'bottom-right'
-    })
+    // Open cart drawer after adding item
+    openCartDrawer()
   }
 
   const handleToggleFavorite = async (e) => {
@@ -227,7 +223,7 @@ export default function DishCard({ dish, onViewDetails }) {
         <HStack justify="space-between" align="center" pt={2} mt="auto">
           <Text
             fontWeight="bold"
-            fontSize="2xl"
+            fontSize="lg"
             color="primary.500"
           >
             {dish.price.toFixed(2)}€
@@ -236,7 +232,7 @@ export default function DishCard({ dish, onViewDetails }) {
             leftIcon={<FiShoppingCart />}
             bg="brand.500"
             color="white"
-            size="sm"
+            size="md"
             onClick={handleAddToCart}
             isDisabled={dish.stock === 0}
             _hover={{
@@ -247,7 +243,7 @@ export default function DishCard({ dish, onViewDetails }) {
               bg: 'brand.700',
             }}
             borderRadius="10px"
-            px={4}
+            px={5}
             fontWeight="semibold"
           >
             {dish.stock === 0 ? 'Rupture' : 'Ajouter'}

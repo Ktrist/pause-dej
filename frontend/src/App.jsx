@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { Box } from '@chakra-ui/react'
 import { AuthProvider } from './context/AuthContext'
 import { CartProvider } from './context/CartContext'
+import { CartDrawerProvider } from './context/CartDrawerContext'
 import Header from './components/layout/Header'
 import Footer from './components/layout/Footer'
 import PWAInstallPrompt from './components/common/PWAInstallPrompt'
@@ -35,6 +36,7 @@ import AdminReviews from './pages/admin/AdminReviews'
 import AdminNewsletter from './pages/admin/AdminNewsletter'
 import AdminDelivery from './pages/admin/AdminDelivery'
 import AdminAnalytics from './pages/admin/AdminAnalytics'
+import AdminB2B from './pages/admin/AdminB2B'
 import AdminB2BQuotes from './pages/admin/AdminB2BQuotes'
 import AdminB2BAccounts from './pages/admin/AdminB2BAccounts'
 import AdminB2BAnalytics from './pages/admin/AdminB2BAnalytics'
@@ -48,13 +50,22 @@ import BudgetManagement from './pages/BudgetManagement'
 import B2BAnalytics from './pages/B2BAnalytics'
 import MonthlyInvoices from './pages/MonthlyInvoices'
 
+// Legal pages
+import MentionsLegalesPage from './pages/legal/MentionsLegalesPage'
+import CGVPage from './pages/legal/CGVPage'
+import PrivacyPolicyPage from './pages/legal/PrivacyPolicyPage'
+import CookiesPage from './pages/legal/CookiesPage'
+
 function App() {
+  console.log('🟢 App loaded - Routes configured')
+
   return (
     <Router>
       <ScrollToTop />
       <AuthProvider>
         <CartProvider>
-          <Routes>
+          <CartDrawerProvider>
+            <Routes>
             {/* Admin Routes - No Header/Footer */}
             <Route path="/admin" element={<AdminLayout />}>
               <Route index element={<AdminDashboard />} />
@@ -67,6 +78,7 @@ function App() {
               <Route path="newsletter" element={<AdminNewsletter />} />
               <Route path="delivery" element={<AdminDelivery />} />
               <Route path="analytics" element={<AdminAnalytics />} />
+              <Route path="b2b" element={<AdminB2B />} />
               <Route path="b2b/quotes" element={<AdminB2BQuotes />} />
               <Route path="b2b/accounts" element={<AdminB2BAccounts />} />
               <Route path="b2b/analytics" element={<AdminB2BAnalytics />} />
@@ -109,6 +121,12 @@ function App() {
                       <Route path="/b2b/invoices" element={<MonthlyInvoices />} />
                       <Route path="/b2b/bulk-order" element={<BulkOrderPage />} />
 
+                      {/* Legal Routes */}
+                      <Route path="/legal/mentions-legales" element={<MentionsLegalesPage />} />
+                      <Route path="/legal/cgv" element={<CGVPage />} />
+                      <Route path="/legal/confidentialite" element={<PrivacyPolicyPage />} />
+                      <Route path="/legal/cookies" element={<CookiesPage />} />
+
                       <Route path="*" element={<NotFoundPage />} />
                     </Routes>
                   </Box>
@@ -118,6 +136,7 @@ function App() {
             />
           </Routes>
           <PWAInstallPrompt />
+          </CartDrawerProvider>
         </CartProvider>
       </AuthProvider>
     </Router>

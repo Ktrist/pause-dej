@@ -84,6 +84,8 @@ export function useB2BPackages() {
       setLoading(true)
       setError(null)
 
+      console.log('🔍 Fetching packages for public B2B page...')
+
       const { data, error: fetchError } = await supabase
         .from('business_pricing_tiers')
         .select('*')
@@ -92,9 +94,10 @@ export function useB2BPackages() {
 
       if (fetchError) throw fetchError
 
+      console.log('✅ Public B2B packages fetched:', data?.length, data)
       setPackages(data || [])
     } catch (err) {
-      console.error('Error fetching B2B packages:', err)
+      console.error('❌ Error fetching B2B packages:', err)
       setError(err.message)
     } finally {
       setLoading(false)

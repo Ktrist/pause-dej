@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import {
   Box,
   Container,
@@ -15,9 +15,12 @@ import {
   useDisclosure,
   Alert,
   AlertIcon,
-  AlertTitle
+  AlertTitle,
+  Badge,
+  AlertDescription
 } from '@chakra-ui/react'
-import { FiSearch, FiFilter, FiStar } from 'react-icons/fi'
+import { FiSearch, FiFilter, FiStar, FiBriefcase } from 'react-icons/fi'
+import { useSearchParams } from 'react-router-dom'
 import { useDishes, useCategories } from '../../hooks/useDishes'
 import { useProfile, DIETARY_PREFERENCES, getPreferenceIcon } from '../../hooks/useProfile'
 import { usePersonalizedSuggestions } from '../../hooks/usePersonalizedSuggestions'
@@ -27,6 +30,10 @@ import DishDetailModal from '../../components/catalogue/DishDetailModal'
 import LoadingSpinner from '../../components/common/LoadingSpinner'
 
 export default function CataloguePage() {
+  const [searchParams] = useSearchParams()
+  const isB2BMode = searchParams.get('b2b') === 'true'
+  const packageName = searchParams.get('package')
+
   const [selectedCategory, setSelectedCategory] = useState('all')
   const [searchQuery, setSearchQuery] = useState('')
   const [sortBy, setSortBy] = useState('popular')
@@ -34,6 +41,8 @@ export default function CataloguePage() {
   const [dietaryFilter, setDietaryFilter] = useState(null) // Filter by specific dietary preference
   const [filterByMyPreferences, setFilterByMyPreferences] = useState(false) // Use user's saved preferences
   const { isOpen, onOpen, onClose } = useDisclosure()
+
+  console.log('📦 Catalogue - B2B Mode:', isB2BMode, 'Package:', packageName)
 
   // Fetch data from Supabase
   const { user } = useAuth()
@@ -130,7 +139,7 @@ export default function CataloguePage() {
     <Box bg="gray.50" minH="calc(100vh - 64px)" py={8}>
       <Container maxW="container.xl">
         <VStack spacing={8} align="stretch">
-          {/* Header */}
+{/* Header */}
           <VStack spacing={4} align="start">
             <Heading as="h1" size="xl" color="gray.800">
               Notre Carte
@@ -139,6 +148,27 @@ export default function CataloguePage() {
               Découvrez nos {allDishes.length} plats frais et savoureux
             </Text>
           </VStack>
+
+          {/* B2B Mode Banner */}
+          {isB2BMode && (
+            <Alert
+              status="info"
+              variant="left-accent"
+              borderRadius="lg"
+              bg="blue.50"
+              borderColor="blue.200"
+              borderWidth={1}
+            >
+              <AlertIcon as={FiBriefcase} />
+              <Box flex={1}>
+                <AlertTitle mb={1}>Mode Entreprise</AlertTitle>
+                <AlertDescription>
+                  Formule sélectionnée : <Badge colorScheme="brand" ml={1}>{packageName}</Badge>
+                  {' '}- Tarifs entreprise appliqués
+                </AlertDescription>
+              </Box>
+            </Alert>
+          )}
 
           {/* Personalized Recommendations - M9.3 */}
           {user && hasPersonalizedSuggestions && suggestions.length > 0 && (
@@ -173,6 +203,7 @@ export default function CataloguePage() {
           {/* Search and Filters */}
           <VStack spacing={4} align="stretch">
             {/* Search Bar */}
+            {/* COMMENTED OUT - Kept for potential future use
             <InputGroup size="lg">
               <InputLeftElement pointerEvents="none">
                 <FiSearch color="gray" />
@@ -185,6 +216,7 @@ export default function CataloguePage() {
                 _focus={{ borderColor: 'brand.500' }}
               />
             </InputGroup>
+            */}
 
             {/* Category Filters */}
             <HStack spacing={2} overflowX="auto" pb={2}>
@@ -204,6 +236,7 @@ export default function CataloguePage() {
             </HStack>
 
             {/* Dietary Filters - M9.2 */}
+            {/* COMMENTED OUT - Kept for potential future use
             <VStack align="stretch" spacing={2}>
               <HStack spacing={2}>
                 <FiFilter />
@@ -213,7 +246,7 @@ export default function CataloguePage() {
               </HStack>
               <HStack spacing={2} overflowX="auto" pb={2}>
                 {/* My Preferences Button */}
-                {dietaryPreferences.length > 0 && (
+                {/* {dietaryPreferences.length > 0 && (
                   <Button
                     size="sm"
                     variant={filterByMyPreferences ? 'solid' : 'outline'}
@@ -227,10 +260,10 @@ export default function CataloguePage() {
                   >
                     Mes préférences ({dietaryPreferences.length})
                   </Button>
-                )}
+                )} */}
 
                 {/* Individual Dietary Filters */}
-                {DIETARY_PREFERENCES.map((pref) => (
+                {/* {DIETARY_PREFERENCES.map((pref) => (
                   <Button
                     key={pref.value}
                     size="sm"
@@ -249,9 +282,9 @@ export default function CataloguePage() {
                   >
                     {pref.label}
                   </Button>
-                ))}
-              </HStack>
-            </VStack>
+                ))} */}
+              {/* </HStack>
+            </VStack> */}
 
             {/* Sort */}
             <HStack justify="space-between" align="center">

@@ -12,7 +12,7 @@ import {
   Heading
 } from '@chakra-ui/react'
 import { Link as RouterLink } from 'react-router-dom'
-import { FiMail, FiPhone, FiMapPin, FiFacebook, FiInstagram, FiTwitter } from 'react-icons/fi'
+import { FiMail, FiPhone, FiMapPin, FiFacebook, FiInstagram } from 'react-icons/fi'
 import { APP_NAME, CONTACT_EMAIL } from '../../config'
 
 export default function Footer() {
@@ -37,9 +37,6 @@ export default function Footer() {
               </Link>
               <Link href="#" _hover={{ color: 'brand.400' }} transition="color 0.2s">
                 <Icon as={FiInstagram} boxSize={5} />
-              </Link>
-              <Link href="#" _hover={{ color: 'brand.400' }} transition="color 0.2s">
-                <Icon as={FiTwitter} boxSize={5} />
               </Link>
             </HStack>
           </VStack>
@@ -100,19 +97,50 @@ export default function Footer() {
             <Heading size="sm" mb={2} color="white" fontWeight="bold">
               Informations légales
             </Heading>
-            {['Mentions légales', 'CGV', 'Politique de confidentialité', 'Cookies'].map((item) => (
-              <Link
-                key={item}
-                href="#"
-                fontSize="sm"
-                color="whiteAlpha.800"
-                fontWeight="medium"
-                _hover={{ color: 'brand.400', textDecoration: 'none' }}
-                transition="color 0.2s"
-              >
-                {item}
-              </Link>
-            ))}
+            <Link
+              as={RouterLink}
+              to="/legal/mentions-legales"
+              fontSize="sm"
+              color="whiteAlpha.800"
+              fontWeight="medium"
+              _hover={{ color: 'brand.400', textDecoration: 'none' }}
+              transition="color 0.2s"
+            >
+              Mentions légales
+            </Link>
+            <Link
+              as={RouterLink}
+              to="/legal/cgv"
+              fontSize="sm"
+              color="whiteAlpha.800"
+              fontWeight="medium"
+              _hover={{ color: 'brand.400', textDecoration: 'none' }}
+              transition="color 0.2s"
+            >
+              CGV
+            </Link>
+            <Link
+              as={RouterLink}
+              to="/legal/confidentialite"
+              fontSize="sm"
+              color="whiteAlpha.800"
+              fontWeight="medium"
+              _hover={{ color: 'brand.400', textDecoration: 'none' }}
+              transition="color 0.2s"
+            >
+              Politique de confidentialité
+            </Link>
+            <Link
+              as={RouterLink}
+              to="/legal/cookies"
+              fontSize="sm"
+              color="whiteAlpha.800"
+              fontWeight="medium"
+              _hover={{ color: 'brand.400', textDecoration: 'none' }}
+              transition="color 0.2s"
+            >
+              Cookies
+            </Link>
           </VStack>
 
           {/* Contact */}

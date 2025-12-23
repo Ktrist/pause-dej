@@ -21,7 +21,8 @@ import {
   Alert,
   AlertIcon,
   AlertTitle,
-  AlertDescription
+  AlertDescription,
+  useDisclosure
 } from '@chakra-ui/react'
 import { Elements } from '@stripe/react-stripe-js'
 import { useNavigate, useLocation } from 'react-router-dom'
@@ -30,12 +31,16 @@ import { useAuth } from '../context/AuthContext'
 import { useCreateOrder } from '../hooks/useOrders'
 import { calculateDiscount } from '../hooks/usePromoCodes'
 import { useEmail } from '../hooks/useEmail'
+import { useB2BEmployee } from '../hooks/useB2BEmployee'
 import { validateDeliveryAddress, getDeliveryFee, formatDeliveryZones } from '../utils/deliveryZones'
 import AddressSelector from '../components/checkout/AddressSelector'
 import TimeSlotSelector from '../components/checkout/TimeSlotSelector'
 import OrderSummary from '../components/checkout/OrderSummary'
 import PaymentForm from '../components/payment/PaymentForm'
+import B2BPaymentSelector from '../components/checkout/B2BPaymentSelector'
 import LoadingSpinner from '../components/common/LoadingSpinner'
+import ComplementaryProductsModal from '../components/cart/ComplementaryProductsModal'
+import ReferralCodeInput from '../components/referral/ReferralCodeInput'
 import getStripe from '../stripeClient'
 
 const steps = [
@@ -55,6 +60,7 @@ function CheckoutPageContent() {
   const toast = useToast()
   const { createOrder, loading: creatingOrder } = useCreateOrder()
   const { sendOrderConfirmation } = useEmail()
+  const { employee, business, budget, loading: employeeLoading } = useB2BEmployee()
 
   const { activeStep, setActiveStep } = useSteps({
     index: 0,
@@ -65,6 +71,18 @@ function CheckoutPageContent() {
   const [selectedTimeSlot, setSelectedTimeSlot] = useState(null)
   const [appliedPromo, setAppliedPromo] = useState(location.state?.appliedPromo || null)
   const [isPlacingOrder, setIsPlacingOrder] = useState(false)
+  const [b2bPaymentMethod, setB2bPaymentMethod] = useState(null)
+  const { isOpen: isModalOpen, onOpen: onModalOpen, onClose: onModalClose } = useDisclosure()
+  const [hasShownModal, setHasShownModal] = useState(false)
+
+  // Show complementary products modal when reaching payment step (step 2)
+  useEffect(() => {
+    if (activeStep === 2 && !hasShownModal && cart.length > 0) {
+      console.log('🍰 Reached payment step - showing dessert suggestions')
+      onModalOpen()
+      setHasShownModal(true) // Only show once per checkout session
+    }
+  }, [activeStep, hasShownModal, cart.length, onModalOpen])
 
   // Redirect if not authenticated
   useEffect(() => {
@@ -77,7 +95,7 @@ function CheckoutPageContent() {
       })
       navigate('/login')
     }
-  }, [user, authLoading, navigate, toast])
+  }, [user, authLoading, navigate])
 
   // Redirect if cart is empty (but not during order placement)
   useEffect(() => {
@@ -90,7 +108,7 @@ function CheckoutPageContent() {
       })
       navigate('/catalogue')
     }
-  }, [cart, navigate, toast, isPlacingOrder])
+  }, [cart, navigate, isPlacingOrder])
 
   const handleNext = () => {
     if (activeStep === 0 && !selectedAddress) {
@@ -137,6 +155,17 @@ function CheckoutPageContent() {
 
   const handlePlaceOrder = async () => {
     try {
+      // Validate B2B payment method is selected
+      if (employee && !b2bPaymentMethod) {
+        toast({
+          title: 'Méthode de paiement requise',
+          description: 'Veuillez sélectionner une méthode de paiement',
+          status: 'warning',
+          duration: 3000
+        })
+        return
+      }
+
       // Set flag to prevent cart empty redirect
       setIsPlacingOrder(true)
 
@@ -162,8 +191,15 @@ function CheckoutPageContent() {
         discount: discount,
         promo_code_id: appliedPromo?.id || null,
         total: total,
-        payment_method: 'card', // TODO: Add payment method selection
-        status: 'pending'
+        payment_method: employee ? b2bPaymentMethod : 'card',
+        status: 'pending',
+        // B2B specific fields
+        ...(employee && {
+          is_b2b_order: true,
+          b2b_company_id: employee.company_id,
+          b2b_employee_id: employee.id,
+          charged_to_budget: b2bPaymentMethod === 'budget'
+        })
       }
 
       // Prepare order items
@@ -220,7 +256,7 @@ function CheckoutPageContent() {
     }
   }
 
-  if (authLoading) {
+  if (authLoading || employeeLoading) {
     return <LoadingSpinner message="Chargement..." />
   }
 
@@ -304,24 +340,53 @@ function CheckoutPageContent() {
                   appliedPromo={appliedPromo}
                 />
 
+                {/* Referral Code Input */}
+                <ReferralCodeInput
+                  onSuccess={() => {
+                    toast({
+                      title: 'Code de parrainage appliqué !',
+                      description: 'Vous recevrez 10€ après votre première commande',
+                      status: 'success',
+                      duration: 4000,
+                      isClosable: true
+                    })
+                  }}
+                />
+
                 {/* Payment Form */}
                 <Box bg="white" p={6} rounded="lg" shadow="sm">
-                  <Heading size="md" mb={6}>
+                  <Heading size="md" mb={4}>
                     Paiement
                   </Heading>
-                  <PaymentForm
-                    amount={getCartTotal() + (getCartTotal() >= 30 ? 0 : 3.90) - (appliedPromo ? calculateDiscount(appliedPromo, getCartTotal()) : 0)}
-                    onSuccess={handlePlaceOrder}
-                    onError={(error) => {
-                      toast({
-                        title: 'Erreur de paiement',
-                        description: error.message || 'Le paiement a échoué',
-                        status: 'error',
-                        duration: 5000
-                      })
-                    }}
-                    disabled={creatingOrder}
-                  />
+
+                  {employee ? (
+                    // B2B Payment Selector for employees
+                    <B2BPaymentSelector
+                      employee={employee}
+                      budget={budget}
+                      business={business}
+                      selectedMethod={b2bPaymentMethod}
+                      onSelectMethod={setB2bPaymentMethod}
+                      onPlaceOrder={handlePlaceOrder}
+                      disabled={creatingOrder}
+                      total={getCartTotal() + (getCartTotal() >= 30 ? 0 : getDeliveryFee(selectedAddress)) - (appliedPromo ? calculateDiscount(appliedPromo, getCartTotal()) : 0)}
+                    />
+                  ) : (
+                    // Regular Stripe Payment Form
+                    <PaymentForm
+                      amount={getCartTotal() + (getCartTotal() >= 30 ? 0 : getDeliveryFee(selectedAddress)) - (appliedPromo ? calculateDiscount(appliedPromo, getCartTotal()) : 0)}
+                      onSuccess={handlePlaceOrder}
+                      onError={(error) => {
+                        toast({
+                          title: 'Erreur de paiement',
+                          description: error.message || 'Le paiement a échoué',
+                          status: 'error',
+                          duration: 5000
+                        })
+                      }}
+                      disabled={creatingOrder}
+                    />
+                  )}
                 </Box>
               </VStack>
             )}
@@ -364,6 +429,13 @@ function CheckoutPageContent() {
           )}
         </VStack>
       </Container>
+
+      {/* Complementary Products Modal */}
+      <ComplementaryProductsModal
+        isOpen={isModalOpen}
+        onClose={onModalClose}
+        onProceedToCheckout={onModalClose}
+      />
     </Box>
   )
 }

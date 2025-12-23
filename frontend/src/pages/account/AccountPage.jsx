@@ -38,7 +38,7 @@ import {
   AlertIcon
 } from '@chakra-ui/react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { FiUser, FiMapPin, FiShoppingBag, FiEdit2, FiTrash2, FiPlus, FiTruck, FiHeart, FiAward, FiMessageSquare, FiMail, FiBell, FiUsers, FiDownload } from 'react-icons/fi'
+import { FiUser, FiMapPin, FiShoppingBag, FiEdit2, FiTrash2, FiPlus, FiTruck, FiHeart, FiAward, FiMessageSquare, FiMail, FiBell, FiUsers, FiDownload, FiCopy, FiCheck } from 'react-icons/fi'
 import { useAuth } from '../../context/AuthContext'
 import { printInvoice } from '../../utils/invoice'
 import { useAddresses, useCreateAddress, useUpdateAddress, useDeleteAddress } from '../../hooks/useAddresses'
@@ -48,6 +48,7 @@ import { useProfile, DIETARY_PREFERENCES } from '../../hooks/useProfile'
 import { useLoyalty, useLoyaltyRewards, useLoyaltyRedemptions, useLoyaltyTransactions } from '../../hooks/useLoyalty'
 import { useUserReviews, useDeleteReview } from '../../hooks/useReviews'
 import { useNewsletterSubscription } from '../../hooks/useNewsletter'
+import { useReferral } from '../../hooks/useReferral'
 import LoadingSpinner from '../../components/common/LoadingSpinner'
 import DishCard from '../../components/catalogue/DishCard'
 import { StarRating } from '../../components/reviews/StarRating'
@@ -104,6 +105,10 @@ export default function AccountPage() {
     unsubscribe: unsubscribeNewsletter,
     updatePreferences
   } = useNewsletterSubscription()
+
+  // Referral hooks
+  const { referralCode, stats: referralStats, loading: loadingReferral } = useReferral()
+  const [copiedReferral, setCopiedReferral] = useState(false)
 
   // Modal for add/edit address
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -436,6 +441,87 @@ export default function AccountPage() {
               {/* Orders Tab */}
               <TabPanel>
                 <VStack spacing={4} align="stretch">
+                  {/* Referral Code Card */}
+                  {!loadingReferral && referralCode && (
+                    <Card bg="gradient.brand" borderWidth={2} borderColor="brand.200">
+                      <CardBody>
+                        <VStack spacing={4} align="stretch">
+                          <HStack justify="space-between" align="start">
+                            <VStack align="start" spacing={1}>
+                              <HStack spacing={2}>
+                                <FiUsers />
+                                <Text fontWeight="600" fontSize="md">
+                                  Parrainez vos amis
+                                </Text>
+                              </HStack>
+                              <Text fontSize="sm" color="gray.600">
+                                Vous et votre filleul gagnez {referralCode?.bonus_per_referral || 10}€ chacun
+                              </Text>
+                            </VStack>
+                            <Badge colorScheme="green" fontSize="md" px={3} py={1}>
+                              {referralStats?.totalEarned?.toFixed(2) || '0.00'}€ gagnés
+                            </Badge>
+                          </HStack>
+
+                          <HStack spacing={3}>
+                            <Input
+                              value={referralCode?.code || ''}
+                              isReadOnly
+                              bg="white"
+                              fontSize="md"
+                              fontWeight="bold"
+                              textAlign="center"
+                              letterSpacing="wider"
+                              color="brand.600"
+                              size="md"
+                            />
+                            <IconButton
+                              icon={copiedReferral ? <FiCheck /> : <FiCopy />}
+                              onClick={() => {
+                                if (referralCode) {
+                                  navigator.clipboard.writeText(referralCode.code)
+                                  setCopiedReferral(true)
+                                  toast({
+                                    title: 'Code copié !',
+                                    description: 'Partagez-le avec vos amis',
+                                    status: 'success',
+                                    duration: 2000,
+                                    isClosable: true
+                                  })
+                                  setTimeout(() => setCopiedReferral(false), 2000)
+                                }
+                              }}
+                              colorScheme={copiedReferral ? 'green' : 'brand'}
+                              size="md"
+                              aria-label="Copier le code"
+                            />
+                          </HStack>
+
+                          <SimpleGrid columns={{ base: 3 }} spacing={3} fontSize="sm">
+                            <VStack spacing={0}>
+                              <Text fontWeight="600" fontSize="lg" color="brand.600">
+                                {referralStats?.totalReferrals || 0}
+                              </Text>
+                              <Text color="gray.600" fontSize="xs">Parrainés</Text>
+                            </VStack>
+                            <VStack spacing={0}>
+                              <Text fontWeight="600" fontSize="lg" color="orange.600">
+                                {referralStats?.pendingReferrals || 0}
+                              </Text>
+                              <Text color="gray.600" fontSize="xs">En attente</Text>
+                            </VStack>
+                            <VStack spacing={0}>
+                              <Text fontWeight="600" fontSize="lg" color="green.600">
+                                {referralStats?.completedReferrals || 0}
+                              </Text>
+                              <Text color="gray.600" fontSize="xs">Validés</Text>
+                            </VStack>
+                          </SimpleGrid>
+                        </VStack>
+                      </CardBody>
+                    </Card>
+                  )}
+
                   <Text fontSize="lg" fontWeight="600">
                     Historique de vos commandes
                   </Text>

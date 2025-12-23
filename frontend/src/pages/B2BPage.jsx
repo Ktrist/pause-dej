@@ -28,7 +28,9 @@ import {
   ModalHeader,
   ModalBody,
   ModalCloseButton,
-  useDisclosure
+  useDisclosure,
+  Skeleton,
+  SkeletonText
 } from '@chakra-ui/react'
 import {
   FiCheck,
@@ -36,9 +38,11 @@ import {
   FiTrendingDown,
   FiCalendar,
   FiPackage,
-  FiClock
+  FiClock,
+  FiArrowRight
 } from 'react-icons/fi'
 import { TbCurrencyEuro } from 'react-icons/tb'
+import { useNavigate } from 'react-router-dom'
 import { useB2BQuotes, useB2BPackages } from '../hooks/useB2BQuotes'
 
 const FeatureCard = ({ icon, title, description }) => {
@@ -62,35 +66,46 @@ const FeatureCard = ({ icon, title, description }) => {
 
 const PackageCard = ({ pkg }) => {
   const bgColor = useColorModeValue('white', 'gray.800')
+  const navigate = useNavigate()
 
   return (
-    <Card bg={bgColor} borderWidth={2} borderColor="brand.200">
+    <Card bg={bgColor} borderWidth={2} borderColor="brand.200" _hover={{ shadow: 'lg', transform: 'translateY(-4px)', transition: 'all 0.2s' }}>
       <CardBody>
         <VStack align="stretch" spacing={4}>
-          <Heading size="md">{pkg.name}</Heading>
-          <Text color="gray.600">{pkg.description}</Text>
+          <Heading size="md">{pkg.tier_name || pkg.name}</Heading>
+          <Text color="gray.600">{pkg.tier_description || pkg.description}</Text>
           <HStack>
             <Text fontSize="3xl" fontWeight="bold" color="brand.600">
-              {pkg.price_per_person.toFixed(2)}€
+              {pkg.price_per_person ? pkg.price_per_person.toFixed(2) : '0.00'}€
             </Text>
             <Text color="gray.600">/personne</Text>
           </HStack>
-          {pkg.min_people && (
+          {pkg.min_employees && (
             <Text fontSize="sm" color="gray.600">
-              Min. {pkg.min_people} personnes
-              {pkg.max_people && ` - Max. ${pkg.max_people} personnes`}
+              Min. {pkg.min_employees} employés
+              {pkg.max_employees && ` - Max. ${pkg.max_employees} employés`}
             </Text>
           )}
-          {pkg.items_included && (
+          {pkg.features && pkg.features.length > 0 && (
             <List spacing={2}>
-              {Object.values(pkg.items_included).map((item, index) => (
+              {pkg.features.map((feature, index) => (
                 <ListItem key={index} fontSize="sm">
                   <ListIcon as={FiCheck} color="green.500" />
-                  {item}
+                  {feature}
                 </ListItem>
               ))}
             </List>
           )}
+
+          {/* CTA Button */}
+          <Button
+            colorScheme="brand"
+            rightIcon={<FiArrowRight />}
+            onClick={() => navigate('/catalogue?b2b=true&package=' + pkg.tier_name)}
+            mt={2}
+          >
+            Découvrir les plats
+          </Button>
         </VStack>
       </CardBody>
     </Card>
@@ -101,8 +116,10 @@ export default function B2BPage() {
   const bgColor = useColorModeValue('gray.50', 'gray.900')
   const toast = useToast()
   const { createQuote } = useB2BQuotes()
-  const { packages } = useB2BPackages()
+  const { packages, loading: packagesLoading } = useB2BPackages()
   const { isOpen, onOpen, onClose } = useDisclosure()
+
+  console.log('📦 B2BPage - Packages loaded:', packages.length, packages)
 
   const [formData, setFormData] = useState({
     company_name: '',
@@ -198,6 +215,13 @@ export default function B2BPage() {
                 borderRadius="12px"
                 _hover={{
                   bg: 'primary.50'
+                }}
+                onClick={(e) => {
+                  e.preventDefault()
+                  document.getElementById('packages')?.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                  })
                 }}
               >
                 Voir nos formules
@@ -297,23 +321,48 @@ export default function B2BPage() {
           </Card>
 
           {/* Packages */}
-          {packages.length > 0 && (
-            <Box>
-              <VStack spacing={8}>
-                <Heading size="xl" textAlign="center" id="packages">
-                  Nos Formules Entreprise
-                </Heading>
+          <Box id="packages">
+            <VStack spacing={8}>
+              <Heading size="xl" textAlign="center">
+                Nos Formules Entreprise
+              </Heading>
+
+              {packagesLoading ? (
+                // Loading skeleton
                 <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6} w="full">
-                  {packages.map((pkg) => (
-                    <PackageCard key={pkg.id} pkg={pkg} />
+                  {[1, 2, 3].map((i) => (
+                    <Card key={i} borderWidth={2} borderColor="gray.200">
+                      <CardBody>
+                        <VStack align="stretch" spacing={4}>
+                          <Skeleton height="30px" width="60%" />
+                          <SkeletonText noOfLines={2} spacing={2} />
+                          <Skeleton height="40px" width="40%" />
+                          <SkeletonText noOfLines={4} spacing={2} />
+                        </VStack>
+                      </CardBody>
+                    </Card>
                   ))}
                 </SimpleGrid>
-                <Text textAlign="center" color="gray.600">
-                  Toutes nos formules sont personnalisables selon vos besoins
+              ) : packages.length > 0 ? (
+                // Actual packages
+                <>
+                  <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6} w="full">
+                    {packages.map((pkg) => (
+                      <PackageCard key={pkg.id} pkg={pkg} />
+                    ))}
+                  </SimpleGrid>
+                  <Text textAlign="center" color="gray.600">
+                    Toutes nos formules sont personnalisables selon vos besoins
+                  </Text>
+                </>
+              ) : (
+                // No packages
+                <Text textAlign="center" color="gray.500">
+                  Aucune formule disponible pour le moment
                 </Text>
-              </VStack>
-            </Box>
-          )}
+              )}
+            </VStack>
+          </Box>
 
           {/* CTA Section */}
           <Card bg="brand.50" borderColor="brand.200" borderWidth={2}>

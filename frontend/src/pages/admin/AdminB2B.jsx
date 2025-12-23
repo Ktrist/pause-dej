@@ -169,6 +169,8 @@ const PackageModal = ({ isOpen, onClose, onSave, editingPackage }) => {
 }
 
 export default function AdminB2B() {
+  console.log('🔵 AdminB2B component loaded')
+
   const bgColor = useColorModeValue('gray.50', 'gray.900')
   const toast = useToast()
   const { isOpen, onOpen, onClose } = useDisclosure()

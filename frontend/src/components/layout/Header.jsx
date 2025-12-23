@@ -27,12 +27,22 @@ import { APP_NAME } from '../../config'
 import { useCart } from '../../context/CartContext'
 import { useAuth } from '../../context/AuthContext'
 import { getPersonalizedGreeting } from '../../utils/greeting'
+import { useCartDrawer } from '../../context/CartDrawerContext'
+import CartDrawer from '../cart/CartDrawer'
 
 export default function Header() {
   const { isOpen, onOpen, onClose } = useDisclosure()
+  const { isCartDrawerOpen, openCartDrawer, closeCartDrawer } = useCartDrawer()
   const { cartItemsCount } = useCart()
   const { user, isAdmin, signOut } = useAuth()
   const navigate = useNavigate()
+
+  console.log('🛒 Header - isCartDrawerOpen:', isCartDrawerOpen)
+
+  const handleCartClick = () => {
+    console.log('🛒 Cart button clicked!')
+    openCartDrawer()
+  }
 
   const handleSignOut = async () => {
     await signOut()
@@ -40,7 +50,6 @@ export default function Header() {
   }
 
   const navLinks = [
-    { name: 'Accueil', path: '/' },
     { name: 'A la carte', path: '/catalogue' },
     { name: 'Comment ça marche', path: '/how-it-works' },
     { name: 'Pause Dej\' At Work', path: '/b2b' },
@@ -94,15 +103,14 @@ export default function Header() {
           <HStack spacing={4}>
             {/* Cart */}
             <Box position="relative">
-              <RouterLink to="/panier">
-                <IconButton
-                  icon={<FiShoppingCart />}
-                  variant="ghost"
-                  colorScheme="brand"
-                  aria-label="Panier"
-                  fontSize="20px"
-                />
-              </RouterLink>
+              <IconButton
+                icon={<FiShoppingCart />}
+                variant="ghost"
+                colorScheme="brand"
+                aria-label="Panier"
+                fontSize="20px"
+                onClick={handleCartClick}
+              />
               {cartItemsCount > 0 && (
                 <Badge
                   position="absolute"
@@ -311,6 +319,9 @@ export default function Header() {
           </DrawerBody>
         </DrawerContent>
       </Drawer>
+
+      {/* Cart Drawer */}
+      <CartDrawer isOpen={isCartDrawerOpen} onClose={closeCartDrawer} />
     </Box>
   )
 }

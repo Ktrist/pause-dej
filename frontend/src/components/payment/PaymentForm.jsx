@@ -17,7 +17,6 @@ import {
   Badge
 } from '@chakra-ui/react'
 import { CardElement, useStripe, useElements, PaymentRequestButtonElement } from '@stripe/react-stripe-js'
-import { FiCreditCard, FiShoppingBag } from 'react-icons/fi'
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from '../../config'
 
 /**
@@ -237,12 +236,62 @@ export default function PaymentForm({ amount, onSuccess, onError, disabled = fal
               transition="all 0.2s"
               _hover={{ borderColor: 'brand.300' }}
             >
-              <VStack spacing={2}>
-                <Icon as={FiCreditCard} boxSize={6} color={paymentMethod === 'card' ? 'brand.600' : 'gray.600'} />
+              <VStack spacing={3}>
                 <Text fontSize="sm" fontWeight="600">Carte bancaire</Text>
-                <Text fontSize="xs" color="gray.600" textAlign="center">
-                  CB, Visa, Mastercard
-                </Text>
+                <HStack spacing={2}>
+                  {/* Visa */}
+                  <Box
+                    w="45px"
+                    h="28px"
+                    bg="white"
+                    borderRadius="4px"
+                    borderWidth="1px"
+                    borderColor="gray.200"
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                  >
+                    <svg viewBox="0 0 48 32" width="28" height="18">
+                      <rect width="48" height="32" rx="4" fill="#1434CB"/>
+                      <text x="24" y="20" fontSize="10" fill="white" textAnchor="middle" fontFamily="Arial" fontWeight="bold">VISA</text>
+                    </svg>
+                  </Box>
+                  {/* Mastercard */}
+                  <Box
+                    w="45px"
+                    h="28px"
+                    bg="white"
+                    borderRadius="4px"
+                    borderWidth="1px"
+                    borderColor="gray.200"
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                  >
+                    <svg viewBox="0 0 48 32" width="28" height="18">
+                      <rect width="48" height="32" rx="4" fill="white"/>
+                      <circle cx="18" cy="16" r="8" fill="#EB001B"/>
+                      <circle cx="30" cy="16" r="8" fill="#F79E1B" opacity="0.8"/>
+                    </svg>
+                  </Box>
+                  {/* Amex */}
+                  <Box
+                    w="45px"
+                    h="28px"
+                    bg="white"
+                    borderRadius="4px"
+                    borderWidth="1px"
+                    borderColor="gray.200"
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                  >
+                    <svg viewBox="0 0 48 32" width="28" height="18">
+                      <rect width="48" height="32" rx="4" fill="#006FCF"/>
+                      <text x="24" y="19" fontSize="8" fill="white" textAnchor="middle" fontFamily="Arial" fontWeight="bold">AMEX</text>
+                    </svg>
+                  </Box>
+                </HStack>
               </VStack>
             </Box>
 
@@ -267,12 +316,58 @@ export default function PaymentForm({ amount, onSuccess, onError, disabled = fal
               >
                 Nouveau
               </Badge>
-              <VStack spacing={2}>
-                <Icon as={FiShoppingBag} boxSize={6} color={paymentMethod === 'meal_voucher' ? 'brand.600' : 'gray.600'} />
+              <VStack spacing={3}>
                 <Text fontSize="sm" fontWeight="600">Ticket Restaurant</Text>
-                <Text fontSize="xs" color="gray.600" textAlign="center">
-                  Swile, Edenred, etc.
-                </Text>
+                <HStack spacing={2}>
+                  {/* Swile */}
+                  <Box
+                    w="45px"
+                    h="28px"
+                    bg="white"
+                    borderRadius="4px"
+                    borderWidth="1px"
+                    borderColor="gray.200"
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                  >
+                    <Text fontSize="8px" fontWeight="bold" color="#FF6B6B">
+                      Swile
+                    </Text>
+                  </Box>
+                  {/* Edenred */}
+                  <Box
+                    w="45px"
+                    h="28px"
+                    bg="white"
+                    borderRadius="4px"
+                    borderWidth="1px"
+                    borderColor="gray.200"
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                  >
+                    <Text fontSize="7px" fontWeight="bold" color="#E31E24">
+                      Edenred
+                    </Text>
+                  </Box>
+                  {/* Sodexo */}
+                  <Box
+                    w="45px"
+                    h="28px"
+                    bg="white"
+                    borderRadius="4px"
+                    borderWidth="1px"
+                    borderColor="gray.200"
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                  >
+                    <Text fontSize="7px" fontWeight="bold" color="#E20074">
+                      Sodexo
+                    </Text>
+                  </Box>
+                </HStack>
               </VStack>
             </Box>
           </SimpleGrid>

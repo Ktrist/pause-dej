@@ -18,13 +18,16 @@ export function useAdminB2BPackages() {
       setLoading(true)
       setError(null)
 
+      console.log('📦 Fetching packages from business_pricing_tiers...')
+
       const { data, error: fetchError } = await supabase
-        .from('b2b_packages')
+        .from('business_pricing_tiers')
         .select('*')
         .order('price_per_person', { ascending: true })
 
       if (fetchError) throw fetchError
 
+      console.log('📦 Fetched packages:', data)
       setPackages(data || [])
     } catch (err) {
       console.error('Error fetching B2B packages:', err)
@@ -36,14 +39,17 @@ export function useAdminB2BPackages() {
 
   const createPackage = async (packageData) => {
     try {
+      console.log('✨ Creating package:', packageData)
+
       const { data, error: createError } = await supabase
-        .from('b2b_packages')
+        .from('business_pricing_tiers')
         .insert([packageData])
         .select()
         .single()
 
       if (createError) throw createError
 
+      console.log('✨ Package created:', data)
       await fetchPackages()
       return { data, error: null }
     } catch (err) {
@@ -54,8 +60,10 @@ export function useAdminB2BPackages() {
 
   const updatePackage = async (packageId, updates) => {
     try {
+      console.log('🔄 Updating package:', packageId, updates)
+
       const { data, error: updateError } = await supabase
-        .from('b2b_packages')
+        .from('business_pricing_tiers')
         .update(updates)
         .eq('id', packageId)
         .select()
@@ -63,6 +71,7 @@ export function useAdminB2BPackages() {
 
       if (updateError) throw updateError
 
+      console.log('🔄 Package updated:', data)
       await fetchPackages()
       return { data, error: null }
     } catch (err) {
@@ -73,13 +82,16 @@ export function useAdminB2BPackages() {
 
   const deletePackage = async (packageId) => {
     try {
+      console.log('🗑️ Deleting package:', packageId)
+
       const { error: deleteError } = await supabase
-        .from('b2b_packages')
+        .from('business_pricing_tiers')
         .delete()
         .eq('id', packageId)
 
       if (deleteError) throw deleteError
 
+      console.log('🗑️ Package deleted')
       await fetchPackages()
       return { error: null }
     } catch (err) {
