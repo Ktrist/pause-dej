@@ -12,6 +12,7 @@ import {
 } from '@chakra-ui/react'
 import { Link as RouterLink } from 'react-router-dom'
 import { FiClock, FiMapPin, FiAward } from 'react-icons/fi'
+import heroImage from '../../assets/hero.png'
 
 export default function HeroSection() {
   const isMobile = useBreakpointValue({ base: true, lg: false })
@@ -173,56 +174,14 @@ export default function HeroSection() {
               overflow="hidden"
               boxShadow="2xl"
             >
-              {/* Placeholder for food image - replace with actual image */}
-              <Box
-                position="relative"
+              <Image
+                src={heroImage}
+                alt="Pause Dej' - Repas frais livrés à Annecy"
                 w="full"
                 h="full"
-                bgGradient="linear(to-br, brand.100, primary.100)"
-              >
-                {/* Image overlay with text prompt */}
-                <VStack
-                  position="absolute"
-                  top="50%"
-                  left="50%"
-                  transform="translate(-50%, -50%)"
-                  spacing={2}
-                  textAlign="center"
-                >
-                  <Text fontSize="2xl" fontWeight="bold" color="primary.600">
-                    📸
-                  </Text>
-                  <Text fontSize="sm" fontWeight="medium" color="text.secondary">
-                    Add hero image here
-                  </Text>
-                  <Text fontSize="xs" color="text.light" maxW="300px">
-                    Stunning food photo in kraft bowl with natural light
-                    (Lake Annecy or mountains in background)
-                  </Text>
-                </VStack>
-
-                {/* Decorative circle elements */}
-                <Box
-                  position="absolute"
-                  top="-20%"
-                  left="-10%"
-                  width="300px"
-                  height="300px"
-                  borderRadius="full"
-                  bg="whiteAlpha.400"
-                  filter="blur(80px)"
-                />
-                <Box
-                  position="absolute"
-                  bottom="-20%"
-                  right="-10%"
-                  width="400px"
-                  height="400px"
-                  borderRadius="full"
-                  bg="whiteAlpha.300"
-                  filter="blur(100px)"
-                />
-              </Box>
+                objectFit="cover"
+                objectPosition="center"
+              />
             </Box>
           </Box>
         </SimpleGrid>
