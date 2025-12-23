@@ -1,4 +1,4 @@
-import { Box, Container, Heading, Text, VStack, SimpleGrid, Flex } from '@chakra-ui/react'
+import { Box, Container, Heading, Text, VStack, SimpleGrid, Flex, Badge, HStack } from '@chakra-ui/react'
 import { howItWorksSteps } from '../../data/mockData'
 
 export default function HowItWorks() {
@@ -74,6 +74,26 @@ export default function HowItWorks() {
                   <Text color="text.secondary" fontSize="sm" fontWeight="medium">
                     {step.description}
                   </Text>
+                  {step.badge && (
+                    <Box
+                      bg="purple.50"
+                      p={2}
+                      rounded="lg"
+                      border="1px solid"
+                      borderColor="purple.200"
+                      w="full"
+                      mt={2}
+                    >
+                      <HStack spacing={1} justify="center" mb={1}>
+                        <Badge colorScheme="purple" fontSize="2xs">
+                          {step.badge.text}
+                        </Badge>
+                      </HStack>
+                      <Text fontSize="2xs" color="purple.800" fontWeight="medium">
+                        {step.badge.info}
+                      </Text>
+                    </Box>
+                  )}
                 </VStack>
               </VStack>
             ))}

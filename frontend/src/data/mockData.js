@@ -315,8 +315,9 @@ export const howItWorksSteps = [
   },
   {
     id: 3,
-    title: 'Livré en 30min',
-    description: 'Recevez votre commande chaude et prête à déguster',
-    icon: '🚴'
+    title: 'Livraison le matin',
+    description: 'Recevez votre commande entre 7h et 9h, fraîche et prête à déguster',
+    icon: '📦',
+    badge: { text: 'Bientôt', info: 'Créneaux de 30 min (7h-13h30)' }
   }
 ]
