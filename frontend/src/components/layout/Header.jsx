@@ -74,7 +74,7 @@ export default function Header() {
             <Image
               src={logo}
               alt={APP_NAME}
-              h={{ base: '40px', md: '50px' }}
+              h={{ base: '50px', md: '65px' }}
               objectFit="contain"
               _hover={{ opacity: 0.8 }}
               transition="opacity 0.2s"
