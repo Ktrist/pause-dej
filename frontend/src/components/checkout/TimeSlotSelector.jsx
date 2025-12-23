@@ -12,9 +12,10 @@ import {
   TabList,
   TabPanels,
   Tab,
-  TabPanel
+  TabPanel,
+  Flex
 } from '@chakra-ui/react'
-import { FiClock, FiCalendar } from 'react-icons/fi'
+import { FiClock, FiCalendar, FiZap } from 'react-icons/fi'
 
 // Generate time slots for a given date (Monday to Friday, 7h-9h morning delivery)
 const generateTimeSlots = (date) => {
@@ -94,41 +95,43 @@ export default function TimeSlotSelector({ selectedTimeSlot, onSelectTimeSlot })
           </Text>
         </Box>
 
-        {/* Day Tabs */}
-        <Tabs
-          index={selectedDay}
-          onChange={setSelectedDay}
-          colorScheme="brand"
-          variant="soft-rounded"
-        >
-          <TabList
-            overflowX="auto"
-            css={{
-              '&::-webkit-scrollbar': { display: 'none' },
-              scrollbarWidth: 'none'
-            }}
-          >
-            {days.map((day, index) => (
-              <Tab
-                key={index}
-                minW="fit-content"
-                px={6}
-                _selected={{
-                  bg: 'brand.500',
-                  color: 'white'
+        <Flex gap={4} direction={{ base: 'column', lg: 'row' }} align="stretch">
+          {/* Day Tabs */}
+          <Box flex="1">
+            <Tabs
+              index={selectedDay}
+              onChange={setSelectedDay}
+              colorScheme="brand"
+              variant="soft-rounded"
+            >
+              <TabList
+                overflowX="auto"
+                css={{
+                  '&::-webkit-scrollbar': { display: 'none' },
+                  scrollbarWidth: 'none'
                 }}
               >
-                <VStack spacing={0}>
-                  <Text fontWeight="bold" fontSize="sm">
-                    {day.label}
-                  </Text>
-                  <Text fontSize="xs" opacity={0.8}>
-                    {day.date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}
-                  </Text>
-                </VStack>
-              </Tab>
-            ))}
-          </TabList>
+                {days.map((day, index) => (
+                  <Tab
+                    key={index}
+                    minW="fit-content"
+                    px={6}
+                    _selected={{
+                      bg: 'brand.500',
+                      color: 'white'
+                    }}
+                  >
+                    <VStack spacing={0}>
+                      <Text fontWeight="bold" fontSize="sm">
+                        {day.label}
+                      </Text>
+                      <Text fontSize="xs" opacity={0.8}>
+                        {day.date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}
+                      </Text>
+                    </VStack>
+                  </Tab>
+                ))}
+              </TabList>
 
           <TabPanels>
             {days.map((day, dayIndex) => (
@@ -161,7 +164,75 @@ export default function TimeSlotSelector({ selectedTimeSlot, onSelectTimeSlot })
               </TabPanel>
             ))}
           </TabPanels>
-        </Tabs>
+            </Tabs>
+          </Box>
+
+          {/* Coming Soon - New Time Slots */}
+          <Box
+            minW={{ base: 'full', lg: '280px' }}
+            maxW={{ base: 'full', lg: '320px' }}
+            bgGradient="linear(to-br, purple.50, pink.50)"
+            p={5}
+            rounded="xl"
+            border="2px solid"
+            borderColor="purple.200"
+            shadow="md"
+            position="relative"
+            overflow="hidden"
+          >
+            <Badge
+              colorScheme="purple"
+              fontSize="xs"
+              px={2}
+              py={1}
+              mb={3}
+              position="absolute"
+              top={3}
+              right={3}
+            >
+              Bientôt
+            </Badge>
+
+            <VStack align="start" spacing={3} mt={2}>
+              <HStack spacing={2}>
+                <Icon as={FiZap} color="purple.600" boxSize={6} />
+                <Text fontSize="lg" fontWeight="bold" color="purple.900">
+                  Nouveaux créneaux
+                </Text>
+              </HStack>
+
+              <Text fontSize="sm" color="purple.800" fontWeight="medium">
+                Livraisons par tranches de 30 min
+              </Text>
+
+              <Box
+                bg="white"
+                p={3}
+                rounded="lg"
+                w="full"
+                border="1px solid"
+                borderColor="purple.200"
+              >
+                <HStack spacing={2} mb={2}>
+                  <Icon as={FiClock} color="purple.600" boxSize={4} />
+                  <Text fontSize="sm" fontWeight="bold" color="purple.900">
+                    Horaires disponibles
+                  </Text>
+                </HStack>
+                <Text fontSize="sm" color="gray.700" fontWeight="semibold">
+                  De 7h00 à 13h30
+                </Text>
+                <Text fontSize="xs" color="gray.600" mt={1}>
+                  Toutes les 30 minutes
+                </Text>
+              </Box>
+
+              <Text fontSize="xs" color="purple.700" fontStyle="italic">
+                Plus de flexibilité pour vos livraisons ! 🎉
+              </Text>
+            </VStack>
+          </Box>
+        </Flex>
 
         {/* Info Banner */}
         <Box bg="blue.50" p={4} rounded="lg" border="1px solid" borderColor="blue.200">
