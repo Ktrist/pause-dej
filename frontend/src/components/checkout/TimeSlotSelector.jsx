@@ -95,7 +95,7 @@ export default function TimeSlotSelector({ selectedTimeSlot, onSelectTimeSlot })
           </Text>
         </Box>
 
-        <Flex gap={4} direction={{ base: 'column', lg: 'row' }} align="stretch">
+        <Flex gap={4} direction={{ base: 'column', lg: 'row' }} align={{ base: 'stretch', lg: 'start' }}>
           {/* Day Tabs */}
           <Box flex="1">
             <Tabs
@@ -234,8 +234,8 @@ export default function TimeSlotSelector({ selectedTimeSlot, onSelectTimeSlot })
           </Box>
         </Flex>
 
-        {/* Info Banner */}
-        <Box bg="blue.50" p={4} rounded="lg" border="1px solid" borderColor="blue.200">
+        {/* Info Banner - Commented out as requested */}
+        {/* <Box bg="blue.50" p={4} rounded="lg" border="1px solid" borderColor="blue.200">
           <HStack spacing={3}>
             <Icon as={FiClock} color="blue.600" boxSize={5} />
             <VStack align="start" spacing={0} flex="1">
@@ -247,7 +247,7 @@ export default function TimeSlotSelector({ selectedTimeSlot, onSelectTimeSlot })
               </Text>
             </VStack>
           </HStack>
-        </Box>
+        </Box> */}
       </VStack>
     </Box>
   )
