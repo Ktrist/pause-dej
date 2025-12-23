@@ -19,7 +19,8 @@ import {
   DrawerContent,
   DrawerCloseButton,
   VStack,
-  Text
+  Text,
+  Image
 } from '@chakra-ui/react'
 import { Link as RouterLink, useNavigate } from 'react-router-dom'
 import { FiShoppingCart, FiMenu, FiUser, FiLogOut, FiSettings } from 'react-icons/fi'
@@ -29,6 +30,7 @@ import { useAuth } from '../../context/AuthContext'
 import { getPersonalizedGreeting } from '../../utils/greeting'
 import { useCartDrawer } from '../../context/CartDrawerContext'
 import CartDrawer from '../cart/CartDrawer'
+import logo from '../../assets/logo.jpg'
 
 export default function Header() {
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -69,16 +71,14 @@ export default function Header() {
         <Flex h={16} alignItems="center" justifyContent="space-between">
           {/* Logo */}
           <RouterLink to="/">
-            <Text
-              fontSize="2xl"
-              fontWeight="800"
-              bgGradient="linear(to-r, brand.500, primary.500)"
-              bgClip="text"
+            <Image
+              src={logo}
+              alt={APP_NAME}
+              h={{ base: '40px', md: '50px' }}
+              objectFit="contain"
               _hover={{ opacity: 0.8 }}
               transition="opacity 0.2s"
-            >
-              {APP_NAME}
-            </Text>
+            />
           </RouterLink>
 
           {/* Desktop Navigation */}
