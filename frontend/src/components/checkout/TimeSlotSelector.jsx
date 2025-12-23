@@ -193,7 +193,7 @@ export default function TimeSlotSelector({ selectedTimeSlot, onSelectTimeSlot })
               Bientôt
             </Badge>
 
-            <VStack align="start" spacing={3} mt={2}>
+            <VStack align="center" spacing={3} mt={2} px={2}>
               <HStack spacing={2}>
                 <Icon as={FiZap} color="purple.600" boxSize={6} />
                 <Text fontSize="lg" fontWeight="bold" color="purple.900">
