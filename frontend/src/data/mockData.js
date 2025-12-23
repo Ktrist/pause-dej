@@ -305,13 +305,13 @@ export const howItWorksSteps = [
     id: 1,
     title: 'Commandez',
     description: 'Choisissez vos plats parmi notre sélection quotidienne',
-    icon: '🛒'
+    icon: '🍽️'
   },
   {
     id: 2,
     title: 'On cuisine',
     description: 'Nos chefs préparent votre repas avec des produits frais',
-    icon: '👨‍🍳'
+    icon: '🔥'
   },
   {
     id: 3,
