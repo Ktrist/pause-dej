@@ -26,7 +26,7 @@ export default function HeroSection() {
       <Container maxW="container.xl" h="full">
         <Box
           display="grid"
-          gridTemplateColumns={{ base: '1fr', lg: '7fr 3fr' }}
+          gridTemplateColumns={{ base: '1fr', lg: '6fr 4fr' }}
           gap={0}
           alignItems="center"
           minH={{ base: '600px', lg: '700px' }}
