@@ -6,7 +6,6 @@ import {
   Button,
   VStack,
   HStack,
-  SimpleGrid,
   Image,
   useBreakpointValue
 } from '@chakra-ui/react'
@@ -25,9 +24,10 @@ export default function HeroSection() {
       overflow="hidden"
     >
       <Container maxW="container.xl" h="full">
-        <SimpleGrid
-          columns={{ base: 1, lg: 2 }}
-          spacing={0}
+        <Box
+          display="grid"
+          gridTemplateColumns={{ base: '1fr', lg: '7fr 3fr' }}
+          gap={0}
           alignItems="center"
           minH={{ base: '600px', lg: '700px' }}
         >
@@ -161,14 +161,12 @@ export default function HeroSection() {
             position="relative"
             h={{ base: '400px', lg: '100%' }}
             minH={{ base: '400px', lg: '700px' }}
-            display={{ base: 'none', lg: 'block' }}
+            display={{ base: 'none', lg: 'flex' }}
+            alignItems="center"
+            justifyContent="center"
           >
             <Box
-              position="absolute"
-              top="50%"
-              right="-10%"
-              transform="translateY(-50%)"
-              width="120%"
+              width="100%"
               height="85%"
               borderRadius="32px"
               overflow="hidden"
@@ -184,7 +182,7 @@ export default function HeroSection() {
               />
             </Box>
           </Box>
-        </SimpleGrid>
+        </Box>
       </Container>
     </Box>
   )
