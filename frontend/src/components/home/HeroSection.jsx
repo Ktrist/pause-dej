@@ -7,7 +7,8 @@ import {
   VStack,
   HStack,
   Image,
-  useBreakpointValue
+  useBreakpointValue,
+  Badge
 } from '@chakra-ui/react'
 import { Link as RouterLink } from 'react-router-dom'
 import { FiClock, FiMapPin, FiAward } from 'react-icons/fi'
@@ -40,19 +41,37 @@ export default function HeroSection() {
             textAlign={{ base: 'center', lg: 'left' }}
           >
             {/* Badge */}
-            <HStack
-              bg="primary.50"
-              color="primary.600"
-              px={4}
-              py={2}
-              borderRadius="full"
-              spacing={2}
-            >
-              <FiClock />
-              <Text fontSize="sm" fontWeight="semibold">
-                Livraison 7h-9h • Commandez avant minuit
-              </Text>
-            </HStack>
+            <VStack spacing={2} align={{ base: 'center', lg: 'start' }}>
+              <HStack
+                bg="primary.50"
+                color="primary.600"
+                px={4}
+                py={2}
+                borderRadius="full"
+                spacing={2}
+              >
+                <FiClock />
+                <Text fontSize="sm" fontWeight="semibold">
+                  Livraison 7h-9h • Commandez avant minuit
+                </Text>
+              </HStack>
+              <HStack spacing={1} opacity={0.9}>
+                <Badge
+                  colorScheme="purple"
+                  fontSize="2xs"
+                  px={2}
+                  py={0.5}
+                  borderRadius="md"
+                  textTransform="none"
+                  fontWeight="semibold"
+                >
+                  Bientôt
+                </Badge>
+                <Text fontSize="2xs" color="purple.700" fontWeight="medium">
+                  Créneaux toutes les 30 min (7h-13h30)
+                </Text>
+              </HStack>
+            </VStack>
 
             {/* Main Headline */}
             <Heading
