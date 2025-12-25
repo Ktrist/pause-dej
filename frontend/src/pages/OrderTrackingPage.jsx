@@ -340,7 +340,7 @@ export default function OrderTrackingPage() {
             </Button>
             <Button
               as={RouterLink}
-              to="/compte"
+              to="/compte?tab=orders"
               size="lg"
               leftIcon={<FiPackage />}
               colorScheme="brand"
