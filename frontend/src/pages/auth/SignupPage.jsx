@@ -20,6 +20,7 @@ import { Link as RouterLink, useNavigate } from 'react-router-dom'
 import { FcGoogle } from 'react-icons/fc'
 import { useAuth } from '../../context/AuthContext'
 import { useNewsletterSubscription } from '../../hooks/useNewsletter'
+import { validatePassword } from '../../utils/passwordValidation'
 
 export default function SignupPage() {
   const [formData, setFormData] = useState({
@@ -56,8 +57,11 @@ export default function SignupPage() {
     }
     if (!formData.password) {
       newErrors.password = 'Mot de passe requis'
-    } else if (formData.password.length < 6) {
-      newErrors.password = 'Minimum 6 caractères'
+    } else {
+      const passwordError = validatePassword(formData.password)
+      if (passwordError) {
+        newErrors.password = passwordError
+      }
     }
     if (formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = 'Les mots de passe ne correspondent pas'

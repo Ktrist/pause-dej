@@ -10,7 +10,8 @@ import {
   Text,
   Button,
   useColorModeValue,
-  Divider
+  Divider,
+  useToast
 } from '@chakra-ui/react'
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import {
@@ -61,18 +62,31 @@ const SidebarLink = ({ to, icon, children }) => {
 }
 
 export default function AdminLayout() {
-  const { user, loading, signOut } = useAuth()
+  const { user, profile, isAdmin, loading, signOut } = useAuth()
   const navigate = useNavigate()
+  const toast = useToast()
   const bgColor = useColorModeValue('white', 'gray.800')
   const borderColor = useColorModeValue('gray.200', 'gray.700')
   const mainBgColor = useColorModeValue('gray.50', 'gray.900')
 
-  // Check if user is authenticated
+  // Check if user is authenticated AND is admin
   useEffect(() => {
-    if (!loading && !user) {
-      navigate('/login')
+    if (!loading) {
+      if (!user) {
+        navigate('/login')
+      } else if (!isAdmin) {
+        // User is authenticated but not admin
+        navigate('/')
+        toast({
+          title: 'Accès refusé',
+          description: 'Vous n\'avez pas les permissions administrateur.',
+          status: 'error',
+          duration: 5000,
+          isClosable: true
+        })
+      }
     }
-  }, [user, loading, navigate])
+  }, [user, isAdmin, loading, navigate, toast])
 
   const handleLogout = async () => {
     await signOut()
@@ -83,7 +97,7 @@ export default function AdminLayout() {
     return null
   }
 
-  if (!user) {
+  if (!user || !isAdmin) {
     return null
   }
 
