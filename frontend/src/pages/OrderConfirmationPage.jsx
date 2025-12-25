@@ -321,7 +321,7 @@ export default function OrderConfirmationPage() {
               </Button>
               <Button
                 as={RouterLink}
-                to="/compte"
+                to="/compte?tab=orders"
                 size="lg"
                 leftIcon={<FiShoppingBag />}
                 variant="outline"
