@@ -176,14 +176,18 @@ export const generateInvoiceHTML = (order, userProfile) => {
           </tr>
         </thead>
         <tbody>
-          ${(order.order_items || []).map(item => `
+          ${(order.order_items || []).map(item => {
+            const unitPrice = item.unit_price || item.dish_price || 0
+            const itemTotal = item.subtotal || (unitPrice * item.quantity)
+            return `
             <tr>
               <td>${item.dish_name}</td>
               <td style="text-align: center;">${item.quantity}</td>
-              <td style="text-align: right;">${item.unit_price.toFixed(2)}€</td>
-              <td style="text-align: right;">${item.subtotal.toFixed(2)}€</td>
+              <td style="text-align: right;">${unitPrice.toFixed(2)}€</td>
+              <td style="text-align: right;">${itemTotal.toFixed(2)}€</td>
             </tr>
-          `).join('')}
+            `
+          }).join('')}
         </tbody>
       </table>
 
@@ -247,13 +251,33 @@ export const generateInvoiceHTML = (order, userProfile) => {
  * @param {Object} userProfile - User profile
  */
 export const printInvoice = (order, userProfile) => {
-  const html = generateInvoiceHTML(order, userProfile)
-  const printWindow = window.open('', '_blank')
-  if (printWindow) {
-    printWindow.document.write(html)
-    printWindow.document.close()
-  } else {
-    alert('Veuillez autoriser les pop-ups pour télécharger la facture')
+  try {
+    const html = generateInvoiceHTML(order, userProfile)
+    const printWindow = window.open('', '_blank', 'width=800,height=600')
+
+    if (printWindow) {
+      printWindow.document.write(html)
+      printWindow.document.close()
+
+      // Auto-focus on the print window
+      printWindow.focus()
+    } else {
+      // Pop-up blocked
+      alert(
+        'Les pop-ups sont bloquées!\n\n' +
+        'Pour télécharger votre facture:\n' +
+        '1. Autorisez les pop-ups pour ce site\n' +
+        '2. Cliquez à nouveau sur "Facture"\n\n' +
+        'Ou utilisez Ctrl+P pour imprimer la page actuelle.'
+      )
+    }
+  } catch (error) {
+    console.error('Erreur génération facture:', error)
+    alert(
+      'Erreur lors de la génération de la facture.\n\n' +
+      'Détails: ' + error.message + '\n\n' +
+      'Veuillez réessayer ou contacter le support.'
+    )
   }
 }
 
