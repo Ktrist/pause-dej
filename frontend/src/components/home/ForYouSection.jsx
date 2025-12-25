@@ -32,7 +32,7 @@ export default function ForYouSection() {
   }
 
   const handleViewDetails = (dish) => {
-    navigate(`/catalogue?dish=${dish.id}`)
+    navigate(`/a-la-carte?dish=${dish.id}`)
   }
 
   return (
@@ -85,7 +85,7 @@ export default function ForYouSection() {
               <HStack justify="center" pt={8}>
                 <Button
                   as="a"
-                  href="/catalogue"
+                  href="/a-la-carte"
                   size="lg"
                   colorScheme="brand"
                   rightIcon={<FiArrowRight />}

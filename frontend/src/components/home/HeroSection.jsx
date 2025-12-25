@@ -136,7 +136,7 @@ export default function HeroSection() {
             <HStack spacing={4} pt={4} flexWrap="wrap" justify={{ base: 'center', lg: 'start' }}>
               <Button
                 as={RouterLink}
-                to="/catalogue"
+                to="/a-la-carte"
                 size="lg"
                 bg="brand.500"
                 color="white"
@@ -156,7 +156,7 @@ export default function HeroSection() {
               </Button>
               <Button
                 as={RouterLink}
-                to="/how-it-works"
+                to="/comment-ca-marche"
                 size="lg"
                 variant="outline"
                 borderColor="primary.500"

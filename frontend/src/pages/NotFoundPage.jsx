@@ -41,7 +41,7 @@ export default function NotFoundPage() {
             </Button>
             <Button
               as={RouterLink}
-              to="/catalogue"
+              to="/a-la-carte"
               leftIcon={<FiShoppingCart />}
               variant="outline"
               colorScheme="brand"

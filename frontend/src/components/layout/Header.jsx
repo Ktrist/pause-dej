@@ -52,9 +52,9 @@ export default function Header() {
   }
 
   const navLinks = [
-    { name: 'A la carte', path: '/catalogue' },
-    { name: 'Comment ça marche', path: '/how-it-works' },
-    { name: 'Pause Dej\' At Work', path: '/b2b' },
+    { name: 'A la carte', path: '/a-la-carte' },
+    { name: 'Comment ça marche', path: '/comment-ca-marche' },
+    { name: 'Pause Dej\' At Work', path: '/pause-dej-at-work' },
     { name: 'Contact', path: '/contact' },
   ]
 

@@ -1,5 +1,13 @@
-import { Box, Container, Heading, Text, VStack, SimpleGrid, Flex, Badge, HStack } from '@chakra-ui/react'
+import { Box, Container, Heading, Text, VStack, SimpleGrid, Flex, Badge, HStack, Icon } from '@chakra-ui/react'
+import { FiShoppingCart, FiPackage, FiTruck } from 'react-icons/fi'
 import { howItWorksSteps } from '../../data/mockData'
+
+// Map icon names to icon components
+const iconMap = {
+  FiShoppingCart,
+  FiPackage,
+  FiTruck
+}
 
 export default function HowItWorks() {
   return (
@@ -62,9 +70,16 @@ export default function HowItWorks() {
                 </Flex>
 
                 {/* Icon */}
-                <Text fontSize="6xl" role="img" aria-label={step.title}>
-                  {step.icon}
-                </Text>
+                <Box
+                  p={4}
+                  bg="brand.50"
+                  borderRadius="full"
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                >
+                  <Icon as={iconMap[step.icon]} boxSize={12} color="brand.600" />
+                </Box>
 
                 {/* Content */}
                 <VStack spacing={2} textAlign="center">

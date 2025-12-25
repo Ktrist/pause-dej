@@ -28,6 +28,8 @@ import { useAuth } from '../../context/AuthContext'
 import DishCard from '../../components/catalogue/DishCard'
 import DishDetailModal from '../../components/catalogue/DishDetailModal'
 import LoadingSpinner from '../../components/common/LoadingSpinner'
+import SEO from '../../components/common/SEO'
+import { BreadcrumbSchema } from '../../components/common/StructuredData'
 
 export default function CataloguePage() {
   const [searchParams] = useSearchParams()
@@ -136,9 +138,20 @@ export default function CataloguePage() {
   }
 
   return (
-    <Box bg="gray.50" minH="calc(100vh - 64px)" py={8}>
-      <Container maxW="container.xl">
-        <VStack spacing={8} align="stretch">
+    <>
+      <SEO
+        title="Notre Carte - Plats frais du jour | Pause Dej'"
+        description="Découvrez notre sélection quotidienne de plats frais : entrées, plats principaux, salades, burgers et desserts. Cuisine locale avec produits de saison à Annecy."
+        keywords="carte restaurant Annecy, plats du jour, menu Annecy, plats frais, entrées, desserts"
+        url="/a-la-carte"
+      />
+      <BreadcrumbSchema items={[
+        { name: 'Accueil', url: '/' },
+        { name: 'À la carte', url: '/a-la-carte' }
+      ]} />
+      <Box bg="gray.50" minH="calc(100vh - 64px)" py={8}>
+        <Container maxW="container.xl">
+          <VStack spacing={8} align="stretch">
 {/* Header */}
           <VStack spacing={4} align="start">
             <Heading as="h1" size="xl" color="gray.800">
@@ -349,6 +362,7 @@ export default function CataloguePage() {
 
       {/* Dish Detail Modal */}
       <DishDetailModal dish={selectedDish} isOpen={isOpen} onClose={onClose} />
-    </Box>
+      </Box>
+    </>
   )
 }

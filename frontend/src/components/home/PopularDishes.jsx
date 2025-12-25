@@ -164,7 +164,7 @@ export default function PopularDishes() {
           {/* CTA */}
           <Button
             as={RouterLink}
-            to="/catalogue"
+            to="/a-la-carte"
             size="lg"
             variant="outline"
             colorScheme="brand"

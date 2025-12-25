@@ -1,8 +1,8 @@
 # 📊 Suivi des User Stories - Pause Dej'
 
-> **Dernière mise à jour** : 2025-12-14 (Session - Newsletter & Marketing Emails)
+> **Dernière mise à jour** : 2025-12-24 (Session - UX Polish & SEO URLs)
 > **Progression globale** : 75/144 User Stories (52.1%)
-> **Infrastructure** : ✅ Supabase entièrement intégré (62 hooks + migrations complètes + RPC functions) | ✅ Stripe paiements fonctionnels | ✅ Admin Dashboard 100% | ✅ Email notifications | ✅ Support client | ✅ Analytics | ✅ B2B Platform 100% (9/9) | ✅ User Personalization 100% (3/3) | ✅ Loyalty Program 100% (3/3) | ✅ Reviews & Ratings 100% (3/3) | ✅ Marketing Emails 100% (3/3)
+> **Infrastructure** : ✅ Supabase entièrement intégré (62 hooks + migrations complètes + RPC functions) | ✅ Stripe paiements fonctionnels | ✅ Admin Dashboard 100% | ✅ Email notifications | ✅ Support client | ✅ Analytics | ✅ B2B Platform 100% (9/9) | ✅ User Personalization 100% (3/3) | ✅ Loyalty Program 100% (3/3) | ✅ Reviews & Ratings 100% (3/3) | ✅ Marketing Emails 100% (3/3) | ✅ SEO-friendly URLs
 
 ---
 
@@ -740,7 +740,7 @@
 
 ---
 
-**Dernière mise à jour** : 2025-12-13 - Session Claude Code (Review Request Emails - 50% Complete! 🎉)
+**Dernière mise à jour** : 2025-12-24 - Session Claude Code (UX Polish & SEO - 52% Complete! 🎉)
 
 ### Newsletter & Marketing Emails Implementation (Session 2025-12-14)
 | Composant | Description | Statut | Commits |
@@ -795,3 +795,76 @@
   - Newsletter route in App.jsx
 - ✅ RLS policies for security
 - ✅ Auto-update timestamps via triggers
+
+### UX Polish & SEO URLs (Session 2025-12-24)
+| Composant | Description | Statut | Commits |
+|---|---|---|---|
+| **B2B Form Optimization** | Form field validation and database mapping | ✅ Terminé | TBD |
+| **Referral System Clarification** | Single-use voucher messaging | ✅ Terminé | TBD |
+| **Home Page Icons** | Emoji to Feather Icons conversion | ✅ Terminé | TBD |
+| **SEO-Friendly URLs** | French URL slugs with redirects | ✅ Terminé | TBD |
+
+**Fonctionnalités implémentées** :
+- ✅ B2B Form Field Mapping:
+  - Fixed field names to match database schema
+  - `company_size` → `employee_count` (INTEGER)
+  - `special_requirements` → `message` (TEXT)
+  - Removed "politique_teletravail" field
+  - Converted "nombre_employes" to Select dropdown with ranges
+  - Employee ranges: 1-10, 11-50, 51-200, 201-500, 500+
+  - Changed "Envoyer" button color to #E85D04 (brand orange)
+- ✅ Referral Rewards Clarification:
+  - Updated `update_referral_single_use_vouchers.sql` migration
+  - Modified `process_referral_rewards()` function
+  - Creates single-use promo codes with `usage_limit = 1`
+  - Updated ReferralDashboard.jsx messaging
+  - Added "À usage unique" badges
+  - Clear "bon d'achat" terminology instead of generic "credits"
+- ✅ Home Page Icon Redesign:
+  - Replaced emoji icons with Feather Icons
+  - 🍽️ → FiShoppingCart (Commandez)
+  - 🔥 → FiPackage (On cuisine)
+  - 📦 → FiTruck (Livraison le matin)
+  - Circular brand.50 background with brand.600 icons
+  - Consistent styling with /how-it-works page
+- ✅ SEO-Friendly URL Restructure:
+  - Changed `/catalogue` → `/a-la-carte`
+  - Changed `/how-it-works` → `/comment-ca-marche`
+  - Changed `/B2B` → `/pause-dej-at-work`
+  - Implemented automatic redirects with `<Navigate replace />`
+  - Updated all internal links across 26 files
+  - Preserved query parameters in redirects
+  - Updated B2B sub-routes:
+    - `/pause-dej-at-work/dashboard`
+    - `/pause-dej-at-work/employees`
+    - `/pause-dej-at-work/budgets`
+    - `/pause-dej-at-work/analytics`
+    - `/pause-dej-at-work/invoices`
+    - `/pause-dej-at-work/bulk-order`
+- ✅ Database Cleanup:
+  - Removed temporary SQL files:
+    - b2b_complete_migration.sql
+    - cleanup_duplicate_packages.sql
+    - fix_pricing_data.sql
+    - complete_reset_fixed.sql
+    - set_user_roles.sql
+
+**Files Updated (26 total)** :
+- App.jsx (routes + redirects)
+- Header.jsx (navigation)
+- Footer.jsx (footer links)
+- HeroSection.jsx (CTAs)
+- PopularDishes.jsx (links)
+- B2BReassuranceBanner.jsx (B2B links)
+- B2BSection.jsx (navigation)
+- ForYouSection.jsx (dish links)
+- B2BPage.jsx (packages + form)
+- HowItWorksPage.jsx (CTAs)
+- CartPage.jsx (empty cart links)
+- CartDrawer.jsx (continue shopping)
+- CheckoutPage.jsx (error navigation)
+- AccountPage.jsx (favorites/reviews links)
+- NotFoundPage.jsx (404 link)
+- HowItWorks.jsx (icon components)
+- mockData.js (icon references)
+- ReferralDashboard.jsx (messaging)

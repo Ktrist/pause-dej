@@ -47,7 +47,7 @@ export default function CartPage() {
             <HStack spacing={4}>
               <Button
                 as={RouterLink}
-                to="/catalogue"
+                to="/a-la-carte"
                 colorScheme="brand"
                 size="lg"
                 leftIcon={<FiShoppingCart />}
@@ -86,7 +86,7 @@ export default function CartPage() {
             </VStack>
             <Button
               as={RouterLink}
-              to="/catalogue"
+              to="/a-la-carte"
               variant="outline"
               colorScheme="brand"
               leftIcon={<FiArrowLeft />}
@@ -109,7 +109,7 @@ export default function CartPage() {
               {/* Continue Shopping (Mobile) */}
               <Button
                 as={RouterLink}
-                to="/catalogue"
+                to="/a-la-carte"
                 variant="outline"
                 colorScheme="brand"
                 size="lg"

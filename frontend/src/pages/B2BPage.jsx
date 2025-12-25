@@ -30,8 +30,17 @@ import {
   ModalCloseButton,
   useDisclosure,
   Skeleton,
-  SkeletonText
+  SkeletonText,
+  Image,
+  Tabs,
+  TabList,
+  TabPanels,
+  Tab,
+  TabPanel,
+  InputGroup,
+  InputLeftElement
 } from '@chakra-ui/react'
+import logo from '../assets/logo.jpg'
 import {
   FiCheck,
   FiUsers,
@@ -44,6 +53,7 @@ import {
 import { TbCurrencyEuro } from 'react-icons/tb'
 import { useNavigate } from 'react-router-dom'
 import { useB2BQuotes, useB2BPackages } from '../hooks/useB2BQuotes'
+import SEO from '../components/common/SEO'
 
 const FeatureCard = ({ icon, title, description }) => {
   const bgColor = useColorModeValue('white', 'gray.800')
@@ -101,7 +111,7 @@ const PackageCard = ({ pkg }) => {
           <Button
             colorScheme="brand"
             rightIcon={<FiArrowRight />}
-            onClick={() => navigate('/catalogue?b2b=true&package=' + pkg.tier_name)}
+            onClick={() => navigate('/a-la-carte?b2b=true&package=' + pkg.tier_name)}
             mt={2}
           >
             Découvrir les plats
@@ -121,34 +131,68 @@ export default function B2BPage() {
 
   console.log('📦 B2BPage - Packages loaded:', packages.length, packages)
 
-  const [formData, setFormData] = useState({
-    company_name: '',
-    contact_name: '',
-    contact_email: '',
-    contact_phone: '',
-    company_size: '',
-    estimated_monthly_orders: '',
-    budget_range: '',
-    delivery_frequency: '',
-    special_requirements: ''
+  // Form 1: Contactez-nous
+  const [contactForm, setContactForm] = useState({
+    prenom: '',
+    nom: '',
+    email: '',
+    telephone: '',
+    entreprise: '',
+    nombre_employes: '',
+    solution_actuelle: '',
+    ticket_restaurant: ''
   })
+
+  // Form 2: Des questions ?
+  const [questionForm, setQuestionForm] = useState({
+    prenom: '',
+    nom: '',
+    email: '',
+    telephone: '',
+    entreprise: '',
+    poste: '',
+    nombre_employes: '',
+    code_postal: '',
+    message: ''
+  })
+
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const handleChange = (e) => {
+  const handleContactChange = (e) => {
     const { name, value } = e.target
-    setFormData((prev) => ({ ...prev, [name]: value }))
+    setContactForm((prev) => ({ ...prev, [name]: value }))
   }
 
-  const handleSubmit = async (e) => {
+  const handleQuestionChange = (e) => {
+    const { name, value } = e.target
+    setQuestionForm((prev) => ({ ...prev, [name]: value }))
+  }
+
+  const handleContactSubmit = async (e) => {
     e.preventDefault()
     setIsSubmitting(true)
+
+    // Convert to database schema format
+    // Extract employee count from range (e.g., "1-10" -> 1, "500+" -> 500)
+    const employeeCount = contactForm.nombre_employes.includes('+')
+      ? parseInt(contactForm.nombre_employes.replace('+', ''))
+      : parseInt(contactForm.nombre_employes.split('-')[0]) || 0
+
+    const formData = {
+      company_name: contactForm.entreprise,
+      contact_name: `${contactForm.prenom} ${contactForm.nom}`,
+      contact_email: contactForm.email,
+      contact_phone: contactForm.telephone,
+      employee_count: employeeCount,
+      message: `Solution actuelle: ${contactForm.solution_actuelle}\nTicket restaurant: ${contactForm.ticket_restaurant}`
+    }
 
     const { error } = await createQuote(formData)
 
     if (error) {
       toast({
         title: 'Erreur',
-        description: "Impossible d'envoyer la demande de devis. Veuillez réessayer.",
+        description: "Impossible d'envoyer votre demande. Veuillez réessayer.",
         status: 'error',
         duration: 5000,
         isClosable: true
@@ -161,16 +205,69 @@ export default function B2BPage() {
         duration: 5000,
         isClosable: true
       })
-      setFormData({
-        company_name: '',
-        contact_name: '',
-        contact_email: '',
-        contact_phone: '',
-        company_size: '',
-        estimated_monthly_orders: '',
-        budget_range: '',
-        delivery_frequency: '',
-        special_requirements: ''
+      setContactForm({
+        prenom: '',
+        nom: '',
+        email: '',
+        telephone: '',
+        entreprise: '',
+        nombre_employes: '',
+        solution_actuelle: '',
+        ticket_restaurant: ''
+      })
+      onClose()
+    }
+
+    setIsSubmitting(false)
+  }
+
+  const handleQuestionSubmit = async (e) => {
+    e.preventDefault()
+    setIsSubmitting(true)
+
+    // Convert to database schema format
+    // Extract employee count from range (e.g., "1-10" -> 1, "500+" -> 500)
+    const employeeCount = questionForm.nombre_employes.includes('+')
+      ? parseInt(questionForm.nombre_employes.replace('+', ''))
+      : parseInt(questionForm.nombre_employes.split('-')[0]) || 0
+
+    const formData = {
+      company_name: questionForm.entreprise,
+      contact_name: `${questionForm.prenom} ${questionForm.nom}`,
+      contact_email: questionForm.email,
+      contact_phone: questionForm.telephone,
+      employee_count: employeeCount,
+      message: `Poste: ${questionForm.poste}\nCode postal: ${questionForm.code_postal}\nMessage: ${questionForm.message}`
+    }
+
+    const { error } = await createQuote(formData)
+
+    if (error) {
+      toast({
+        title: 'Erreur',
+        description: "Impossible d'envoyer votre message. Veuillez réessayer.",
+        status: 'error',
+        duration: 5000,
+        isClosable: true
+      })
+    } else {
+      toast({
+        title: 'Message envoyé !',
+        description: 'Nous vous répondrons dans les plus brefs délais.',
+        status: 'success',
+        duration: 5000,
+        isClosable: true
+      })
+      setQuestionForm({
+        prenom: '',
+        nom: '',
+        email: '',
+        telephone: '',
+        entreprise: '',
+        poste: '',
+        nombre_employes: '',
+        code_postal: '',
+        message: ''
       })
       onClose()
     }
@@ -179,10 +276,17 @@ export default function B2BPage() {
   }
 
   return (
-    <Box bg={bgColor} minH="100vh" py={16}>
-      <Container maxW="container.xl">
-        <VStack spacing={16} align="stretch">
-          {/* Hero Section */}
+    <>
+      <SEO
+        title="Pause Dej' At Work - Solution restauration entreprise à Annecy"
+        description="Offrez des repas frais et de qualité à vos employés. Forfaits entreprise personnalisés, gestion d'équipe, budgets flexibles. Demandez un devis gratuit."
+        keywords="restauration entreprise Annecy, repas entreprise, forfait B2B, cantine entreprise, ticket restaurant"
+        url="/pause-dej-at-work"
+      />
+      <Box bg={bgColor} minH="100vh" py={16}>
+        <Container maxW="container.xl">
+          <VStack spacing={16} align="stretch">
+            {/* Hero Section */}
           <VStack spacing={6} textAlign="center" maxW="3xl" mx="auto">
             <Badge colorScheme="brand" fontSize="md" px={3} py={1}>
               Solutions B2B
@@ -202,7 +306,7 @@ export default function B2BPage() {
                 onClick={onOpen}
                 borderRadius="12px"
               >
-                Demander un devis
+                Discutons de vos besoins
               </Button>
               <Button
                 variant="outline"
@@ -373,7 +477,7 @@ export default function B2BPage() {
                   Contactez-nous pour une étude personnalisée et un devis gratuit
                 </Text>
                 <Button colorScheme="brand" size="lg" onClick={onOpen}>
-                  Demander un devis gratuit
+                  Discutons de vos besoins
                 </Button>
               </VStack>
             </CardBody>
@@ -385,136 +489,379 @@ export default function B2BPage() {
       <Modal isOpen={isOpen} onClose={onClose} size="xl">
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Demande de Devis B2B</ModalHeader>
+          <ModalHeader>
+            <VStack align="start" spacing={4}>
+              <HStack spacing={3} align="center">
+                <Image
+                  src={logo}
+                  alt="Pause Dej'"
+                  h="50px"
+                  objectFit="contain"
+                />
+                <Text fontSize="lg" color="gray.700" fontWeight="medium">
+                  dans votre entreprise
+                </Text>
+              </HStack>
+              <Box
+                bg="purple.500"
+                px={5}
+                py={2}
+                borderRadius="md"
+                transform="rotate(-3deg)"
+                boxShadow="lg"
+                display="inline-block"
+                w="fit-content"
+              >
+                <Text
+                  fontSize="lg"
+                  fontWeight="extrabold"
+                  color="white"
+                  fontFamily="Agrandir, Circular, Helvetica, Arial, sans-serif"
+                  letterSpacing="wider"
+                  textTransform="lowercase"
+                >
+                  c'est pour bientôt !
+                </Text>
+              </Box>
+            </VStack>
+          </ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6}>
-            <form onSubmit={handleSubmit}>
-              <VStack spacing={4}>
-                <FormControl isRequired>
-                  <FormLabel>Nom de l'entreprise</FormLabel>
-                  <Input
-                    name="company_name"
-                    value={formData.company_name}
-                    onChange={handleChange}
-                    placeholder="Acme Corp"
-                  />
-                </FormControl>
-
-                <SimpleGrid columns={2} spacing={4} w="full">
-                  <FormControl isRequired>
-                    <FormLabel>Nom du contact</FormLabel>
-                    <Input
-                      name="contact_name"
-                      value={formData.contact_name}
-                      onChange={handleChange}
-                      placeholder="Jean Dupont"
-                    />
-                  </FormControl>
-
-                  <FormControl isRequired>
-                    <FormLabel>Email</FormLabel>
-                    <Input
-                      name="contact_email"
-                      type="email"
-                      value={formData.contact_email}
-                      onChange={handleChange}
-                      placeholder="jean@acme.com"
-                    />
-                  </FormControl>
-                </SimpleGrid>
-
-                <FormControl>
-                  <FormLabel>Téléphone</FormLabel>
-                  <Input
-                    name="contact_phone"
-                    type="tel"
-                    value={formData.contact_phone}
-                    onChange={handleChange}
-                    placeholder="+33 6 12 34 56 78"
-                  />
-                </FormControl>
-
-                <SimpleGrid columns={2} spacing={4} w="full">
-                  <FormControl isRequired>
-                    <FormLabel>Taille de l'entreprise</FormLabel>
-                    <Select
-                      name="company_size"
-                      value={formData.company_size}
-                      onChange={handleChange}
-                      placeholder="Sélectionner"
-                    >
-                      <option value="1-10">1-10 employés</option>
-                      <option value="11-50">11-50 employés</option>
-                      <option value="51-200">51-200 employés</option>
-                      <option value="201-500">201-500 employés</option>
-                      <option value="500+">500+ employés</option>
-                    </Select>
-                  </FormControl>
-
-                  <FormControl>
-                    <FormLabel>Commandes mensuelles estimées</FormLabel>
-                    <Input
-                      name="estimated_monthly_orders"
-                      type="number"
-                      value={formData.estimated_monthly_orders}
-                      onChange={handleChange}
-                      placeholder="100"
-                    />
-                  </FormControl>
-                </SimpleGrid>
-
-                <SimpleGrid columns={2} spacing={4} w="full">
-                  <FormControl>
-                    <FormLabel>Budget mensuel</FormLabel>
-                    <Input
-                      name="budget_range"
-                      value={formData.budget_range}
-                      onChange={handleChange}
-                      placeholder="1000-2000€"
-                    />
-                  </FormControl>
-
-                  <FormControl>
-                    <FormLabel>Fréquence de livraison</FormLabel>
-                    <Select
-                      name="delivery_frequency"
-                      value={formData.delivery_frequency}
-                      onChange={handleChange}
-                      placeholder="Sélectionner"
-                    >
-                      <option value="daily">Quotidienne</option>
-                      <option value="2-3-week">2-3 fois/semaine</option>
-                      <option value="weekly">Hebdomadaire</option>
-                      <option value="occasional">Ponctuelle</option>
-                    </Select>
-                  </FormControl>
-                </SimpleGrid>
-
-                <FormControl>
-                  <FormLabel>Besoins particuliers</FormLabel>
-                  <Textarea
-                    name="special_requirements"
-                    value={formData.special_requirements}
-                    onChange={handleChange}
-                    placeholder="Régimes alimentaires spécifiques, allergies, préférences..."
-                    rows={4}
-                  />
-                </FormControl>
-
-                <Button
-                  type="submit"
-                  colorScheme="brand"
-                  size="lg"
-                  w="full"
-                  isLoading={isSubmitting}
+            <Tabs variant="unstyled" colorScheme="gray">
+              <TabList borderBottom="2px solid" borderColor="gray.200" mb={6}>
+                <Tab
+                  _selected={{ borderBottom: '3px solid black', fontWeight: 'bold' }}
+                  _hover={{ color: 'gray.700' }}
+                  pb={3}
+                  px={6}
+                  fontSize="md"
                 >
-                  Envoyer ma demande
-                </Button>
-              </VStack>
-            </form>
+                  <HStack spacing={2}>
+                    <Icon as={FiUsers} />
+                    <Text>Contactez-nous</Text>
+                  </HStack>
+                </Tab>
+                <Tab
+                  _selected={{ borderBottom: '3px solid black', fontWeight: 'bold' }}
+                  _hover={{ color: 'gray.700' }}
+                  pb={3}
+                  px={6}
+                  fontSize="md"
+                >
+                  <HStack spacing={2}>
+                    <Text>❓</Text>
+                    <Text>Des questions ?</Text>
+                  </HStack>
+                </Tab>
+              </TabList>
+
+              <TabPanels>
+                {/* Tab 1: Contactez-nous */}
+                <TabPanel px={0}>
+                  <VStack spacing={6} align="stretch">
+                    <Text color="gray.700" fontSize="sm" fontWeight="bold">
+                      On vous envoie un e-mail avec les infos à transférer à votre RH ou CSE.
+                    </Text>
+
+                    <form onSubmit={handleContactSubmit}>
+                      <VStack spacing={4}>
+                        <SimpleGrid columns={2} spacing={4} w="full">
+                          <FormControl isRequired>
+                            <Input
+                              name="prenom"
+                              value={contactForm.prenom}
+                              onChange={handleContactChange}
+                              placeholder="Prénom *"
+                              borderColor="gray.300"
+                              _hover={{ borderColor: 'gray.400' }}
+                              _focus={{ borderColor: 'black', boxShadow: 'none' }}
+                            />
+                          </FormControl>
+
+                          <FormControl isRequired>
+                            <Input
+                              name="nom"
+                              value={contactForm.nom}
+                              onChange={handleContactChange}
+                              placeholder="Nom *"
+                              borderColor="gray.300"
+                              _hover={{ borderColor: 'gray.400' }}
+                              _focus={{ borderColor: 'black', boxShadow: 'none' }}
+                            />
+                          </FormControl>
+                        </SimpleGrid>
+
+                        <SimpleGrid columns={2} spacing={4} w="full">
+                          <FormControl isRequired>
+                            <Input
+                              name="email"
+                              type="email"
+                              value={contactForm.email}
+                              onChange={handleContactChange}
+                              placeholder="Email *"
+                              borderColor="gray.300"
+                              _hover={{ borderColor: 'gray.400' }}
+                              _focus={{ borderColor: 'black', boxShadow: 'none' }}
+                            />
+                          </FormControl>
+
+                          <FormControl isRequired>
+                            <InputGroup>
+                              <InputLeftElement pointerEvents="none">
+                                <Text fontSize="lg">🇫🇷</Text>
+                              </InputLeftElement>
+                              <Input
+                                name="telephone"
+                                type="tel"
+                                value={contactForm.telephone}
+                                onChange={handleContactChange}
+                                placeholder="Numéro de téléphone *"
+                                pl={10}
+                                borderColor="gray.300"
+                                _hover={{ borderColor: 'gray.400' }}
+                                _focus={{ borderColor: 'black', boxShadow: 'none' }}
+                              />
+                            </InputGroup>
+                          </FormControl>
+                        </SimpleGrid>
+
+                        <SimpleGrid columns={2} spacing={4} w="full">
+                          <FormControl isRequired>
+                            <Input
+                              name="entreprise"
+                              value={contactForm.entreprise}
+                              onChange={handleContactChange}
+                              placeholder="Nom de l'entreprise *"
+                              borderColor="gray.300"
+                              _hover={{ borderColor: 'gray.400' }}
+                              _focus={{ borderColor: 'black', boxShadow: 'none' }}
+                            />
+                          </FormControl>
+
+                          <FormControl isRequired>
+                            <Select
+                              name="nombre_employes"
+                              value={contactForm.nombre_employes}
+                              onChange={handleContactChange}
+                              placeholder="Nombre d'employés *"
+                              borderColor="gray.300"
+                              _hover={{ borderColor: 'gray.400' }}
+                              _focus={{ borderColor: 'black', boxShadow: 'none' }}
+                            >
+                              <option value="1-10">1-10 employés</option>
+                              <option value="11-50">11-50 employés</option>
+                              <option value="51-200">51-200 employés</option>
+                              <option value="201-500">201-500 employés</option>
+                              <option value="500+">500+ employés</option>
+                            </Select>
+                          </FormControl>
+                        </SimpleGrid>
+
+                        <FormControl isRequired>
+                          <Input
+                            name="solution_actuelle"
+                            value={contactForm.solution_actuelle}
+                            onChange={handleContactChange}
+                            placeholder="Solution actuelle dans l'entreprise *"
+                            borderColor="gray.300"
+                            _hover={{ borderColor: 'gray.400' }}
+                            _focus={{ borderColor: 'black', boxShadow: 'none' }}
+                          />
+                        </FormControl>
+
+                        <FormControl isRequired>
+                          <Input
+                            name="ticket_restaurant"
+                            value={contactForm.ticket_restaurant}
+                            onChange={handleContactChange}
+                            placeholder="Ticket restaurant *"
+                            borderColor="gray.300"
+                            _hover={{ borderColor: 'gray.400' }}
+                            _focus={{ borderColor: 'black', boxShadow: 'none' }}
+                          />
+                        </FormControl>
+
+                        <Button
+                          type="submit"
+                          bg="#E85D04"
+                          color="white"
+                          size="lg"
+                          borderRadius="full"
+                          px={12}
+                          mt={4}
+                          _hover={{ bg: '#C74E03' }}
+                          isLoading={isSubmitting}
+                        >
+                          Envoyer
+                        </Button>
+                      </VStack>
+                    </form>
+                  </VStack>
+                </TabPanel>
+
+                {/* Tab 2: Des questions ? */}
+                <TabPanel px={0}>
+                  <VStack spacing={6} align="stretch">
+                    <Text color="gray.700" fontSize="sm" fontWeight="bold">
+                      Encore des questions sur nos offres ? N'hésitez pas à nous laisser un message.
+                    </Text>
+
+                    <form onSubmit={handleQuestionSubmit}>
+                      <VStack spacing={4}>
+                        <SimpleGrid columns={2} spacing={4} w="full">
+                          <FormControl isRequired>
+                            <Input
+                              name="prenom"
+                              value={questionForm.prenom}
+                              onChange={handleQuestionChange}
+                              placeholder="Prénom *"
+                              borderColor="gray.300"
+                              _hover={{ borderColor: 'gray.400' }}
+                              _focus={{ borderColor: 'black', boxShadow: 'none' }}
+                            />
+                          </FormControl>
+
+                          <FormControl isRequired>
+                            <Input
+                              name="nom"
+                              value={questionForm.nom}
+                              onChange={handleQuestionChange}
+                              placeholder="Nom *"
+                              borderColor="gray.300"
+                              _hover={{ borderColor: 'gray.400' }}
+                              _focus={{ borderColor: 'black', boxShadow: 'none' }}
+                            />
+                          </FormControl>
+                        </SimpleGrid>
+
+                        <SimpleGrid columns={2} spacing={4} w="full">
+                          <FormControl isRequired>
+                            <Input
+                              name="email"
+                              type="email"
+                              value={questionForm.email}
+                              onChange={handleQuestionChange}
+                              placeholder="Email *"
+                              borderColor="gray.300"
+                              _hover={{ borderColor: 'gray.400' }}
+                              _focus={{ borderColor: 'black', boxShadow: 'none' }}
+                            />
+                          </FormControl>
+
+                          <FormControl isRequired>
+                            <InputGroup>
+                              <InputLeftElement pointerEvents="none">
+                                <Text fontSize="lg">🇫🇷</Text>
+                              </InputLeftElement>
+                              <Input
+                                name="telephone"
+                                type="tel"
+                                value={questionForm.telephone}
+                                onChange={handleQuestionChange}
+                                placeholder="Numéro de téléphone *"
+                                pl={10}
+                                borderColor="gray.300"
+                                _hover={{ borderColor: 'gray.400' }}
+                                _focus={{ borderColor: 'black', boxShadow: 'none' }}
+                              />
+                            </InputGroup>
+                          </FormControl>
+                        </SimpleGrid>
+
+                        <SimpleGrid columns={2} spacing={4} w="full">
+                          <FormControl isRequired>
+                            <Input
+                              name="entreprise"
+                              value={questionForm.entreprise}
+                              onChange={handleQuestionChange}
+                              placeholder="Nom de l'entreprise *"
+                              borderColor="gray.300"
+                              _hover={{ borderColor: 'gray.400' }}
+                              _focus={{ borderColor: 'black', boxShadow: 'none' }}
+                            />
+                          </FormControl>
+
+                          <FormControl isRequired>
+                            <Input
+                              name="poste"
+                              value={questionForm.poste}
+                              onChange={handleQuestionChange}
+                              placeholder="Poste *"
+                              borderColor="gray.300"
+                              _hover={{ borderColor: 'gray.400' }}
+                              _focus={{ borderColor: 'black', boxShadow: 'none' }}
+                            />
+                          </FormControl>
+                        </SimpleGrid>
+
+                        <SimpleGrid columns={2} spacing={4} w="full">
+                          <FormControl isRequired>
+                            <Select
+                              name="nombre_employes"
+                              value={questionForm.nombre_employes}
+                              onChange={handleQuestionChange}
+                              placeholder="Nombre d'employés *"
+                              borderColor="gray.300"
+                              _hover={{ borderColor: 'gray.400' }}
+                              _focus={{ borderColor: 'black', boxShadow: 'none' }}
+                            >
+                              <option value="1-10">1-10 employés</option>
+                              <option value="11-50">11-50 employés</option>
+                              <option value="51-200">51-200 employés</option>
+                              <option value="201-500">201-500 employés</option>
+                              <option value="500+">500+ employés</option>
+                            </Select>
+                          </FormControl>
+
+                          <FormControl isRequired>
+                            <Input
+                              name="code_postal"
+                              value={questionForm.code_postal}
+                              onChange={handleQuestionChange}
+                              placeholder="Code postal de l'entreprise *"
+                              borderColor="gray.300"
+                              _hover={{ borderColor: 'gray.400' }}
+                              _focus={{ borderColor: 'black', boxShadow: 'none' }}
+                            />
+                          </FormControl>
+                        </SimpleGrid>
+
+                        <FormControl isRequired>
+                          <Textarea
+                            name="message"
+                            value={questionForm.message}
+                            onChange={handleQuestionChange}
+                            placeholder="Pouvez-vous nous en dire plus sur votre besoin ? *"
+                            rows={6}
+                            borderColor="gray.300"
+                            _hover={{ borderColor: 'gray.400' }}
+                            _focus={{ borderColor: 'black', boxShadow: 'none' }}
+                          />
+                        </FormControl>
+
+                        <Button
+                          type="submit"
+                          bg="#E85D04"
+                          color="white"
+                          size="lg"
+                          borderRadius="full"
+                          px={12}
+                          mt={4}
+                          _hover={{ bg: '#C74E03' }}
+                          isLoading={isSubmitting}
+                        >
+                          Envoyer
+                        </Button>
+                      </VStack>
+                    </form>
+                  </VStack>
+                </TabPanel>
+              </TabPanels>
+            </Tabs>
           </ModalBody>
         </ModalContent>
       </Modal>
-    </Box>
+      </Box>
+    </>
   )
 }

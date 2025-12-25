@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { Box } from '@chakra-ui/react'
 import { AuthProvider } from './context/AuthContext'
 import { CartProvider } from './context/CartContext'
@@ -95,7 +95,18 @@ function App() {
                   <Box flex="1">
                     <Routes>
                       <Route path="/" element={<HomePage />} />
-                      <Route path="/catalogue" element={<CataloguePage />} />
+
+                      {/* New Routes */}
+                      <Route path="/a-la-carte" element={<CataloguePage />} />
+                      <Route path="/comment-ca-marche" element={<HowItWorksPage />} />
+
+                      {/* Redirects from old URLs */}
+                      <Route path="/catalogue" element={<Navigate to="/a-la-carte" replace />} />
+                      <Route path="/how-it-works" element={<Navigate to="/comment-ca-marche" replace />} />
+                      <Route path="/b2b" element={<Navigate to="/pause-dej-at-work" replace />} />
+                      <Route path="/b2b/*" element={<Navigate to="/pause-dej-at-work" replace />} />
+                      <Route path="/B2B" element={<Navigate to="/pause-dej-at-work" replace />} />
+
                       <Route path="/panier" element={<CartPage />} />
                       <Route path="/compte" element={<AccountPage />} />
                       <Route path="/login" element={<LoginPage />} />
@@ -107,19 +118,18 @@ function App() {
                       <Route path="/support" element={<SupportPage />} />
                       <Route path="/support/:ticketId" element={<SupportPage />} />
                       <Route path="/contact" element={<ContactPage />} />
-                      <Route path="/how-it-works" element={<HowItWorksPage />} />
 
                       {/* B2B Public Routes */}
-                      <Route path="/b2b" element={<B2BPage />} />
-                      <Route path="/b2b/quote" element={<B2BQuoteRequestPage />} />
+                      <Route path="/pause-dej-at-work" element={<B2BPage />} />
+                      <Route path="/pause-dej-at-work/quote" element={<B2BQuoteRequestPage />} />
 
                       {/* B2B Business Routes (Protected) */}
-                      <Route path="/b2b/dashboard" element={<B2BDashboard />} />
-                      <Route path="/b2b/employees" element={<EmployeeManagement />} />
-                      <Route path="/b2b/budgets" element={<BudgetManagement />} />
-                      <Route path="/b2b/analytics" element={<B2BAnalytics />} />
-                      <Route path="/b2b/invoices" element={<MonthlyInvoices />} />
-                      <Route path="/b2b/bulk-order" element={<BulkOrderPage />} />
+                      <Route path="/pause-dej-at-work/dashboard" element={<B2BDashboard />} />
+                      <Route path="/pause-dej-at-work/employees" element={<EmployeeManagement />} />
+                      <Route path="/pause-dej-at-work/budgets" element={<BudgetManagement />} />
+                      <Route path="/pause-dej-at-work/analytics" element={<B2BAnalytics />} />
+                      <Route path="/pause-dej-at-work/invoices" element={<MonthlyInvoices />} />
+                      <Route path="/pause-dej-at-work/bulk-order" element={<BulkOrderPage />} />
 
                       {/* Legal Routes */}
                       <Route path="/legal/mentions-legales" element={<MentionsLegalesPage />} />

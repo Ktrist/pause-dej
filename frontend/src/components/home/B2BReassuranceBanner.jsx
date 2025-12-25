@@ -59,7 +59,7 @@ export default function B2BReassuranceBanner() {
           <HStack spacing={4} pt={4} flexWrap="wrap" justify="center">
             <Button
               as={RouterLink}
-              to="/b2b"
+              to="/pause-dej-at-work"
               size="lg"
               variant="outline"
               borderColor="brand.500"
@@ -85,7 +85,7 @@ export default function B2BReassuranceBanner() {
             </Button>
             <Button
               as={RouterLink}
-              to="/how-it-works"
+              to="/comment-ca-marche"
               size="lg"
               variant="ghost"
               color="primary.500"

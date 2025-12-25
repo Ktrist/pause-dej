@@ -1,0 +1,29 @@
+# robots.txt pour Pause Dej'
+# https://pause-dej.fr/robots.txt
+
+# Autoriser tous les robots
+User-agent: *
+Allow: /
+
+# Bloquer les pages privées et admin
+Disallow: /compte
+Disallow: /compte/
+Disallow: /checkout
+Disallow: /checkout/
+Disallow: /panier
+Disallow: /panier/
+Disallow: /admin
+Disallow: /admin/
+Disallow: /confirmation/
+Disallow: /track/
+
+# Bloquer les pages inutiles pour le SEO
+Disallow: /forgot-password
+Disallow: /login
+Disallow: /signup
+
+# Sitemap
+Sitemap: https://pause-dej.fr/sitemap.xml
+
+# Délai entre les requêtes (optionnel, pour être poli avec les crawlers)
+Crawl-delay: 1

@@ -59,7 +59,7 @@ export default function Footer() {
             </Link>
             <Link
               as={RouterLink}
-              to="/catalogue"
+              to="/a-la-carte"
               fontSize="sm"
               color="whiteAlpha.800"
               fontWeight="medium"
@@ -70,7 +70,7 @@ export default function Footer() {
             </Link>
             <Link
               as={RouterLink}
-              to="/how-it-works"
+              to="/comment-ca-marche"
               fontSize="sm"
               color="whiteAlpha.800"
               fontWeight="medium"
@@ -81,7 +81,7 @@ export default function Footer() {
             </Link>
             <Link
               as={RouterLink}
-              to="/b2b"
+              to="/pause-dej-at-work"
               fontSize="sm"
               color="whiteAlpha.800"
               fontWeight="medium"

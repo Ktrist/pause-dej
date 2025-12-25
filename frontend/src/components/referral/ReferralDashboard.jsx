@@ -74,7 +74,7 @@ export default function ReferralDashboard() {
       try {
         await navigator.share({
           title: 'Rejoins Pause Dej\' !',
-          text: `Utilise mon code ${referralCode.code} pour obtenir ${referralCode.bonus_per_referral}€ de réduction sur ta première commande !`,
+          text: `Utilise mon code ${referralCode.code} pour obtenir un bon d'achat de ${referralCode.bonus_per_referral}€ (usage unique) sur ta première commande !`,
           url: referralUrl
         })
       } catch (err) {
@@ -165,11 +165,11 @@ export default function ReferralDashboard() {
                 </HStack>
                 <HStack>
                   <Text>2️⃣</Text>
-                  <Text>Ils obtiennent {referralCode?.bonus_per_referral || 10}€ sur leur 1ère commande</Text>
+                  <Text>Ils obtiennent un bon d'achat de {referralCode?.bonus_per_referral || 10}€ utilisable une seule fois</Text>
                 </HStack>
                 <HStack>
                   <Text>3️⃣</Text>
-                  <Text>Vous recevez {referralCode?.referrer_bonus || 10}€ après leur commande</Text>
+                  <Text>Vous recevez un bon d'achat de {referralCode?.referrer_bonus || 10}€ utilisable une seule fois après leur commande</Text>
                 </HStack>
               </VStack>
             </VStack>
@@ -338,11 +338,12 @@ export default function ReferralDashboard() {
                         <VStack align="start" spacing={1}>
                           <HStack>
                             <Icon as={FiGift} color="green.600" />
-                            <Text fontWeight="600">{reward.reward_amount}€ de crédit</Text>
+                            <Text fontWeight="600">Bon d'achat de {reward.reward_amount}€</Text>
                             {reward.is_claimed && <Badge colorScheme="gray">Utilisé</Badge>}
+                            {!reward.is_claimed && <Badge colorScheme="green">À usage unique</Badge>}
                           </HStack>
                           <Text fontSize="sm" color="gray.600">
-                            Via le code {reward.referral?.code_used}
+                            Via le code de parrainage {reward.referral?.code_used}
                           </Text>
                           {reward.expires_at && !reward.is_claimed && (
                             <Text fontSize="xs" color="orange.600">

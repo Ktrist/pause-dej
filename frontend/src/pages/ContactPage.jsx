@@ -19,6 +19,7 @@ import {
   useColorModeValue
 } from '@chakra-ui/react'
 import { FiMail, FiPhone, FiMapPin, FiClock } from 'react-icons/fi'
+import SEO from '../components/common/SEO'
 
 const ContactInfoCard = ({ icon, title, children }) => {
   const bgColor = useColorModeValue('white', 'gray.800')
@@ -84,10 +85,16 @@ export default function ContactPage() {
   }
 
   return (
-    <Box bg={bgColor} minH="calc(100vh - 64px)" py={16}>
-      <Container maxW="container.xl">
-        <VStack spacing={12} align="stretch">
-          {/* Header */}
+    <>
+      <SEO
+        title="Nous Contacter - Pause Dej' Annecy"
+        description="Une question ? Besoin d'aide ? Contactez notre équipe. Nous sommes là pour vous aider du lundi au vendredi."
+        url="/contact"
+      />
+      <Box bg={bgColor} minH="calc(100vh - 64px)" py={16}>
+        <Container maxW="container.xl">
+          <VStack spacing={12} align="stretch">
+            {/* Header */}
           <VStack spacing={4} textAlign="center" maxW="2xl" mx="auto">
             <Heading size="2xl">Contactez-nous</Heading>
             <Text fontSize="xl" color="gray.600">
@@ -228,6 +235,7 @@ export default function ContactPage() {
           </SimpleGrid>
         </VStack>
       </Container>
-    </Box>
+      </Box>
+    </>
   )
 }

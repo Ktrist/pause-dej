@@ -161,7 +161,7 @@ export default function CartDrawer({ isOpen, onClose }) {
                     colorScheme="brand"
                     onClick={() => {
                       onClose()
-                      navigate('/catalogue')
+                      navigate('/a-la-carte')
                     }}
                   >
                     Découvrir nos plats

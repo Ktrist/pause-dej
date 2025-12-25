@@ -106,7 +106,7 @@ function CheckoutPageContent() {
         status: 'info',
         duration: 3000
       })
-      navigate('/catalogue')
+      navigate('/a-la-carte')
     }
   }, [cart, navigate, isPlacingOrder])
 

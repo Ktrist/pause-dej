@@ -111,7 +111,7 @@ export default function B2BSection() {
                   rightIcon={<FiArrowRight />}
                   px={8}
                   borderRadius="12px"
-                  onClick={() => navigate('/b2b')}
+                  onClick={() => navigate('/pause-dej-at-work')}
                 >
                   Demander un devis
                 </Button>
@@ -122,7 +122,7 @@ export default function B2BSection() {
                   px={8}
                   borderRadius="12px"
                   borderWidth="1px"
-                  onClick={() => navigate('/b2b')}
+                  onClick={() => navigate('/pause-dej-at-work')}
                 >
                   En savoir plus
                 </Button>

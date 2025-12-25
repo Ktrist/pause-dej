@@ -545,7 +545,7 @@ export default function AccountPage() {
                         </Text>
                         <Button
                           as="a"
-                          href="/catalogue"
+                          href="/a-la-carte"
                           colorScheme="brand"
                           size="lg"
                         >
@@ -1042,7 +1042,7 @@ export default function AccountPage() {
                         </Text>
                         <Button
                           as="a"
-                          href="/catalogue"
+                          href="/a-la-carte"
                           colorScheme="brand"
                           size="lg"
                         >
@@ -1056,7 +1056,7 @@ export default function AccountPage() {
                         <DishCard
                           key={favorite.dish_id}
                           dish={favorite.dishes}
-                          onViewDetails={() => navigate(`/catalogue?dish=${favorite.dish_id}`)}
+                          onViewDetails={() => navigate(`/a-la-carte?dish=${favorite.dish_id}`)}
                         />
                       ))}
                     </SimpleGrid>
@@ -1085,7 +1085,7 @@ export default function AccountPage() {
                         </Text>
                         <Button
                           as="a"
-                          href="/catalogue"
+                          href="/a-la-carte"
                           colorScheme="brand"
                           size="lg"
                         >
@@ -1193,7 +1193,7 @@ export default function AccountPage() {
 
                               <Button
                                 as="a"
-                                href={`/catalogue?dish=${review.dish_id}`}
+                                href={`/a-la-carte?dish=${review.dish_id}`}
                                 size="sm"
                                 variant="outline"
                                 colorScheme="brand"

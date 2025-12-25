@@ -27,6 +27,8 @@ import {
   FiHeart,
   FiRefreshCw
 } from 'react-icons/fi'
+import SEO from '../components/common/SEO'
+import { FAQPageSchema } from '../components/common/StructuredData'
 
 const StepCard = ({ number, icon, title, description, details, badge }) => {
   const bgColor = useColorModeValue('white', 'gray.800')
@@ -115,11 +117,42 @@ const FeatureCard = ({ icon, title, description }) => {
 export default function HowItWorksPage() {
   const bgColor = useColorModeValue('gray.50', 'gray.900')
 
+  const faqs = [
+    {
+      question: "Comment commander sur Pause Dej' ?",
+      answer: "Parcourez notre carte de plats frais, sélectionnez vos plats préférés, ajoutez-les à votre panier, choisissez votre créneau de livraison et validez votre commande. C'est simple et rapide !"
+    },
+    {
+      question: "Quels sont les horaires de livraison ?",
+      answer: "Nous livrons du lundi au vendredi entre 7h et 9h. Commandez avant minuit pour une livraison le lendemain matin. Bientôt disponible : créneaux de 30 minutes de 7h à 13h30."
+    },
+    {
+      question: "Quelles sont les zones de livraison ?",
+      answer: "Nous livrons actuellement à Annecy (74000), Annecy-le-Vieux (74940) et Argonay (74370). Livraison à partir de 3.50€, gratuite dès 30€ d'achat."
+    },
+    {
+      question: "Proposez-vous des options pour les régimes alimentaires spécifiques ?",
+      answer: "Oui ! Notre carte propose des options végétariennes, vegan, sans gluten et sans lactose. Vous pouvez filtrer les plats selon vos préférences alimentaires."
+    },
+    {
+      question: "Comment sont préparés les plats ?",
+      answer: "Nos chefs préparent chaque jour des plats frais avec des ingrédients locaux et de saison. Les plats sont livrés dans des emballages isothermes pour garantir leur fraîcheur."
+    }
+  ]
+
   return (
-    <Box bg={bgColor} minH="100vh" py={16}>
-      <Container maxW="container.xl">
-        <VStack spacing={16} align="stretch">
-          {/* Hero Section */}
+    <>
+      <SEO
+        title="Comment ça marche ? | Livraison repas Annecy - Pause Dej'"
+        description="Découvrez notre processus simple : commandez en ligne, nos chefs préparent vos plats, et recevez votre commande le lendemain matin entre 7h et 9h."
+        keywords="comment commander, livraison Annecy, processus commande, horaires livraison"
+        url="/comment-ca-marche"
+      />
+      <FAQPageSchema faqs={faqs} />
+      <Box bg={bgColor} minH="100vh" py={16}>
+        <Container maxW="container.xl">
+          <VStack spacing={16} align="stretch">
+            {/* Hero Section */}
           <VStack spacing={6} textAlign="center" maxW="3xl" mx="auto">
             <Badge colorScheme="brand" fontSize="md" px={3} py={1}>
               Simple et Rapide
@@ -135,7 +168,7 @@ export default function HowItWorksPage() {
             <HStack spacing={4}>
               <Button
                 as={RouterLink}
-                to="/catalogue"
+                to="/a-la-carte"
                 colorScheme="brand"
                 size="lg"
                 borderRadius="12px"
@@ -323,7 +356,7 @@ export default function HowItWorksPage() {
                 </Text>
                 <Button
                   as={RouterLink}
-                  to="/catalogue"
+                  to="/a-la-carte"
                   colorScheme="brand"
                   size="lg"
                 >
@@ -334,6 +367,7 @@ export default function HowItWorksPage() {
           </Card>
         </VStack>
       </Container>
-    </Box>
+      </Box>
+    </>
   )
 }

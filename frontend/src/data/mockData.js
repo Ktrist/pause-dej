@@ -305,19 +305,19 @@ export const howItWorksSteps = [
     id: 1,
     title: 'Commandez',
     description: 'Choisissez vos plats parmi notre sélection quotidienne',
-    icon: '🍽️'
+    icon: 'FiShoppingCart'
   },
   {
     id: 2,
     title: 'On cuisine',
     description: 'Nos chefs préparent votre repas avec des produits frais',
-    icon: '🔥'
+    icon: 'FiPackage'
   },
   {
     id: 3,
     title: 'Livraison le matin',
     description: 'Recevez votre commande entre 7h et 9h, fraîche et prête à déguster',
-    icon: '📦',
+    icon: 'FiTruck',
     badge: { text: 'Bientôt', info: 'Créneaux de 30 min (7h-13h30)' }
   }
 ]
