@@ -48,8 +48,40 @@ export function AuthProvider({ children }) {
       if (data) {
         setProfile(data)
       } else {
-        // Profile doesn't exist yet, set default
-        setProfile({ id: userId, role: 'user' })
+        // Profile doesn't exist - create it automatically (handles OAuth signups)
+        try {
+          // Get current user to access metadata
+          const { data: { user: currentUser } } = await supabase.auth.getUser()
+
+          if (currentUser) {
+            const metadata = currentUser.user_metadata || {}
+
+            // Create profile with user metadata
+            const { data: newProfile, error: insertError } = await supabase
+              .from('profiles')
+              .insert({
+                id: userId,
+                email: currentUser.email,
+                full_name: metadata.full_name || metadata.name || currentUser.email?.split('@')[0] || '',
+                phone: metadata.phone || '',
+                role: 'user'
+              })
+              .select()
+              .single()
+
+            if (!insertError && newProfile) {
+              setProfile(newProfile)
+            } else {
+              // Set default profile if insert fails
+              setProfile({ id: userId, role: 'user' })
+            }
+          } else {
+            setProfile({ id: userId, role: 'user' })
+          }
+        } catch (createErr) {
+          // Set default profile if profile creation fails
+          setProfile({ id: userId, role: 'user' })
+        }
       }
     } catch (err) {
       // Set a default profile on error or timeout
